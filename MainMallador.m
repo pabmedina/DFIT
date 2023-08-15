@@ -87,7 +87,7 @@ else
     barreras.n=0;
     barreras.espesor =0;
 end
-%% ACTUALIZACIÓN DOMINIO %%
+%% ACTUALIZACIÃ“N DOMINIO %%
 anchoX = max(nodes(:,1));
 anchoY = max(nodes(:,2));
 anchoZ = max(nodes(:,3));
@@ -289,7 +289,7 @@ if debugPlots == 1
     end
 end
 
-%% A PARTIR DE AHORA COMIENZA LA SEPARACIÓN (LOS PLUS),GENERACION DE GAP,NODOS DE FLUIDOS Y ELEMENTS BARRA %%
+%% A PARTIR DE AHORA COMIENZA LA SEPARACIÃ“N (LOS PLUS),GENERACION DE GAP,NODOS DE FLUIDOS Y ELEMENTS BARRA %%
 %%% Primero se separan todos los elementos y nodos que no son parte
 %%% de alguna interseccion.
 
