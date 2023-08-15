@@ -5,6 +5,7 @@ meshCase = 'DFN'; %'WI';% 'DFN';%
 KeyInicioIsip=false;
 wantBuffPermeability = false; % false: la permeabilidad no se altera con el campo de tensiones de la etapa de fractura.
 permFactor=1e5; keyAgusCheck = false; factor =1;
+keyCorteCohesivos= 'Y';
 %-------------------------------------------------------------------------%
 %% %%%%%%%%%%%%%%%%%%%       main DFIT/TShape       %%%%%%%%%%%%%%%%%%%% %%
 %-------------------------------------------------------------------------%
