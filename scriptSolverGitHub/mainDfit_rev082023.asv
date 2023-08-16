@@ -1,7 +1,7 @@
 clc;close all; format shortg; set(0,'DefaultFigureWindowStyle','docked');
 
 setBiot = 0.7; setPropante = true;
-poroElasticity = true; checkFaces = false; isipKC = true; flagPreCierre =false; gapPreCierre = 1; flagCierre = false; gapCierre =3e-1; 
+poroElasticity = true; checkPlots = false; isipKC = true; flagPreCierre =false; gapPreCierre = 1; flagCierre = false; gapCierre =3e-1; 
 meshCase = 'DFN'; %'WI';% 'DFN';%
 KeyInicioIsip=false;
 wantBuffPermeability = false; % false: la permeabilidad no se altera con el campo de tensiones de la etapa de fractura.
@@ -12,12 +12,12 @@ keyCorteCohesivos= 'Y';
 %-------------------------------------------------------------------------%
 %% Variables a modificar segun lo requerido en cada corrida:
 % Variables de inicio de corrida.
-guardarCorrida    = 'Y'; % Si se quiere guardar la corrida. "Y" o "N".
+guardarCorrida    = 'N'; % Si se quiere guardar la corrida. "Y" o "N".
 pathAdder
 % direccionGuardado = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\Resultados de corridas (.mat)\';   %Dejo ambos directorios, ir comentando segun quien la use 
 direccionGuardado = 'D:\Corridas\Paper geomec DFN\Santi\DFIT 7 del 23\Resultados de corridas (.mat)\'; 
 % Direccion donde se guarda la informacion.
-nombreCorrida     = 'DFIT_tripleEncuentroBorrar'; % Nombre de la corrida. La corrida se guarda en la carpeta "Resultado de corridas" en una subcarpeta con este nombre.
+nombreCorrida     = 'DFIT_DFN_angle_CorteAumentado_Qextendido'; % Nombre de la corrida. La corrida se guarda en la carpeta "Resultado de corridas" en una subcarpeta con este nombre.
 
 cargaDatos     = 'load'; % Forma en la que se cargan las propiedades de entrada. "load" "test" "default" "change".
 archivoLectura = 'DFITtripleEncuentro_rev082023.txt';%'DFIT_rev052022_WI062023CorridaCorta.txt';%'DFIT_rev052022_WI+DFN062023CorridaCorta.txt';%'Dfit_rev052022_DFIT_062023.txt'; %'Dfit_rev052022_DFIT_WItrial_062023.txt';% Nombre del archivo con las propiedades de entrada. 
@@ -92,16 +92,22 @@ temporalProperties   = setTemporalPropertiesLabel(cargaDatos,archivoLectura);   
 algorithmProperties  = setAlgorithmPropertiesLabel(cargaDatos,archivoLectura);            % Propiedades del algoritmo de convergencia.                             
 bombaProperties      = setBombaPropertiesLabel(meshInfo,'off',cargaDatos,archivoLectura); % Propiedades de la bomba.
 produccionProperties = setProduccionPropertiesLabel(cargaDatos,archivoLectura);
-[meshInfo,cohesivosProperties] = setCohesivosPropertiesLabel(meshInfo,physicalProperties,temporalProperties,bombaProperties,'off',cargaDatos,archivoLectura);  % Propiedades de los elementos cohesivos. 
+
+if strcmp(keyCorteCohesivos,'Y')
+    [meshInfo,cohesivosProperties] = setCohesivosPropertiesLabelCorteModificado(meshInfo,physicalProperties,temporalProperties,bombaProperties,'off',cargaDatos,archivoLectura);  % Propiedades de los elementos cohesivos. 
+else
+    [meshInfo,cohesivosProperties] = setCohesivosPropertiesLabel(meshInfo,physicalProperties,temporalProperties,bombaProperties,'off',cargaDatos,archivoLectura);  % Propiedades de los elementos cohesivos. 
+end
+
 propanteProperties   = setPropantePropertiesLabel(cargaDatos,physicalProperties,meshInfo,setPropante,archivoLectura);
 SRVProperties        = setSRVPropertiesLabel(cargaDatos,'N',meshInfo,archivoLectura);
 SRVProperties.elementsIndex=meshInfo.elementsFisu.ALL.index;
 
-if checkFaces
-plotMeshColo3D(meshInfo.nodes,meshInfo.elements,meshInfo.cohesivos.elements,'off','on','w','r','k',1) % Se plotea la malla
-hold on
-plotMeshColo3D(meshInfo.nodes,meshInfo.elements(SRVProperties.elementsIndex,:),meshInfo.cohesivos.elements,'off','off','r','r','k',1) % Se plotea la malla
-hold off
+if checkPlots
+    plotMeshColo3D(meshInfo.nodes,meshInfo.elements,meshInfo.cohesivos.elements,'off','on','w','r','k',1) % Se plotea la malla
+    hold on
+    plotMeshColo3D(meshInfo.nodes,meshInfo.elements(SRVProperties.elementsIndex,:),meshInfo.cohesivos.elements,'off','off','r','r','k',1) % Se plotea la malla
+    hold off
 end
 %%
 %-------------------------------------------------------------------------%
@@ -118,7 +124,7 @@ pGaussParam = getPGaussParam(); % Obtencion de puntos de gauss y pesos.
 % -- Nodos de caras.
 [nodosCara,cara] = getNodosCaras(meshInfo,paramDiscEle);
 
-if checkFaces
+if checkPlots
     plotCara(meshInfo,'on',cara.oeste)
 end
 
@@ -142,7 +148,7 @@ if ~keyAgusCheck % -> hardcodeo para parchar el mallador.
             meshInfo.constraintsRelations = meshInfo.constraintsRelations; % normalConstraintsDFN(meshInfo.constraintsRelations,meshInfo.nodosBoundary);
     end
 end
-if checkFaces
+if checkPlots
     plotOverCT(meshInfo,'on',nodesToRemove)
 end
 % Fijacion de las direcciones normales a cada cara.

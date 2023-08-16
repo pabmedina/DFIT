@@ -1,0 +1,169 @@
+- Modo de uso:
+- Para realizar comentarios o lineas que seran ignoradas empezar las mismas
+- con "-".
+- Las lineas vacias tambien seran ignoradas.
+- Respetar la definicion de variables como "nombreVariables = valor" (Notar
+- el espacio que se deja antes y despues del igual)
+- Se puede cambiar el nombre de las propiedades por cualquiera cosa.
+- No cambiar el orden de las propiedades a como estan escritas.
+- Si se agregan propiedades o se modifica el orden, hay que modificar las 
+- funciones de las propiedades del main.
+- Los limites de la variable "depth" en propiedades constitutivas tienen 
+- que coincidir con 0 y el ancho en Z de todo el dominio. Solo cambia si se
+- cambia el dominio (no si se usa una malla mas refinada por ejemplo).
+- El tiempo total de corrida no puede superar al "tiempoBomba" + 
+- "tiempoISIP" + "tiempoProduccion". Si puede ser menor o igual.
+------------------------    CORRIDA DE PRUEBA    --------------------------
+---------------------------------------------------------------------------
+-Malla utilizada:
+---------------------------------------------------------------------------
+selectedMesh = DFIT+DFN+WI_noRef.mat
+
+---------------------------------------------------------------------------
+-Propiedades Constitutivas: [Mpsi][mm]
+---------------------------------------------------------------------------
+Ev =  [2.811028 2.186780 2.650860 2.733285 2.581179 2.518686 2.214589 2.461940 2.534397 2.550776 2.526200 2.461565 2.515103 2.594485 2.681194 2.545814 2.631346 2.694999 2.581949 2.206073 2.366490 2.533778 2.604427 2.325931 2.153577 2.445321 2.338690 2.525453 3.088779 3.062246 2.861436 3.128716 3.434145 5.834225 5.038360]
+Eh =  [4.560073 3.917136 4.401009 4.483326 4.330629 4.266868 3.947209 4.208426 4.282956 4.299686 4.274566 4.208038 4.263193 4.344125 4.431420 4.294621 4.381374 4.445214 4.331411 3.938015 4.108912 4.282322 4.354192 4.066147 3.881032 4.191211 4.079631 4.273802 4.827670 4.802530 4.609388 4.865351 5.147496 7.094008 6.491484]
+NUv = [0.202795 0.183593 0.201891 0.205049 0.203629 0.200686 0.184357 0.196520 0.198630 0.197694 0.198096 0.196617 0.197845 0.201988 0.204670 0.197784 0.203666 0.203527 0.201684 0.184059 0.190305 0.197309 0.203272 0.187566 0.182698 0.195352 0.188116 0.197828 0.207567 0.207977 0.210688 0.206356 0.207119 0.294965 0.265967]
+NUh = [0.258947 0.239744 0.258043 0.261201 0.259780 0.256837 0.240509 0.252672 0.254781 0.253845 0.254247 0.252769 0.253996 0.258139 0.260822 0.253936 0.259817 0.259678 0.257836 0.240210 0.246456 0.253461 0.259423 0.243717 0.238849 0.251503 0.244268 0.253980 0.263718 0.264128 0.266840 0.262507 0.263270 0.351116 0.322118]
+depth = [70000 60000 50000 49000 48000 47000 46000 45000 44000 43000 42000 41000 40000 39000 38000 37000 36000 35000 34000 33000 32000 31000 30000 29000 28000 27000 26000 25000 24000 23000 22000 21000 20000 10000 0]
+
+EvL = []
+EhL = []
+NUvL = []
+NUhL = []
+depthL = []
+eL = []
+eT = []
+
+---------------------------------------------------------------------------
+-Propiedades Poroelasticas: [psi][][][psi][psi]
+---------------------------------------------------------------------------
+pPoral = 8214
+m = [1 1 1 0 0 0]
+poro = 0.11
+Ks = 6.58e6
+Kf = 418723.95
+
+---------------------------------------------------------------------------
+-Propiedades del Fluido poral: [miliDarcy][Pa*s]
+---------------------------------------------------------------------------
+permShale = 0.0001
+permBarreras = 0.01
+permBarrerasVertical = 0.01
+permSRV = 1
+mu_dinamico = 8.9e-4
+
+---------------------------------------------------------------------------
+-Propiedades del Fluido fracturante: [Pa*s]
+---------------------------------------------------------------------------
+MU = 8.9e-4
+preCondCTFluidos = 1e7
+
+---------------------------------------------------------------------------
+-Cargas tectonicas: [psi]
+---------------------------------------------------------------------------
+ShX = -11603
+ShY = -11168
+SvZ = -11748
+TauXY = 0
+TauYZ = 0
+TauXZ = 0
+
+ShXL = 0
+ShYL = 0
+SvZL = 0
+TauXYL = 0
+TauYZL = 0
+TauXZL = 0
+
+---------------------------------------------------------------------------
+-Propiedades Temporales: [s]
+---------------------------------------------------------------------------
+drainTimes = 5
+initTimes = 5
+deltaTdrainTimes = 1000000
+deltaT = 0.001
+deltaTMax = 2.5
+
+tiempoISIP = 2
+deltaTISIP = 2
+tiempoProduccion = 1
+deltaTProduccionMax = 1
+
+---------------------------------------------------------------------------
+-Propiedades del algoritmo:
+---------------------------------------------------------------------------
+toleranciaU = 0.005/1
+toleranciaP = 0.005/1
+toleranciaCohesivos = 0.02/1
+nIterDiv = 10
+nIterFast = 4
+nIterSlow = 8
+precondCT = 1e7
+
+---------------------------------------------------------------------------
+-Propiedades de la bomba: [BPM][s][mm]
+---------------------------------------------------------------------------
+Q =  [0.5   0.5   0.5 ]/3
+tQ = [0     1     3]
+
+posNodoBomba1 = [0 30000 34000]
+posNodoBomba2 = [0 30000 32000]
+posNodoBomba3 = [0 30000 36000]
+posNodoBomba4 = [2000 30000 34000]
+posNodoBomba5 = [2000 30000 32000]
+posNodoBomba6 = [2000 30000 36000]
+---------------------------------------------------------------------------
+-Propiedades de produccion: [psi][s][BPM]
+---------------------------------------------------------------------------
+- Si tProduccion se queda mas corto que el tiempo de produccion seteado en 
+- la parte de propiedades temporales, se toma la ultima presion cargada en 
+- el vector.
+
+modo = q
+pProduccion = [1        1]
+QProduccion = [-0.07/200 -0.01/200]
+tProduccion = [0    100]
+frontImpermeable = N
+
+---------------------------------------------------------------------------
+-Propiedades de los cohesivos: [][grad][psi][psi*in^0.5][psi][psi*in^0.5][psi][psi*in^0.5][Mpsi][]
+---------------------------------------------------------------------------
+npiCohesivos = 4
+anguloDilatancia = 0
+-Propiedades del "shale":
+tensionRoturaCohesivo = 1039.58
+K1c = 513.58
+-Propiedades del "limestone":
+tensionRoturaCohesivoL = 1039.58
+K1cL = 513.58
+-Propiedades de la "interface":
+tensionRoturaCohesivoInter = 1039.58
+K1cI = 513.58
+EvI = 5
+NUI = 0.24
+
+-Recomendaciones: 
+-K1cI = min(K1cL,K1c)/weakFactor --> Es decir, que sea mas chico que el minimo entre esos dos. 
+-EvI = min(Ev,EvL)/2
+-NUvI = NUvL
+
+---------------------------------------------------------------------------
+-Propiedades del propante: [Mpsi][][miliDarcy][%]
+---------------------------------------------------------------------------
+propanteKey = N
+EPropante = 10.4
+NuPropante = 0.25
+kappaPropante = 1000
+hPropantePorcentaje = 50
+
+---------------------------------------------------------------------------
+-Volumen de SRV: [m][m][m]
+---------------------------------------------------------------------------
+-Nota: fijarse bien que las coordenadas que depende de los elementos de 
+-las mallas.
+SRVKey = N
+dX = [0 34]
+dY = [12 24]
+dZ = [9 27]
