@@ -956,11 +956,11 @@ if strcmpi(guardarCorrida,'Y')
 %     movefile(['Q_',nombreCorrida,'.txt'],[direccionGuardado,nombreCorrida]);
     
     if exist(['resultadosFinISIP_',nombreCorrida,'.mat'],'file') == 2
-        cd([DirectorioMadre 'scripSolverGitHub\'])
+        cd([DirectorioMadre 'scriptSolverGitHub\'])
         movefile(['resultadosFinISIP_',nombreCorrida,'.mat'],[direccionGuardado,nombreCorrida]);
     end
     if exist(['resultadosFinFractura_',nombreCorrida,'.mat'],'file') == 2
-        cd([DirectorioMadre 'scripSolverGitHub\'])
+        cd([DirectorioMadre 'scriptSolverGitHub\'])
         movefile(['resultadosFinFractura_',nombreCorrida,'.mat'],[direccionGuardado,nombreCorrida]);
     end
     
