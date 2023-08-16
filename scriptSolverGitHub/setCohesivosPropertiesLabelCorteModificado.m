@@ -69,7 +69,7 @@ else
     %----------------------------------------------------------------------
     cohesivosProperties.tensionRoturaCohesivoS = cohesivosProperties.tensionRoturaCohesivo;       % psi
     cohesivosProperties.fractureGM1            = (cohesivosProperties.K1c^2)/((physicalProperties.constitutive.Eh(1) * MPa2psi)/(1-physicalProperties.constitutive.NUh(1)^2));  % psi in
-    cohesivosProperties.K2c                    = cohesivosProperties.K1c/3; 
+    cohesivosProperties.K2c                    = 1e3*cohesivosProperties.K1c/3; 
     cohesivosProperties.fractureGM2            = (cohesivosProperties.K2c^2)/((physicalProperties.constitutive.Eh(1) * MPa2psi)/(1-physicalProperties.constitutive.NUh(1)^2));
     
     cohesivosProperties.Kn0   = physicalProperties.constitutive.Eh(1)/1.5;
@@ -78,7 +78,7 @@ else
     cohesivosProperties.dS0_1 = (cohesivosProperties.fractureGM2) / cohesivosProperties.tensionRoturaCohesivoS * in2mm;           % Antiguamente despRot - NORMAL
     cohesivosProperties.dS0_2 = cohesivosProperties.dS0_1;
     cohesivosProperties.dN0   = 2 * cohesivosProperties.fractureGM1 / cohesivosProperties.tensionRoturaCohesivo * in2mm ;           % despRot - TANGENTE
-    cohesivosProperties.TS0_1 = 1000*cohesivosProperties.tensionRoturaCohesivoS* psi2MPa;
+    cohesivosProperties.TS0_1 = 1e3*cohesivosProperties.tensionRoturaCohesivoS* psi2MPa;
     cohesivosProperties.TS0_2 = cohesivosProperties.TS0_1;
     cohesivosProperties.TN0   = cohesivosProperties.tensionRoturaCohesivo* psi2MPa;
     cohesivosProperties.dN1   = cohesivosProperties.TN0 / (cohesivosProperties.Kn0);       % desp1   - NORMAL
@@ -106,7 +106,7 @@ else
     if ~isempty(cohesivosProperties.tensionRoturaCohesivoL)
         cohesivosProperties.tensionRoturaCohesivoSL = cohesivosProperties.tensionRoturaCohesivoL;       % psi
         cohesivosProperties.fractureGM1L            = (cohesivosProperties.K1c^2)/((physicalProperties.constitutive.Eh(1) * MPa2psi)/(1-physicalProperties.constitutive.NUh(1)^2));  % psi in
-        cohesivosProperties.K2cL                    = cohesivosProperties.K1cL/3;
+        cohesivosProperties.K2cL                    = 1e3*cohesivosProperties.K1cL/3;
         cohesivosProperties.fractureGM2L            = (cohesivosProperties.K2c^2)/((physicalProperties.constitutive.Eh(1) * MPa2psi)/(1-physicalProperties.constitutive.NUh(1)^2));
         
         cohesivosProperties.Kn0L   = physicalProperties.constitutive.Eh(1)/1.5;
@@ -115,7 +115,7 @@ else
         cohesivosProperties.dS0_1L = (cohesivosProperties.fractureGM2L) / cohesivosProperties.tensionRoturaCohesivoSL * in2mm;           % Antiguamente despRot - NORMAL
         cohesivosProperties.dS0_2L = cohesivosProperties.dS0_1L;
         cohesivosProperties.dN0L   = 2 * cohesivosProperties.fractureGM1L / cohesivosProperties.tensionRoturaCohesivoL * in2mm;           % despRot - TANGENTE
-        cohesivosProperties.TS0_1L = cohesivosProperties.tensionRoturaCohesivoSL * psi2MPa;
+        cohesivosProperties.TS0_1L = 1e3*cohesivosProperties.tensionRoturaCohesivoSL * psi2MPa;
         cohesivosProperties.TS0_2L = cohesivosProperties.TS0_1L;
         cohesivosProperties.TN0L   = cohesivosProperties.tensionRoturaCohesivoL * psi2MPa;
         cohesivosProperties.dN1L   = cohesivosProperties.TN0L / (cohesivosProperties.Kn0L);       % desp1   - NORMAL
@@ -145,7 +145,7 @@ else
         %----------------------------------------------------------------------        
         cohesivosProperties.tensionRoturaCohesivoSInter  = cohesivosProperties.tensionRoturaCohesivoInter;       % psi
         cohesivosProperties.fractureGM1Inter             = (cohesivosProperties.K1cInter^2)/((cohesivosProperties.EvInter * MPa2psi)/(1-cohesivosProperties.NUvInter^2));  % psi in
-        cohesivosProperties.K2cInter                     = cohesivosProperties.K1cInter/3;
+        cohesivosProperties.K2cInter                     = 1e3*cohesivosProperties.K1cInter/3;
         cohesivosProperties.fractureGM2Inter             = (cohesivosProperties.K2cInter^2)/((cohesivosProperties.EvInter * MPa2psi)/(1-cohesivosProperties.NUvInter^2));  % psi in
         
         cohesivosProperties.Kn0Inter   = cohesivosProperties.EvInter/1.5;
@@ -154,7 +154,7 @@ else
         cohesivosProperties.dS0_1Inter = (cohesivosProperties.fractureGM2Inter) / cohesivosProperties.tensionRoturaCohesivoSInter * in2mm;           % Antiguamente despRot - NORMAL
         cohesivosProperties.dS0_2Inter = cohesivosProperties.dS0_1Inter;
         cohesivosProperties.dN0Inter   = 2 * cohesivosProperties.fractureGM1Inter / cohesivosProperties.tensionRoturaCohesivoInter * in2mm ;           % despRot - TANGENTE
-        cohesivosProperties.TS0_1Inter = cohesivosProperties.tensionRoturaCohesivoSInter * psi2MPa;
+        cohesivosProperties.TS0_1Inter = 1e3*cohesivosProperties.tensionRoturaCohesivoSInter * psi2MPa;
         cohesivosProperties.TS0_2Inter = cohesivosProperties.TS0_1Inter;
         cohesivosProperties.TN0Inter   = cohesivosProperties.tensionRoturaCohesivoInter * psi2MPa;
         cohesivosProperties.dN1Inter   = cohesivosProperties.TN0Inter / (cohesivosProperties.Kn0Inter);       % desp1   - NORMAL
