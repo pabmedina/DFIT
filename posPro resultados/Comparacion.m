@@ -1,0 +1,2 @@
+% Comparación corridas
+
