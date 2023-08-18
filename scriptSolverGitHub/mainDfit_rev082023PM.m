@@ -661,7 +661,7 @@ while algorithmProperties.elapsedTime <= temporalProperties.tiempoTotalCorrida
                 else
                     dfnPerm = 1;
                 end
-                He{aux2} = HFluidos2DV2(meshInfo.elementsFluidos,iEle,hhIter(meshInfo.nodosFluidos.EB_Asociados,1),physicalProperties.fluidoFracturante.MU,meshInfo.cohesivos,meshInfo.nodes,cohesivosProperties.angDilatancy,factor);
+                He{aux2} = HFluidos2DV3(meshInfo.elementsFluidos,iEle,hhIter(meshInfo.nodosFluidos.EB_Asociados,1),physicalProperties.fluidoFracturante.MU,meshInfo.cohesivos,meshInfo.nodes,cohesivosProperties.angDilatancy,factor,dfnPerm);
                 aux2     = aux2+1;
             end
         end
