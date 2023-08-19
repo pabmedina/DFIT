@@ -2,11 +2,9 @@ clc;close all; format shortg; set(0,'DefaultFigureWindowStyle','docked');
 
 setBiot = 0.7; setPropante = true;
 poroElasticity = true; checkPlots = false; isipKC = true; flagPreCierre =false; gapPreCierre = 1; flagCierre = false; gapCierre =3e-1; 
-meshCase = 'DFN'; %'WI';% 'DFN';% 
-keyPermeador = false;
-
+meshCase = 'WI'; %'WI';% 'DFN';%
 KeyInicioIsip=false;
-wantBuffPermeability = false; % false: la permeabilidad no se altera con el campo de tensiones de la etapa de fractura.
+wantBuffPermeability = true; % false: la permeabilidad no se altera con el campo de tensiones de la etapa de fractura.
 permFactor=1e5; keyAgusCheck = false; factor =1;
 keyCorteCohesivos= 'Y';
 %-------------------------------------------------------------------------%
@@ -17,16 +15,16 @@ keyCorteCohesivos= 'Y';
 guardarCorrida    = 'Y'; % Si se quiere guardar la corrida. "Y" o "N".
 pathAdder
 % direccionGuardado = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\Resultados de corridas (.mat)\';   %Dejo ambos directorios, ir comentando segun quien la use 
-direccionGuardado = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\Resultados de corridas (.mat)\'; 
+direccionGuardado = 'D:\Corridas\Paper geomec DFN\Santi\DFIT 7 del 23\DFIT\Resultados de corridas (.mat)\'; 
 % Direccion donde se guarda la informacion.
-nombreCorrida     = 'DFIT_DFN_trial1'; % Nombre de la corrida. La corrida se guarda en la carpeta "Resultado de corridas" en una subcarpeta con este nombre.
+nombreCorrida     = 'DFIT_WI_CorteAumentado_Qextendido_buff'; % Nombre de la corrida. La corrida se guarda en la carpeta "Resultado de corridas" en una subcarpeta con este nombre.
 
 cargaDatos     = 'load'; % Forma en la que se cargan las propiedades de entrada. "load" "test" "default" "change".
-archivoLectura = 'DFITtripleEncuentro_rev082023.txt';%'DFIT_rev052022_WI062023CorridaCorta.txt';%'DFIT_rev052022_WI+DFN062023CorridaCorta.txt';%'Dfit_rev052022_DFIT_062023.txt'; %'Dfit_rev052022_DFIT_WItrial_062023.txt';% Nombre del archivo con las propiedades de entrada. 
+archivoLectura = 'DFITWI_rev082023.txt';%'DFIT_rev052022_WI062023CorridaCorta.txt';%'DFIT_rev052022_WI+DFN062023CorridaCorta.txt';%'Dfit_rev052022_DFIT_062023.txt'; %'Dfit_rev052022_DFIT_WItrial_062023.txt';% Nombre del archivo con las propiedades de entrada. 
 
 tSaveParcial   = []; % Guardado de resultados parciales durante la corrida. Colocar los tiempos en los cuales se quiere guardar algun resultado parcial.
 
-restart            = 'Y'; % Si no queremos arrancar la simulacion desde el principio sino que desde algun punto de partida 'Y' en caso contrario 'N'.
+restart            = 'N'; % Si no queremos arrancar la simulacion desde el principio sino que desde algun punto de partida 'Y' en caso contrario 'N'.
 direccionRestart   = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\Resultados de corridas (.mat)\reStartPropagacionDFN\';
 propiedadesRestart = 'resultadosCorrida_DFIT_DFN_trialReStart.mat';
 
@@ -661,7 +659,7 @@ while algorithmProperties.elapsedTime <= temporalProperties.tiempoTotalCorrida
                 else
                     dfnPerm = 1;
                 end
-                He{aux2} = HFluidos2DV2(meshInfo.elementsFluidos,iEle,hhIter(meshInfo.nodosFluidos.EB_Asociados,1),physicalProperties.fluidoFracturante.MU,meshInfo.cohesivos,meshInfo.nodes,cohesivosProperties.angDilatancy,factor,dfnPerm);
+                He{aux2} = HFluidos2DV3(meshInfo.elementsFluidos,iEle,hhIter(meshInfo.nodosFluidos.EB_Asociados,1),physicalProperties.fluidoFracturante.MU,meshInfo.cohesivos,meshInfo.nodes,cohesivosProperties.angDilatancy,factor,dfnPerm);
                 aux2     = aux2+1;
             end
         end
@@ -931,10 +929,12 @@ while algorithmProperties.elapsedTime <= temporalProperties.tiempoTotalCorrida
     meshInfo.elementsFisu.fracturados                           = sum(ismember(meshInfo.elementsFisu.ALL.nodesInFisu,nodosMuertos),2) > 0;    % Este vector indica, segun como esten ordenados los elementsFisu, quienes de ellos
     % se comportan como parte de la fractura.
     meshInfo.elementsFluidos.activos                            = sum(ismember(meshInfo.elementsFluidos.elements,nodosMuertos),2) > 0;        % Este vector indica, segun como esten ordenados los elementsFluidos, quienes estan activos.
-    if keyPermeador
+    if  strcmp(meshCase,'DFN')
+        if keyPermeador 
         meshInfo.elementsFluidos.activos = meshInfo.elementsFluidos.activos | nodosFuidosAddToActive;
         keyPermeador = false;
         activadorDFN = true;
+        end
     end
     meshInfo.cohesivos.biot(meshInfo.elementsFluidos.activos,:) = 1;
     meshInfo.cohesivos.elementsFluidosActivos                   = meshInfo.elementsFluidos.activos;
@@ -997,7 +997,7 @@ end
 %-------------------------------------------------------------------------%
 if strcmpi(guardarCorrida,'Y')
     clear han1 han2
-    cd('D:\Geomec\paper DFN\ITBA\Piloto\DFIT\Resultados de corridas (.mat)\')
+    cd(direccionGuardado)
     mkdir(nombreCorrida) % Crea una subcarpeta en Resultado de corridas donde se guardara la informacion obtenida.
     cd([direccionGuardado,nombreCorrida])
     save(['resultadosCorrida_',nombreCorrida,'.mat']);    % Se guarda la informacion obtenida.
@@ -1021,7 +1021,7 @@ if strcmpi(guardarCorrida,'Y')
     
     if ~isempty(tSaveParcial)
         for i = 1:numel(tSaveParcial)
-            cd([DirectorioMadre 'scripSolverGitHub\'])
+            cd([DirectorioMadre 'scriptSolverGitHub\'])
             movefile(['resultadosPARCIALESCorrida_',nombreCorrida,'_numero_',num2str(i),'.mat'],[direccionGuardado,nombreCorrida]);
         end
     end
