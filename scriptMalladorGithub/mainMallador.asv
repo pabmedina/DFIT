@@ -1,22 +1,22 @@
 %% START %%
 clc; clear; close all;
-nombreOutput = 'DFIT+WI+DFN'; % Nombre del archivo de salida.
+nameData = 'test'; % Nombre del archivo de salida.
 
-guardado = 0;
-debugPlots = 0;
+saveData = true;
+debugPlots = 1;
 barrerasFlag = 0;
 DFN_flag = 0;
 
+mainFolder = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\'; % el mainFolder cambia segun usuario
 pathDir
-direccionGuardado = 'D:\Corridas\Paper geomec DFN\Agus\DFIT\scriptSolver';
 
 %% MESH PARAMETERS %%
-gap = 1e3;
-nX = 1; nY = 1; nZ = 1; %Cantidad de fracturas en cada direccion
+gap = 2;
+nX = 3; nY = 1; nZ = 5; %Cantidad de fracturas en cada direccion
 DFN_ang  = 15;
 
 X0 = 1e4; %Ubicacion inicial fractura normal X
-dX = 20e3; %Distancia entre fracturas X
+dX = 4e3; %Distancia entre fracturas X
 
 Z0  = 24e3; %Ubicacion inicial fractura normal Z
 dZ0 = [4e3 4e3 4e3 6e3 4e3];%Distancia entre fracturas Z
@@ -1405,8 +1405,8 @@ infoPlot.elementsFluidos = elementsFluidos;
 infoPlot.elementsFisu    = elementsFisu;
 %% OUTPUTS
 plotMeshSlider(nodes, elements)
-if guardado == 1
-save(nombreOutput,'nodes','elements','cohesivos','elementsFisu','elementsBarra','nodosFluidos','elementsFluidos','anchoX','anchoY','anchoZ','CRFluidos','elementsMediumPlus','constraintsRelations','nodosBoundary');
-movefile([nombreOutput,'.mat'],direccionGuardado)
+if saveData
+    save(nameData,'nodes','elements','cohesivos','elementsFisu','elementsBarra','nodosFluidos','elementsFluidos','anchoX','anchoY','anchoZ','CRFluidos','elementsMediumPlus','constraintsRelations','nodosBoundary');
+    movefile([nameData,'.mat'],direccionGuardado)
 end
     
