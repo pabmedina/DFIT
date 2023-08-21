@@ -7,9 +7,9 @@ debugPlots = 0;
 barrerasFlag = 0;
 DFN_flag = 0;
 
-addpath('D:\Corridas\Paper geomec DFN\Agus\funciones');
-addpath('D:\Corridas\Paper geomec DFN\Agus\Mallas');
-direccionGuardado = 'D:\Corridas\Paper geomec DFN\Agus\DFIT\scriptSolver';
+mainFolder = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\'; % el mainFolder cambia segun usuario
+
+pathDir
 
 %% MESH PARAMETERS %%
 gap = 1e3;
