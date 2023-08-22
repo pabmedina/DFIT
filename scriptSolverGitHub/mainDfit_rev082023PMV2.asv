@@ -107,22 +107,35 @@ if ~keyAgusCheck && strcmpi(meshCase,'DFN')
     %     nodBooltripleInf = false(size(meshInfo.nodes,1),1);
     %     nodBooltripleInf(meshInfo.nodesInt.triplesAll) = true;
     %
-    %     nodFracturaId_X = nodBool & ~nodFactura_Z & ~nodFactura_Y | nodBoolIntYX | nodBoolIntZX | nodBooltripleInf;
+%         nodFracturaId_X = nodBool & ~nodFactura_Z & ~nodFactura_Y | nodBoolIntYX | nodBoolIntZX | nodBooltripleInf;
     tolFind = 1e-3;
+    nodTripleEncuentro = false(size(meshInfo.nodes,1),size(nodesInt.triplesAll,1));
     for i = 1:size(nodesInt.triplesAll,1)
         xInput1 = meshInfo.nodes(nodesInt.triplesAll(i),1); yInput1 = meshInfo.nodes(nodesInt.triplesAll(i),2); zInput1 =  meshInfo.nodes(nodesInt.triplesAll(i),3);
-        nodTripleEncuentro = findTriple(meshInfo,xInput1,yInput1,zInput1,tolFind);
+        nodTripleEncuentro(:,i) = findTriple(meshInfo,xInput1,yInput1,zInput1,tolFind);
+        
     end
+    nodTripleEncuentro = any(nodTripleEncuentro,2);
+    nodosInterseccionID = unique(find(nodTripleEncuentro));
+    d = ismember(meshInfo.elementsFluidos.elements,nodosInterseccionID);
+    elFluidoElementID= find(sum(d,2)>0); % aca tengo el ID de todos los elementos de fluido que rodean a los nodos de la triple interseccion
+    plotMeshColo3D(meshInfo.nodes,meshInfo.elements,meshInfo.cohesivos.elements(elFluidoElementID,:),'off','off','w','r','k',1)
     
+    elFluidoElementBool_X = false(size(meshInfo.cohesivos.elements,1),1);
+    for j = 1:size(meshInfo.cohesivos.elements,1)
+        cohesiveName = meshInfo.cohesivos.name(j);
+        if strcmpi(cohesiveName,'X') 
+            elFluidoElementBool_X(j) = true;
+        end
+    end
+    elFluidoElementID_X = find(elFluidoElementBool_X); 
     
-    
-    nodFracturaId_X = false(size(meshInfo.nodes,1),1);
-    
-    
-    nodFracturaId_X(nodesInt.triplesAll,1) = true;
-    d = ismember(meshInfo.elementsFluidos.elements,find(nodFracturaId_X));
-    elFluidoElementID_X = find(sum(d,2)>0);
-    plotMeshColo3D(meshInfo.nodes,meshInfo.elements,meshInfo.cohesivos.elements(elFluidoElementID_X,:),'off','on','w','r','k',1) % Se plotea la malla
+    elFluidoElementsBool = false(size(meshInfo.elementsFluidos.elements,1),1);
+    elFluidoElementsBool(elFluidoElementID_X,1) = true;
+    elFluidoElementsBool(elFluidoElementID,1) = true;
+    allFluidElementsID = unique(find(elFluidoElementsBool));
+%     elFluidoElementID = 
+    plotMeshColo3D(meshInfo.nodes,meshInfo.elements,meshInfo.cohesivos.elements(allFluidElementsID,:),'off','on','w','r','k',1) % Se plotea la malla
 end
 if ~keyAgusCheck
     vec = testingMesh(meshInfo.elements,meshInfo.nodes); % isempty(find(vec)) = true -> esto esta de mas y ya esta arreglado en el mallador.

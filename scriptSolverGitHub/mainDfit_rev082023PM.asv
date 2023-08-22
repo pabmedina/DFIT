@@ -62,60 +62,56 @@ meshInfo = meshVerification(meshInfo);
 
 if ~keyAgusCheck && strcmpi(meshCase,'DFN')
     % esta parte la tiene que arreglar Agus con el mallador
-    % colocamos una keyAgusCheck = false;
+    % colocamos una keyAgusCheck = false; 
+    
+%     xInput1 = 1e4; yInput1 = 3e4; zInput1 = 3.4e4; tolFind = 1e-4;
+%     nodTripleEncuentro = findTriple(meshInfo,xInput1,yInput1,zInput1,tolFind);
+%     c = ismember(meshInfo.cohesivos.elements,find(nodTripleEncuentro));
+%     elCohesiveGathering = find(sum(c,2)>0);
+%     
+%     
+%     xInput2 = 2e4; yInput2 = 3e4; zInput2 = 3.4e4;
+%     nodEncuentroYZ = findDoble(meshInfo,xInput2,yInput2,zInput2,tolFind);
+%     
+%     xInput3 = 1e4; yInput3 = 3e4; zInput1_3 = 2e4; zInput2_3 =5e4;
+%     nodEncuentroXY = findDobleBis(meshInfo,xInput3,yInput3,zInput1_3,zInput2_3,tolFind);
+%     
+%     nodosInterseccionID = [find(nodEncuentroXY) ; find(nodEncuentroYZ)];
+%     nodosInterseccionID = unique(nodosInterseccionID);
+%     aa = ismember(meshInfo.elementsFluidos.elements,nodosInterseccionID);
+%     elCohesiveElementID = find(sum(aa,2)>0);
+%     
+%     
+%     nodosFluidosID = unique(meshInfo.elementsFluidos.elements);
+%     nodBool = false(size(meshInfo.nodes,1),1);
+%     nodBool(nodosFluidosID) = true;
+%     
+%     % esta parte la tiene que arreglar Agus con el mallador
+%     % colocamos una keyAgusCheck = false;
+%     
+%     xInput1 = []; yInput1 = []; zInput1 = 3.4e4; tolFind = 1e-4;
+%     nodFactura_Z = findTriple(meshInfo,xInput1,yInput1,zInput1,tolFind);
+%     nodFracturaId_Z = unique(meshInfo.elementsFluidos.elements(ismember(meshInfo.elementsFluidos.elements,find(nodFactura_Z))));
+%     
+%     xInput1 = []; yInput1 = 3e4; zInput1 = []; tolFind = 1e-4;
+%     nodFactura_Y = findTriple(meshInfo,xInput1,yInput1,zInput1,tolFind);
+%     nodFracturaId_Y = unique(meshInfo.elementsFluidos.elements(ismember(meshInfo.elementsFluidos.elements,find(nodFactura_Y))));
+%     
+%     
+%     nodBoolIntYX = false(size(meshInfo.nodes,1),1);
+%     nodBoolIntYX(meshInfo.nodesInt.dobles{1}) = true;
+%     
+%     nodBoolIntZX = false(size(meshInfo.nodes,1),1);
+%     nodBoolIntZX(meshInfo.nodesInt.dobles{3}) = true;
+%     
+%     nodBooltripleInf = false(size(meshInfo.nodes,1),1);
+%     nodBooltripleInf(meshInfo.nodesInt.triplesAll) = true;
+%     
+%     nodFracturaId_X = nodBool & ~nodFactura_Z & ~nodFactura_Y | nodBoolIntYX | nodBoolIntZX | nodBooltripleInf;
     
     %     xInput1 = 1e4; yInput1 = 3e4; zInput1 = 3.4e4; tolFind = 1e-4;
     %     nodTripleEncuentro = findTriple(meshInfo,xInput1,yInput1,zInput1,tolFind);
-    %     c = ismember(meshInfo.cohesivos.elements,find(nodTripleEncuentro));
-    %     elCohesiveGathering = find(sum(c,2)>0);
-    %
-    %
-    %     xInput2 = 2e4; yInput2 = 3e4; zInput2 = 3.4e4;
-    %     nodEncuentroYZ = findDoble(meshInfo,xInput2,yInput2,zInput2,tolFind);
-    %
-    %     xInput3 = 1e4; yInput3 = 3e4; zInput1_3 = 2e4; zInput2_3 =5e4;
-    %     nodEncuentroXY = findDobleBis(meshInfo,xInput3,yInput3,zInput1_3,zInput2_3,tolFind);
-    %
-    %     nodosInterseccionID = [find(nodEncuentroXY) ; find(nodEncuentroYZ)];
-    %     nodosInterseccionID = unique(nodosInterseccionID);
-    %     aa = ismember(meshInfo.elementsFluidos.elements,nodosInterseccionID);
-    %     elCohesiveElementID = find(sum(aa,2)>0);
-    %
-    %
-    %     nodosFluidosID = unique(meshInfo.elementsFluidos.elements);
-    %     nodBool = false(size(meshInfo.nodes,1),1);
-    %     nodBool(nodosFluidosID) = true;
-    %
-    %     % esta parte la tiene que arreglar Agus con el mallador
-    %     % colocamos una keyAgusCheck = false;
-    %
-    %     xInput1 = []; yInput1 = []; zInput1 = 3.4e4; tolFind = 1e-4;
-    %     nodFactura_Z = findTriple(meshInfo,xInput1,yInput1,zInput1,tolFind);
-    %     nodFracturaId_Z = unique(meshInfo.elementsFluidos.elements(ismember(meshInfo.elementsFluidos.elements,find(nodFactura_Z))));
-    %
-    %     xInput1 = []; yInput1 = 3e4; zInput1 = []; tolFind = 1e-4;
-    %     nodFactura_Y = findTriple(meshInfo,xInput1,yInput1,zInput1,tolFind);
-    %     nodFracturaId_Y = unique(meshInfo.elementsFluidos.elements(ismember(meshInfo.elementsFluidos.elements,find(nodFactura_Y))));
-    %
-    %
-    %     nodBoolIntYX = false(size(meshInfo.nodes,1),1);
-    %     nodBoolIntYX(meshInfo.nodesInt.dobles{1}) = true;
-    %
-    %     nodBoolIntZX = false(size(meshInfo.nodes,1),1);
-    %     nodBoolIntZX(meshInfo.nodesInt.dobles{3}) = true;
-    %
-    %     nodBooltripleInf = false(size(meshInfo.nodes,1),1);
-    %     nodBooltripleInf(meshInfo.nodesInt.triplesAll) = true;
-    %
-    %     nodFracturaId_X = nodBool & ~nodFactura_Z & ~nodFactura_Y | nodBoolIntYX | nodBoolIntZX | nodBooltripleInf;
-    tolFind = 1e-3;
-    for i = 1:size(nodesInt.triplesAll,1)
-        xInput1 = meshInfo.nodes(nodesInt.triplesAll(i),1); yInput1 = meshInfo.nodes(nodesInt.triplesAll(i),2); zInput1 =  meshInfo.nodes(nodesInt.triplesAll(i),3);
-        nodTripleEncuentro = findTriple(meshInfo,xInput1,yInput1,zInput1,tolFind);
-    end
-    
-    
-    
+
     nodFracturaId_X = false(size(meshInfo.nodes,1),1);
     
     

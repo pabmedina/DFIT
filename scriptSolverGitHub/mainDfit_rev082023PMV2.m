@@ -4,6 +4,8 @@ setBiot = 0.7; setPropante = true;
 poroElasticity = true; checkPlots = false; isipKC = true; 
 meshCase = 'DFN'; %'WI';% 'DFN';% 
 keyPermeador = false;
+activadorDFN = false; 
+kappa_DFN = 1; % para definir la permeabilidad de dfn a mano
 
 KeyInicioIsip=false;
 wantBuffPermeability = false; % false: la permeabilidad no se altera con el campo de tensiones de la etapa de fractura.
@@ -19,7 +21,7 @@ pathAdder
 % direccionGuardado = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\Resultados de corridas (.mat)\';   %Dejo ambos directorios, ir comentando segun quien la use 
 direccionGuardado = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\Resultados de corridas (.mat)\'; 
 % Direccion donde se guarda la informacion.
-nombreCorrida     = 'DFIT_redDFN_v1'; % Nombre de la corrida. La corrida se guarda en la carpeta "Resultado de corridas" en una subcarpeta con este nombre.
+nombreCorrida     = 'DFIT_redDFN_v5'; % Nombre de la corrida. La corrida se guarda en la carpeta "Resultado de corridas" en una subcarpeta con este nombre.
 
 cargaDatos     = 'load'; % Forma en la que se cargan las propiedades de entrada. "load" "test" "default" "change".
 archivoLectura = 'DFITredDFN_rev082023.txt';%'DFIT_rev052022_WI062023CorridaCorta.txt';%'DFIT_rev052022_WI+DFN062023CorridaCorta.txt';%'Dfit_rev052022_DFIT_062023.txt'; %'Dfit_rev052022_DFIT_WItrial_062023.txt';% Nombre del archivo con las propiedades de entrada. 
@@ -27,8 +29,8 @@ archivoLectura = 'DFITredDFN_rev082023.txt';%'DFIT_rev052022_WI062023CorridaCort
 tSaveParcial   = []; % Guardado de resultados parciales durante la corrida. Colocar los tiempos en los cuales se quiere guardar algun resultado parcial.
 
 restart            = 'Y'; % Si no queremos arrancar la simulacion desde el principio sino que desde algun punto de partida 'Y' en caso contrario 'N'.
-direccionRestart   = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\Resultados de corridas (.mat)\reStartPropagacionDFN\';
-propiedadesRestart = 'resultadosCorrida_DFIT_DFN_trialReStart.mat';
+direccionRestart   = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\Resultados de corridas (.mat)\DFIT_red_ReStart_V1\';
+propiedadesRestart = 'resultadosCorrida_DFIT_redDFN_v1ReStart.mat';
 
 % Variables del post - procesado.
 tiempoArea      = 0; % Tiempo en el que se quiere visualizar la forma del area de fractura.
@@ -59,74 +61,36 @@ end
 % Verificacion de malla.
 meshInfo = meshVerification(meshInfo);
 
-
 if ~keyAgusCheck && strcmpi(meshCase,'DFN')
-    % esta parte la tiene que arreglar Agus con el mallador
-    % colocamos una keyAgusCheck = false;
-    
-    %     xInput1 = 1e4; yInput1 = 3e4; zInput1 = 3.4e4; tolFind = 1e-4;
-    %     nodTripleEncuentro = findTriple(meshInfo,xInput1,yInput1,zInput1,tolFind);
-    %     c = ismember(meshInfo.cohesivos.elements,find(nodTripleEncuentro));
-    %     elCohesiveGathering = find(sum(c,2)>0);
-    %
-    %
-    %     xInput2 = 2e4; yInput2 = 3e4; zInput2 = 3.4e4;
-    %     nodEncuentroYZ = findDoble(meshInfo,xInput2,yInput2,zInput2,tolFind);
-    %
-    %     xInput3 = 1e4; yInput3 = 3e4; zInput1_3 = 2e4; zInput2_3 =5e4;
-    %     nodEncuentroXY = findDobleBis(meshInfo,xInput3,yInput3,zInput1_3,zInput2_3,tolFind);
-    %
-    %     nodosInterseccionID = [find(nodEncuentroXY) ; find(nodEncuentroYZ)];
-    %     nodosInterseccionID = unique(nodosInterseccionID);
-    %     aa = ismember(meshInfo.elementsFluidos.elements,nodosInterseccionID);
-    %     elCohesiveElementID = find(sum(aa,2)>0);
-    %
-    %
-    %     nodosFluidosID = unique(meshInfo.elementsFluidos.elements);
-    %     nodBool = false(size(meshInfo.nodes,1),1);
-    %     nodBool(nodosFluidosID) = true;
-    %
-    %     % esta parte la tiene que arreglar Agus con el mallador
-    %     % colocamos una keyAgusCheck = false;
-    %
-    %     xInput1 = []; yInput1 = []; zInput1 = 3.4e4; tolFind = 1e-4;
-    %     nodFactura_Z = findTriple(meshInfo,xInput1,yInput1,zInput1,tolFind);
-    %     nodFracturaId_Z = unique(meshInfo.elementsFluidos.elements(ismember(meshInfo.elementsFluidos.elements,find(nodFactura_Z))));
-    %
-    %     xInput1 = []; yInput1 = 3e4; zInput1 = []; tolFind = 1e-4;
-    %     nodFactura_Y = findTriple(meshInfo,xInput1,yInput1,zInput1,tolFind);
-    %     nodFracturaId_Y = unique(meshInfo.elementsFluidos.elements(ismember(meshInfo.elementsFluidos.elements,find(nodFactura_Y))));
-    %
-    %
-    %     nodBoolIntYX = false(size(meshInfo.nodes,1),1);
-    %     nodBoolIntYX(meshInfo.nodesInt.dobles{1}) = true;
-    %
-    %     nodBoolIntZX = false(size(meshInfo.nodes,1),1);
-    %     nodBoolIntZX(meshInfo.nodesInt.dobles{3}) = true;
-    %
-    %     nodBooltripleInf = false(size(meshInfo.nodes,1),1);
-    %     nodBooltripleInf(meshInfo.nodesInt.triplesAll) = true;
-    %
-    %     nodFracturaId_X = nodBool & ~nodFactura_Z & ~nodFactura_Y | nodBoolIntYX | nodBoolIntZX | nodBooltripleInf;
     tolFind = 1e-3;
+    nodTripleEncuentro = false(size(meshInfo.nodes,1),size(nodesInt.triplesAll,1));
     for i = 1:size(nodesInt.triplesAll,1)
         xInput1 = meshInfo.nodes(nodesInt.triplesAll(i),1); yInput1 = meshInfo.nodes(nodesInt.triplesAll(i),2); zInput1 =  meshInfo.nodes(nodesInt.triplesAll(i),3);
-        nodTripleEncuentro = findTriple(meshInfo,xInput1,yInput1,zInput1,tolFind);
+        nodTripleEncuentro(:,i) = findTriple(meshInfo,xInput1,yInput1,zInput1,tolFind);
+        
     end
+    nodTripleEncuentro = any(nodTripleEncuentro,2);
+    nodosInterseccionID = unique(find(nodTripleEncuentro));
+    d = ismember(meshInfo.elementsFluidos.elements,nodosInterseccionID);
+    elFluidoElementID= find(sum(d,2)>0); % aca tengo el ID de todos los elementos de fluido que rodean a los nodos de la triple interseccion
+    plotMeshColo3D(meshInfo.nodes,meshInfo.elements,meshInfo.cohesivos.elements(elFluidoElementID,:),'off','off','w','r','k',1)
     
+    elFluidoElementBool_X = false(size(meshInfo.cohesivos.elements,1),1);
+    for j = 1:size(meshInfo.cohesivos.elements,1)
+        cohesiveName = meshInfo.cohesivos.name(j);
+        if strcmpi(cohesiveName,'X') 
+            elFluidoElementBool_X(j) = true;
+        end
+    end
+    elFluidoElementID_X = find(elFluidoElementBool_X); 
     
-    
-    nodFracturaId_X = false(size(meshInfo.nodes,1),1);
-    
-    
-    nodFracturaId_X(nodesInt.triplesAll,1) = true;
-    d = ismember(meshInfo.elementsFluidos.elements,find(nodFracturaId_X));
-    elFluidoElementID_X = find(sum(d,2)>0);
-    plotMeshColo3D(meshInfo.nodes,meshInfo.elements,meshInfo.cohesivos.elements(elFluidoElementID_X,:),'off','on','w','r','k',1) % Se plotea la malla
+    elFluidoElementsBool = false(size(meshInfo.elementsFluidos.elements,1),1);
+    elFluidoElementsBool(elFluidoElementID_X,1) = true;
+    elFluidoElementsBool(elFluidoElementID,1) = true;
+    allFluidElementsID = unique(find(elFluidoElementsBool)); % aca tengo el ID de todos los elementos de la triple interseccion y ademas de las DFNS
+    plotMeshColo3D(meshInfo.nodes,meshInfo.elements,meshInfo.cohesivos.elements(allFluidElementsID,:),'off','off','w','r','k',1)
 end
-if ~keyAgusCheck
-    vec = testingMesh(meshInfo.elements,meshInfo.nodes); % isempty(find(vec)) = true -> esto esta de mas y ya esta arreglado en el mallador.
-end
+
 %-------------------------------------------------------------------------%
 %%%                         INPUTS y PROPERTIES                         %%%
 %-------------------------------------------------------------------------%
@@ -407,7 +371,7 @@ end
 % clc
 % 
 % load('incorporacionPropante.mat')
-activadorDFN = false;
+
 
 while algorithmProperties.elapsedTime <= temporalProperties.tiempoTotalCorrida
     %% Activacion de propantes luego de la fractura.
@@ -669,7 +633,7 @@ while algorithmProperties.elapsedTime <= temporalProperties.tiempoTotalCorrida
                 aux2     = aux2+1;
             else
                 if boolToPerm(iEle)
-                    dfnPerm = 1e3;
+                    dfnPerm = kappa_DFN;
                 else
                     dfnPerm = 1;
                 end
