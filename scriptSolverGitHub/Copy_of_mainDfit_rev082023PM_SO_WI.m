@@ -3,10 +3,14 @@ clc;close all; format shortg; set(0,'DefaultFigureWindowStyle','docked');
 setBiot = 0.7; setPropante = true;
 poroElasticity = true; checkPlots = false; isipKC = true; flagPreCierre =false; gapPreCierre = 1; flagCierre = false; gapCierre =3e-1; 
 meshCase = 'WI'; %'WI';% 'DFN';%
-KeyInicioIsip=false;
+KeyInicioIsip=true;
 wantBuffPermeability = true; % false: la permeabilidad no se altera con el campo de tensiones de la etapa de fractura.
 permFactor=1e5; keyAgusCheck = false; factor =1;
 keyCorteCohesivos= 'Y';
+
+if wantBuffPermeability
+    KeyInicioIsip=true;
+end
 %-------------------------------------------------------------------------%
 %% %%%%%%%%%%%%%%%%%%%       main DFIT/TShape       %%%%%%%%%%%%%%%%%%%% %%
 %-------------------------------------------------------------------------%
@@ -109,6 +113,8 @@ if ~keyAgusCheck && strcmpi(meshCase,'DFN')
     d = ismember(meshInfo.elementsFluidos.elements,find(nodFracturaId_X));
     elFluidoElementID_X = find(sum(d,2)>0);
     plotMeshColo3D(meshInfo.nodes,meshInfo.elements,meshInfo.cohesivos.elements(elFluidoElementID_X,:),'off','off','w','r','k',1) % Se plotea la malla
+else
+    nodTripleEncuentro=[];
 end
 if ~keyAgusCheck
     vec = testingMesh(meshInfo.elements,meshInfo.nodes); % isempty(find(vec)) = true -> esto esta de mas y ya esta arreglado en el mallador.

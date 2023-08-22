@@ -109,8 +109,6 @@ if ~keyAgusCheck && strcmpi(meshCase,'DFN')
     d = ismember(meshInfo.elementsFluidos.elements,find(nodFracturaId_X));
     elFluidoElementID_X = find(sum(d,2)>0);
     plotMeshColo3D(meshInfo.nodes,meshInfo.elements,meshInfo.cohesivos.elements(elFluidoElementID_X,:),'off','off','w','r','k',1) % Se plotea la malla
-else
-    nodTripleEncuentro=[];
 end
 if ~keyAgusCheck
     vec = testingMesh(meshInfo.elements,meshInfo.nodes); % isempty(find(vec)) = true -> esto esta de mas y ya esta arreglado en el mallador.
@@ -896,6 +894,7 @@ while algorithmProperties.elapsedTime <= temporalProperties.tiempoTotalCorrida
     % aca tengo que fijarme si de los nodos muertos alguno es un nodo de la
     % interseccion y adicionarle que mate a todos los nodos cohesivos de
     % los elementos que contengan este nodo interseccion
+    if strcmp(meshcase,'DFN')
     if any(ismember(find(nodTripleEncuentro),nodosMuertos)) && ~keyAgusCheck
         disp('LCDTMAllBoys')
         keyPermeador = true;
@@ -907,6 +906,7 @@ while algorithmProperties.elapsedTime <= temporalProperties.tiempoTotalCorrida
             % la DFN sin matar nodos
             
         end
+    end
         % hay que sacarlo -> pero es un beta para ver la propagacion en el
         % encuentro. Va a entrar a este "if" si se rompe un nodo de la
         % triple interseccion. Aca no hay que sacar el keyAgus. Pero

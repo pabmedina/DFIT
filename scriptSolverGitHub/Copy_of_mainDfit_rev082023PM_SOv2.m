@@ -5,7 +5,7 @@ poroElasticity = true; checkPlots = false; isipKC = true; flagPreCierre =false; 
 meshCase = 'DFN'; %'WI';% 'DFN';% 
 keyPermeador = false;
 
-KeyInicioIsip=false;
+KeyInicioIsip=true;
 wantBuffPermeability = true; % false: la permeabilidad no se altera con el campo de tensiones de la etapa de fractura.
 permFactor=1e5; keyAgusCheck = false; factor =1;
 keyCorteCohesivos= 'Y';
