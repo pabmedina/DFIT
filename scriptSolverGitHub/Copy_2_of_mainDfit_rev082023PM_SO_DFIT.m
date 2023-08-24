@@ -24,9 +24,9 @@ archivoLectura = 'DFIT_rev082023.txt';%'DFIT_rev052022_WI062023CorridaCorta.txt'
 
 tSaveParcial   = []; % Guardado de resultados parciales durante la corrida. Colocar los tiempos en los cuales se quiere guardar algun resultado parcial.
 
-restart            = 'N'; % Si no queremos arrancar la simulacion desde el principio sino que desde algun punto de partida 'Y' en caso contrario 'N'.
-direccionRestart   = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\Resultados de corridas (.mat)\reStartPropagacionDFN\';
-propiedadesRestart = 'resultadosCorrida_DFIT_DFN_trialReStart.mat';
+restart            = 'Y'; % Si no queremos arrancar la simulacion desde el principio sino que desde algun punto de partida 'Y' en caso contrario 'N'.
+direccionRestart   = 'D:\Corridas\Paper geomec DFN\Santi\DFIT 7 del 23\DFIT\Resultados de corridas (.mat)\DFIT_DFIT_CorteAumentado_Qextendido\';
+propiedadesRestart = 'resultadosFinFractura_DFIT_DFIT_CorteAumentado_Qextendido';
 
 % Variables del post - procesado.
 tiempoArea      = 0; % Tiempo en el que se quiere visualizar la forma del area de fractura.
@@ -512,13 +512,14 @@ while algorithmProperties.elapsedTime <= temporalProperties.tiempoTotalCorrida
             KeyInicioIsip=false; %% Aca vamos a generar la Curva y desp usamos esa
             calcTensionesenInicioISIP 
             calcTensionesenDrainTimes
-            DeltaPHidro=abs(abs(tensionHidroDrainTimes(Elem))-abs(tensionHidroInicioIsip(Elem))); %% diferencia de tensionesH entre el itime 2 y donde arranca el Isip
+            DeltaPHidro=abs(tensionHidroDrainTimes(Elem)-tensionHidroInicioIsip(Elem)); %% diferencia de tensionesH entre el itime 2 y donde arranca el Isip
             %%Elem es el elemento Bomba
         end
             calcTensionesenISIP
             
             if wantBuffPermeability
-                ImproveFactor=permFactor+(1-permFactor/DeltaPHidro)*(tensionHidroDrainTimes-tensionHidroIsip').*((tensionHidroDrainTimes-tensionHidroIsip')>0);
+                ImproveFactor=permFactor-(1-permFactor/DeltaPHidro)*(tensionHidroIsip-tensionHidroInicioIsip);
+                ImproveFactor=(ImproveFactor<permFactor).*ImproveFactor+(ImproveFactor>permFactor).*permFactor;
                 ImproveFactor=(ImproveFactor>1).*ImproveFactor+(ImproveFactor<1).*1;
             else
                 ImproveFactor = ones(paramDiscEle.nel,1);

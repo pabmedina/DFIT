@@ -1,13 +1,13 @@
 clc;clear;close all
 %% Archivos a leer
-for i=1:7
+for i=8:12
 addpath(['D:\Corridas\Paper geomec DFN\Santi\DFIT 7 del 23\DFIT\Resultados de corridas (.mat)\DFIT_DFN_github_new_variasPerm_' num2str(i)]);
 
 end
 addpath('D:\Corridas\Paper geomec DFN\Santi\DFIT 7 del 23\DFIT\scriptSolver\')
 addpath('D:\Geomec\paper DFN\ITBA\Piloto\DFIT\scriptSolver\')
 %% Parametros para analizar
-names = {'resultadosFinFractura_DFIT_DFN_github_new_variasPerm_5'};%{'resultadosCorrida_DFIT_mensual'};%{'resultadosCorrida_resultadosCorrida_test6BorrarMatch'};%{'resultados_DFITFract_trial_poralMod1'};%
+names = {'resultadosFinFractura_DFIT_DFN_github_new_variasPerm_12'};%{'resultadosCorrida_DFIT_mensual'};%{'resultadosCorrida_resultadosCorrida_test6BorrarMatch'};%{'resultados_DFITFract_trial_poralMod1'};%
 fName = 'zonaInteresPreproLimpio';
 z1 = 3050e3;  %Profundidades entre las que se analiza. Z1 < Z2
 z2 = 3120e3;
