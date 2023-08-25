@@ -1,0 +1,52 @@
+% %% Current path
+% 
+% DirActual=pwd;
+% 
+% %% Agregamos primero los directorios que estan dentro de solver
+% cd('D:\Geomec\paper DFN\ITBA\Piloto\DFIT');
+% 
+% str2=[pwd '\inputs (.txt)\'];
+% str3=[DirActual '\plots\'];
+% str5=[pwd '\Resultados de corridas (.mat)\'];
+% 
+% %% Directorios que estan por afuera
+% Largo=length(DirActual);
+% 
+% str6=[pwd '\Mallas read data (.mat)\'];
+% 
+% addpath(str2);
+% addpath(str3);
+% 
+% addpath(str5);
+% addpath(str6);
+% addpath(DirActual)
+% cd('D:\Geomec\paper DFN\ITBA\Piloto\DFIT\scriptSolverGitHub')
+
+
+%%
+%% Current path
+
+DirActual=mainFolder;
+
+
+str1=[DirActual '\scriptSolverGitHub\plots\'];
+addpath(str1);
+
+%% Agregamos primero los directorios que estan dentro de solver
+% cd(DirectorioMadre);
+
+str2=[DirActual '\inputs (.txt)\'];
+str4=[DirActual '\Resultados de corridas (.mat)\'];
+str5=[DirActual '\posPro resultados\'];
+str6=[DirAcutal '\Mallas read data (.mat)\'];
+%% Directorios que estan por afuera
+Largo=length(DirActual);
+
+str6=[pwd '\Mallas read data (.mat)\'];
+
+addpath(str2);
+
+addpath(str4);
+addpath(str6);
+addpath(DirActual)
+cd(DirActual)
