@@ -5,8 +5,8 @@ poroElasticity = true; checkPlots = false; isipKC = true; flagPreCierre =false; 
 meshCase = 'DFN'; %'WI';% 'DFN';% 
 keyPermeador = false;
 
-KeyInicioIsip=false;
-wantBuffPermeability = false; % false: la permeabilidad no se altera con el campo de tensiones de la etapa de fractura.
+KeyInicioIsip=true;
+wantBuffPermeability = true; % false: la permeabilidad no se altera con el campo de tensiones de la etapa de fractura.
 permFactor=1e5; keyAgusCheck = false; factor =1;
 keyCorteCohesivos= 'Y';
 %-------------------------------------------------------------------------%
@@ -19,16 +19,16 @@ pathAdder
 direccionGuardado = 'D:\Corridas\Paper geomec DFN\Santi\DFIT 7 del 23\Resultados de corridas (.mat)';   %Dejo ambos directorios, ir comentando segun quien la use 
 % direccionGuardado = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\Resultados de corridas (.mat)\'; 
 % Direccion donde se guarda la informacion.
-nombreCorrida     = 'DFIT_DFN_Qextendido'; % Nombre de la corrida. La corrida se guarda en la carpeta "Resultado de corridas" en una subcarpeta con este nombre.
+nombreCorrida     = 'DFIT_DFN_Qextendido_buff_God'; % Nombre de la corrida. La corrida se guarda en la carpeta "Resultado de corridas" en una subcarpeta con este nombre.
 
 cargaDatos     = 'load'; % Forma en la que se cargan las propiedades de entrada. "load" "test" "default" "change".
 archivoLectura = 'DFITtripleEncuentro_rev082023.txt';%'DFIT_rev052022_WI062023CorridaCorta.txt';%'DFIT_rev052022_WI+DFN062023CorridaCorta.txt';%'Dfit_rev052022_DFIT_062023.txt'; %'Dfit_rev052022_DFIT_WItrial_062023.txt';% Nombre del archivo con las propiedades de entrada. 
 
 tSaveParcial   = []; % Guardado de resultados parciales durante la corrida. Colocar los tiempos en los cuales se quiere guardar algun resultado parcial.
 
-restart            = 'N'; % Si no queremos arrancar la simulacion desde el principio sino que desde algun punto de partida 'Y' en caso contrario 'N'.
-direccionRestart   = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\Resultados de corridas (.mat)\reStartPropagacionDFN\';
-propiedadesRestart = 'resultadosCorrida_DFIT_DFN_trialReStart.mat';
+restart            = 'Y'; % Si no queremos arrancar la simulacion desde el principio sino que desde algun punto de partida 'Y' en caso contrario 'N'.
+direccionRestart   = 'D:\Corridas\Paper geomec DFN\Santi\DFIT 7 del 23\Resultados de corridas (.mat)\DFIT_DFN_QExt\';
+propiedadesRestart = 'resultadosFinFractura_DFIT_DFN_Qextendido_buff';
 
 % Variables del post - procesado.
 tiempoArea      = 0; % Tiempo en el que se quiere visualizar la forma del area de fractura.
@@ -512,13 +512,14 @@ while algorithmProperties.elapsedTime <= temporalProperties.tiempoTotalCorrida
             KeyInicioIsip=false; %% Aca vamos a generar la Curva y desp usamos esa
             calcTensionesenInicioISIP 
             calcTensionesenDrainTimes
-            DeltaPHidro=abs(abs(tensionHidroDrainTimes(Elem))-abs(tensionHidroInicioIsip(Elem))); %% diferencia de tensionesH entre el itime 2 y donde arranca el Isip
+            DeltaPHidro=abs(tensionHidroDrainTimes-tensionHidroInicioIsip); %% diferencia de tensionesH entre el itime 2 y donde arranca el Isip
             %%Elem es el elemento Bomba
         end
             calcTensionesenISIP
             
             if wantBuffPermeability
-                ImproveFactor=permFactor+(1-permFactor/DeltaPHidro)*(tensionHidroDrainTimes-tensionHidroIsip').*((tensionHidroDrainTimes-tensionHidroIsip')>0);
+                ImproveFactor=1-(1-permFactor)*(tensionHidroDrainTimes-tensionHidroIsip)./DeltaPHidro(Elem);
+                ImproveFactor=(ImproveFactor>permFactor).*permFactor+(ImproveFactor<permFactor).*ImproveFactor;
                 ImproveFactor=(ImproveFactor>1).*ImproveFactor+(ImproveFactor<1).*1;
             else
                 ImproveFactor = ones(paramDiscEle.nel,1);
@@ -661,8 +662,8 @@ while algorithmProperties.elapsedTime <= temporalProperties.tiempoTotalCorrida
                 else
                     dfnPerm = 1;
                 end
-                He{aux2} = HFluidos2DV2(meshInfo.elementsFluidos,iEle,hhIter(meshInfo.nodosFluidos.EB_Asociados,1),physicalProperties.fluidoFracturante.MU,meshInfo.cohesivos,meshInfo.nodes,cohesivosProperties.angDilatancy,factor);
-                aux2     = aux2+1;
+                He{aux2} = HFluidos2DV3(meshInfo.elementsFluidos,iEle,hhIter(meshInfo.nodosFluidos.EB_Asociados,1),physicalProperties.fluidoFracturante.MU,meshInfo.cohesivos,meshInfo.nodes,cohesivosProperties.angDilatancy,factor,dfnPerm);
+                 aux2     = aux2+1;
             end
         end
         H = sparse(vertcat(row{:}),vertcat(col{:}),vertcat(He{:}),paramDiscEle.nDofTot_P,paramDiscEle.nDofTot_P);

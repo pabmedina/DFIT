@@ -489,7 +489,7 @@ while algorithmProperties.elapsedTime <= temporalProperties.tiempoTotalCorrida
             calcTensionesenISIP
             
             if wantBuffPermeability
-                ImproveFactor=permFactor+(1-permFactor/DeltaPHidro)*(tensionHidroDrainTimes-tensionHidroIsip').*((tensionHidroDrainTimes-tensionHidroIsip')>0);
+                ImproveFactor=permFactor-(1-permFactor/DeltaPHidro)*(tensionHidroInicioIsip-tensionHidroIsip).*((tensionHidroDrainTimes-tensionHidroIsip)>0);
                 ImproveFactor=(ImproveFactor>1).*ImproveFactor+(ImproveFactor<1).*1;
             else
                 ImproveFactor = ones(paramDiscEle.nel,1);

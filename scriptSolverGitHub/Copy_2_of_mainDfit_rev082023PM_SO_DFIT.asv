@@ -2,9 +2,7 @@ clc;close all; format shortg; set(0,'DefaultFigureWindowStyle','docked');
 
 setBiot = 0.7; setPropante = true;
 poroElasticity = true; checkPlots = false; isipKC = true; flagPreCierre =false; gapPreCierre = 1; flagCierre = false; gapCierre =3e-1; 
-meshCase = 'DFN'; %'WI';% 'DFN';% 
-keyPermeador = false;
-
+meshCase = 'DFIT'; %'WI';% 'DFN';%
 KeyInicioIsip=true;
 wantBuffPermeability = true; % false: la permeabilidad no se altera con el campo de tensiones de la etapa de fractura.
 permFactor=1e5; keyAgusCheck = false; factor =1;
@@ -13,15 +11,16 @@ keyCorteCohesivos= 'Y';
 %% %%%%%%%%%%%%%%%%%%%       main DFIT/TShape       %%%%%%%%%%%%%%%%%%%% %%
 %-------------------------------------------------------------------------%
 %% Variables a modificar segun lo requerido en cada corrida:
+% Variables de inicio de corrida.
 guardarCorrida    = 'Y'; % Si se quiere guardar la corrida. "Y" o "N".
 pathAdder
-direccionGuardado = 'D:\Corridas\Paper geomec DFN\Santi\DFIT 7 del 23\DFIT\Resultados de corridas (.mat)';   %Dejo ambos directorios, ir comentando segun quien la use 
-% direccionGuardado = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\Resultados de corridas (.mat)\'; 
+% direccionGuardado = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\Resultados de corridas (.mat)\';   %Dejo ambos directorios, ir comentando segun quien la use 
+direccionGuardado = 'D:\Corridas\Paper geomec DFN\Santi\DFIT 7 del 23\DFIT\Resultados de corridas (.mat)\'; 
 % Direccion donde se guarda la informacion.
-nombreCorrida     = 'DFIT_DFN_Qextendido_buff'; % Nombre de la corrida. La corrida se guarda en la carpeta "Resultado de corridas" en una subcarpeta con este nombre.
+nombreCorrida     = 'DFIT_DFIT_CorteAumentado_Qextendido_buff'; % Nombre de la corrida. La corrida se guarda en la carpeta "Resultado de corridas" en una subcarpeta con este nombre.
 
 cargaDatos     = 'load'; % Forma en la que se cargan las propiedades de entrada. "load" "test" "default" "change".
-archivoLectura = 'DFITtripleEncuentro_rev082023.txt';%'DFIT_rev052022_WI062023CorridaCorta.txt';%'DFIT_rev052022_WI+DFN062023CorridaCorta.txt';%'Dfit_rev052022_DFIT_062023.txt'; %'Dfit_rev052022_DFIT_WItrial_062023.txt';% Nombre del archivo con las propiedades de entrada. 
+archivoLectura = 'DFIT_rev082023.txt';%'DFIT_rev052022_WI062023CorridaCorta.txt';%'DFIT_rev052022_WI+DFN062023CorridaCorta.txt';%'Dfit_rev052022_DFIT_062023.txt'; %'Dfit_rev052022_DFIT_WItrial_062023.txt';% Nombre del archivo con las propiedades de entrada. 
 
 tSaveParcial   = []; % Guardado de resultados parciales durante la corrida. Colocar los tiempos en los cuales se quiere guardar algun resultado parcial.
 
@@ -895,6 +894,7 @@ while algorithmProperties.elapsedTime <= temporalProperties.tiempoTotalCorrida
     % aca tengo que fijarme si de los nodos muertos alguno es un nodo de la
     % interseccion y adicionarle que mate a todos los nodos cohesivos de
     % los elementos que contengan este nodo interseccion
+    if strcmp(meshcase,'DFN')
     if any(ismember(find(nodTripleEncuentro),nodosMuertos)) && ~keyAgusCheck
         disp('LCDTMAllBoys')
         keyPermeador = true;
@@ -906,6 +906,7 @@ while algorithmProperties.elapsedTime <= temporalProperties.tiempoTotalCorrida
             % la DFN sin matar nodos
             
         end
+    end
         % hay que sacarlo -> pero es un beta para ver la propagacion en el
         % encuentro. Va a entrar a este "if" si se rompe un nodo de la
         % triple interseccion. Aca no hay que sacar el keyAgus. Pero
@@ -930,10 +931,12 @@ while algorithmProperties.elapsedTime <= temporalProperties.tiempoTotalCorrida
     meshInfo.elementsFisu.fracturados                           = sum(ismember(meshInfo.elementsFisu.ALL.nodesInFisu,nodosMuertos),2) > 0;    % Este vector indica, segun como esten ordenados los elementsFisu, quienes de ellos
     % se comportan como parte de la fractura.
     meshInfo.elementsFluidos.activos                            = sum(ismember(meshInfo.elementsFluidos.elements,nodosMuertos),2) > 0;        % Este vector indica, segun como esten ordenados los elementsFluidos, quienes estan activos.
-    if keyPermeador
+    if  strcmp(meshCase,'DFN')
+        if keyPermeador 
         meshInfo.elementsFluidos.activos = meshInfo.elementsFluidos.activos | nodosFuidosAddToActive;
         keyPermeador = false;
         activadorDFN = true;
+        end
     end
     meshInfo.cohesivos.biot(meshInfo.elementsFluidos.activos,:) = 1;
     meshInfo.cohesivos.elementsFluidosActivos                   = meshInfo.elementsFluidos.activos;

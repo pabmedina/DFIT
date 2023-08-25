@@ -5,9 +5,10 @@
 %-------------------------------------------------------------------------%
 
 Elem=find(max(meshInfo.elements'== bombaProperties.nodoBomba(1)),1);
-% indiceTiempo = temporalProperties.drainTimes+1:iTime;
-% tiempo = cumsum(temporalProperties.deltaTs(indiceTiempo));
-iTimeEspecifico = iTime-1; %find((tiempo>temporalProperties.tInicioISIP)); %sum(tiempo <= tiempoTensiones) + temporalProperties.drainTimes;
+indiceTiempo = temporalProperties.drainTimes+1:iTime;
+tiempo = cumsum(temporalProperties.deltaTs(indiceTiempo));
+iTimeEspecifico = find((tiempo>temporalProperties.tInicioISIP)); %sum(tiempo <= tiempoTensiones) + temporalProperties.drainTimes;
+iTimeEspecifico=iTimeEspecifico(1);
 %- Tensiones. (Solo esta calculando para un tiempo en particular)
 unod = pGaussParam.upg; 
 stress = zeros(paramDiscEle.nel,paramDiscEle.nNodEl,6);
@@ -67,7 +68,6 @@ for itime = iTimeEspecifico
             ksi  = unod(nP,1);
             eta  = unod(nP,2);
             zeta = unod(nP,3);
-            
             % Funciones de forma
             
             N = [ (1-ksi)*(1-eta)*(1+zeta)/8, (1-ksi)*(1-eta)*(1-zeta)/8, (1-ksi)*(1+eta)*(1-zeta)/8....
@@ -123,10 +123,10 @@ for iele = 1:paramDiscEle.nel
     
 end
 
-tensionHidroIsip=zeros(paramDiscEle.nel,1);
+tensionHidroInicioIsip=zeros(paramDiscEle.nel,1);
 
 for iele=1:paramDiscEle.nel
-    tensionHidroIsip(iele)=tensionEfectivaNodal(iele,1)+tensionEfectivaNodal(iele,2)+tensionEfectivaNodal(iele,3);
+    tensionHidroInicioIsip(iele)=tensionEfectivaNodal(iele,1)+tensionEfectivaNodal(iele,2)+tensionEfectivaNodal(iele,3);
 end
 
 
@@ -188,7 +188,7 @@ end
 % title(['\sigma_Z   iTime: ',num2str(tiempoTensiones), '[s]']);
 
 %
-
+% plotColo3D(meshInfo.nodes(1:paramDiscEle.nDofTot_P,:),meshInfo.elements,avgStressEdit(:,1))
 % title(['\sigma_X   iTime: ',num2str(tiempoTensiones), '[s]']);
 % plotColo3D(meshInfo.nodes(1:paramDiscEle.nDofTot_P,:),meshInfo.elements,avgStressEdit(:,2))
 % title(['\sigma_Y   iTime: ',num2str(tiempoTensiones), '[s]']);

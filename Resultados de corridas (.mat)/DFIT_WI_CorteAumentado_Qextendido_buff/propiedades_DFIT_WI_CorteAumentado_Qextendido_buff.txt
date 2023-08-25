@@ -17,7 +17,7 @@
 ---------------------------------------------------------------------------
 -Malla utilizada:
 ---------------------------------------------------------------------------
-selectedMesh = DFIT+DFN+WI_noRef_angle.mat
+selectedMesh = DFIT_WINoRef.mat
 
 ---------------------------------------------------------------------------
 -Propiedades Constitutivas: [Mpsi][mm]
@@ -84,10 +84,10 @@ drainTimes = 5
 initTimes = 5
 deltaTdrainTimes = 1000000
 deltaT = 0.001
-deltaTMax = 0.1
+deltaTMax = 2.5
 
-tiempoISIP = 20
-deltaTISIP = 0.2
+tiempoISIP = 300
+deltaTISIP = 2
 tiempoProduccion = 10
 deltaTProduccionMax = 1
 
@@ -150,8 +150,7 @@ NUI = 0.24
 -NUvI = NUvL
 
 ---------------------------------------------------------------------------
--Propiedades del propante: [Mpsi][][miliDarcy][%]
----------------------------------------------------------------------------
+-Propiedades del propante: [Mpsi][][miliDarcy][---------------------------------------------------------------------------
 propanteKey = N
 EPropante = 10.4
 NuPropante = 0.25
