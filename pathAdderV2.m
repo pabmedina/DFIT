@@ -35,12 +35,12 @@ addpath(str1);
 %% Agregamos primero los directorios que estan dentro de solver
 % cd(DirectorioMadre);
 
-str2=[DirActual '\inputs (.txt)\'];
-str3=[DirActual '\Mallas read data (.mat)\'];
-str4=[DirActual '\posPro resultados\'];
-str5=[DirActual '\Resultados de corridas (.mat)\'];
-str6=[DirActual '\scriptMalladorGithub\'];
-str7=[DirActual '\scriptSolverGitHub\'];
+str2=[DirActual 'inputs (.txt)\'];
+str3=[DirActual 'Mallas read data (.mat)\'];
+str4=[DirActual 'posPro resultados\'];
+str5=[DirActual 'Resultados de corridas (.mat)\'];
+str6=[DirActual 'scriptMalladorGithub\'];
+str7=[DirActual 'scriptSolverGitHub\'];
 
 %% Directorios que estan por afuera
 
