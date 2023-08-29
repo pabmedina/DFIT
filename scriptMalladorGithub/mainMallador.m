@@ -1,23 +1,22 @@
 %% START %%
 clc; clear; close all;
-nombreOutput = 'DFIT+WI+DFN'; % Nombre del archivo de salida.
+nameData = 'testDFN'; % Nombre del archivo de salida.
 
-guardado = 0;
+saveData = true;
 debugPlots = 0;
 barrerasFlag = 0;
-DFN_flag = 0;
+DFN_flag = 1;
 
-addpath('D:\Corridas\Paper geomec DFN\Agus\funciones');
-addpath('D:\Corridas\Paper geomec DFN\Agus\Mallas');
-direccionGuardado = 'D:\Corridas\Paper geomec DFN\Agus\DFIT\scriptSolver';
+mainFolder = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\'; % el mainFolder cambia segun usuario
+pathDir
 
 %% MESH PARAMETERS %%
-gap = 1e3;
-nX = 1; nY = 1; nZ = 1; %Cantidad de fracturas en cada direccion
+gap = 1e-4;
+nX = 3; nY = 1; nZ = 5; %Cantidad de fracturas en cada direccion
 DFN_ang  = 15;
 
 X0 = 1e4; %Ubicacion inicial fractura normal X
-dX = 20e3; %Distancia entre fracturas X
+dX = 4e3; %Distancia entre fracturas X
 
 Z0  = 24e3; %Ubicacion inicial fractura normal Z
 dZ0 = [4e3 4e3 4e3 6e3 4e3];%Distancia entre fracturas Z
@@ -769,7 +768,7 @@ counter                 = 1;
 for i = 1:nX
     for iNod = 1:size(nodosBoundary.sinInt{1,i},1)
         relationNodes                   = elementsBarra.X{i}(relatedEB{1,i}(iNod),:);
-        constraintsRelations(counter,:) = [nodosBordesNewIndex{1,i}(iNod) relationNodes 0 0 3];
+        constraintsRelations(counter,:) = [nodosBordesNewIndex{1,i}(iNod) relationNodes 0 0 1];
         counter                         = counter + 1;
     end
 end
@@ -777,7 +776,7 @@ end
 for i = 1:nY
     for iNod = 1:size(nodosBoundary.sinInt{2,i},1)
         relationNodes                   = elementsBarra.Y{i}(relatedEB{2,i}(iNod),:);
-        constraintsRelations(counter,:) = [nodosBordesNewIndex{2,i}(iNod) relationNodes 0 0 1];
+        constraintsRelations(counter,:) = [nodosBordesNewIndex{2,i}(iNod) relationNodes 0 0 2];
         counter                         = counter + 1;
     end
 end
@@ -786,7 +785,7 @@ for i = 1:nZ
     if ~isempty(nodosBordesNewIndex{3,i})
         for iNod = 1:size(nodosBoundary.sinInt{3,i},1)
             relationNodes                   = elementsBarra.Z{i}(relatedEB{3,i}(iNod),:);
-            constraintsRelations(counter,:) = [ nodosBordesNewIndex{3,i}(iNod) relationNodes 0 0 2];
+            constraintsRelations(counter,:) = [ nodosBordesNewIndex{3,i}(iNod) relationNodes 0 0 3];
             counter                         = counter + 1;
         end
     end
@@ -859,43 +858,43 @@ end
 
 %% ULTIMOS CONSTRAINT RELATION ASOCIADOS A LA INTERSECCIONES Y SU SEPARACION %%
 %% INT XY %%
-for j = 1:nX  % Lo analizo por tipo de interseccion, para cada interseccion 
-for k = 1:nY  % de cada tipo y para cada nodo de cada interseccion de cada tipo
-for t = 1:length(nodoInterseccion{1,j,k})
-nodesNew_LastPosition   = size(nodesNew,1);
-auxVec                  = [nodesNew(nodoInterseccion{1,j,k}(t),1)+gap/2 nodesNew(nodoInterseccion{1,j,k}(t),2)+gap/2 nodesNew(nodoInterseccion{1,j,k}(t),3)];
-nodesNew                = [nodesNew
-                           auxVec];
-nodosBordesNewIndexINT{1,j,k}(t) = (nodesNew_LastPosition+1:1:size(nodesNew,1))';
-if isempty(nodosBordesNewIndexINT{1,j,k}(t)) %% NO HAY INTERSECCIONES
-     %%% AGREGO LAS CONSTRAINTS RELATIONS A LAS DE FLUIDOS %%%
-    [aux1,aux2] = ismember(CRFluidos(:,[1 2]),constraintsRelations(:,[2 3]),'rows');
-    %%% HAY QUE AGREGAR AQUELLOS CONTRAINTS DONDE 3 NODOS TIENEN LA MISMA P %%%
-    CRFluidos(aux1,:) = constraintsRelations(nonzeros(aux2),1:end-1);
-else
-    
-    %%% CONSTRAINTS RELATIONS %%%
-    relationNodes            = intRelatedNodes{1,j,k}(ismember(intRelatedNodes{1,j,k}(:,1),nodoInterseccion{1,j,k}(t)),:);
-    constraintsRelations(counter,:) = [nodosBordesNewIndexINT{1,j,k}(t) relationNodes 0];
-    counter = counter + 1;
-    
-    %%% AGREGO LAS CONSTRAINTS RELATIONS A LAS DE FLUIDOS %%%
-    [aux1,aux2] = ismember(CRFluidos(:,[1 2]),constraintsRelations(:,[2 3]),'rows');
-    %%% HAY QUE AGREGAR AQUELLOS CONTRAINTS DONDE 3 NODOS TIENEN LA MISMA P %%%
-    CRFluidos(aux1,:) = constraintsRelations(nonzeros(aux2),1:end-1);
-    
-end
-% Hago un arreglo geometrico ahora para que no traiga problemas despues
-elementsFondo =  find(sum(elements==nodoInterseccion{1,j,k}(t),2)==1);
-% Son los que estan pasando la fractura y que quedan conectados al nodo
-% original. Saco el primero del vector porque ese es parte de la fractura
-elementsFondo = selectFondoEle(nodesNew, elements, elementsFondo,3);
-for l = 1:length(elementsFondo)
-    pos = find(elements(elementsFondo(l),:)==nodoInterseccion{1,j,k}(t));
-    elements(elementsFondo(l),pos) = nodosBordesNewIndexINT{1,j,k}(t);
-end
-end
-end
+for j = 1:nX  % Lo analizo por tipo de interseccion, para cada interseccion
+    for k = 1:nY  % de cada tipo y para cada nodo de cada interseccion de cada tipo
+        for t = 1:length(nodoInterseccion{1,j,k})
+            nodesNew_LastPosition   = size(nodesNew,1);
+            auxVec                  = [nodesNew(nodoInterseccion{1,j,k}(t),1)+gap/2 nodesNew(nodoInterseccion{1,j,k}(t),2)+gap/2 nodesNew(nodoInterseccion{1,j,k}(t),3)];
+            nodesNew                = [nodesNew
+                auxVec];
+            nodosBordesNewIndexINT{1,j,k}(t) = (nodesNew_LastPosition+1:1:size(nodesNew,1))';
+            if isempty(nodosBordesNewIndexINT{1,j,k}(t)) %% NO HAY INTERSECCIONES
+                %%% AGREGO LAS CONSTRAINTS RELATIONS A LAS DE FLUIDOS %%%
+                [aux1,aux2] = ismember(CRFluidos(:,[1 2]),constraintsRelations(:,[2 3]),'rows');
+                %%% HAY QUE AGREGAR AQUELLOS CONTRAINTS DONDE 3 NODOS TIENEN LA MISMA P %%%
+                CRFluidos(aux1,:) = constraintsRelations(nonzeros(aux2),1:end-1);
+            else
+                
+                %%% CONSTRAINTS RELATIONS %%%
+                relationNodes            = intRelatedNodes{1,j,k}(ismember(intRelatedNodes{1,j,k}(:,1),nodoInterseccion{1,j,k}(t)),:);
+                constraintsRelations(counter,:) = [nodosBordesNewIndexINT{1,j,k}(t) relationNodes 0];
+                counter = counter + 1;
+                
+                %%% AGREGO LAS CONSTRAINTS RELATIONS A LAS DE FLUIDOS %%%
+                [aux1,aux2] = ismember(CRFluidos(:,[1 2]),constraintsRelations(:,[2 3]),'rows');
+                %%% HAY QUE AGREGAR AQUELLOS CONTRAINTS DONDE 3 NODOS TIENEN LA MISMA P %%%
+                CRFluidos(aux1,:) = constraintsRelations(nonzeros(aux2),1:end-1);
+                
+            end
+            % Hago un arreglo geometrico ahora para que no traiga problemas despues
+            elementsFondo =  find(sum(elements==nodoInterseccion{1,j,k}(t),2)==1);
+            % Son los que estan pasando la fractura y que quedan conectados al nodo
+            % original. Saco el primero del vector porque ese es parte de la fractura
+            elementsFondo = selectFondoEle(nodesNew, elements, elementsFondo,3);
+            for l = 1:length(elementsFondo)
+                pos = find(elements(elementsFondo(l),:)==nodoInterseccion{1,j,k}(t));
+                elements(elementsFondo(l),pos) = nodosBordesNewIndexINT{1,j,k}(t);
+            end
+        end
+    end
 end
 if debugPlots == 1
     plotMeshColo3D(nodesNew,elements,'w')
@@ -905,84 +904,84 @@ end
 %% INT YZ %%
 
 for j = 1:nY
-for k = 1:nZ
-for t = 1:length(nodoInterseccion{2,j,k})
-nodesNew_LastPosition   = size(nodesNew,1);
-auxVec                  = [nodesNew(nodoInterseccion{2,j,k}(t),1) nodesNew(nodoInterseccion{2,j,k}(t),2)+gap/2 nodesNew(nodoInterseccion{2,j,k}(t),3)+gap/2 ];
-nodesNew                = [nodesNew
-                           auxVec];
-nodosBordesNewIndexINT{2,j,k}(t) = (nodesNew_LastPosition+1:1:size(nodesNew,1))';
-if isempty(nodosBordesNewIndexINT{2,j,k}(t)) %% NO HAY INTERSECCIONES
-     %%% AGREGO LAS CONSTRAINTS RELATIONS A LAS DE FLUIDOS %%%
-    [aux1,aux2] = ismember(CRFluidos(:,[1 2]),constraintsRelations(:,[2 3]),'rows');
-    %%% HAY QUE AGREGAR AQUELLOS CONTRAINTS DONDE 3 NODOS TIENEN LA MISMA P %%%
-    CRFluidos(aux1,:) = constraintsRelations(nonzeros(aux2),1:end-1);
-else
-    
-    %%% CONSTRAINTS RELATIONS %%%   
-    relationNodes            = intRelatedNodes{2,j,k}(ismember(intRelatedNodes{2,j,k}(:,1),nodoInterseccion{2,j,k}(t)),:);
-    constraintsRelations(counter,:) = [nodosBordesNewIndexINT{2,j,k}(t) relationNodes 0];
-    counter = counter + 1;
-    
-    %%% AGREGO LAS CONSTRAINTS RELATIONS A LAS DE FLUIDOS %%%
-    [aux1,aux2] = ismember(CRFluidos(:,[1 2]),constraintsRelations(:,[2 3]),'rows');
-    %%% HAY QUE AGREGAR AQUELLOS CONTRAINTS DONDE 3 NODOS TIENEN LA MISMA P %%%
-    CRFluidos(aux1,:) = constraintsRelations(nonzeros(aux2),1:end-1);
-    
-end
-% Hago un arreglo geometrico ahora para que no traiga problemas despues
-elementsFondo =  find(sum(elements==nodoInterseccion{2,j,k}(t),2)==1);
-% Son los que estan pasando la fractura y que quedan conectados al nodo
-% original. Saco el primero del vector porque ese es parte de la fractura
-elementsFondo = selectFondoEle(nodesNew, elements, elementsFondo,1);
-for l = 1:length(elementsFondo)
-    pos = find(elements(elementsFondo(l),:)==nodoInterseccion{2,j,k}(t));
-    elements(elementsFondo(l),pos) = nodosBordesNewIndexINT{2,j,k}(t);
-end
-end
-end
+    for k = 1:nZ
+        for t = 1:length(nodoInterseccion{2,j,k})
+            nodesNew_LastPosition   = size(nodesNew,1);
+            auxVec                  = [nodesNew(nodoInterseccion{2,j,k}(t),1) nodesNew(nodoInterseccion{2,j,k}(t),2)+gap/2 nodesNew(nodoInterseccion{2,j,k}(t),3)+gap/2 ];
+            nodesNew                = [nodesNew
+                auxVec];
+            nodosBordesNewIndexINT{2,j,k}(t) = (nodesNew_LastPosition+1:1:size(nodesNew,1))';
+            if isempty(nodosBordesNewIndexINT{2,j,k}(t)) %% NO HAY INTERSECCIONES
+                %%% AGREGO LAS CONSTRAINTS RELATIONS A LAS DE FLUIDOS %%%
+                [aux1,aux2] = ismember(CRFluidos(:,[1 2]),constraintsRelations(:,[2 3]),'rows');
+                %%% HAY QUE AGREGAR AQUELLOS CONTRAINTS DONDE 3 NODOS TIENEN LA MISMA P %%%
+                CRFluidos(aux1,:) = constraintsRelations(nonzeros(aux2),1:end-1);
+            else
+                
+                %%% CONSTRAINTS RELATIONS %%%
+                relationNodes            = intRelatedNodes{2,j,k}(ismember(intRelatedNodes{2,j,k}(:,1),nodoInterseccion{2,j,k}(t)),:);
+                constraintsRelations(counter,:) = [nodosBordesNewIndexINT{2,j,k}(t) relationNodes 0];
+                counter = counter + 1;
+                
+                %%% AGREGO LAS CONSTRAINTS RELATIONS A LAS DE FLUIDOS %%%
+                [aux1,aux2] = ismember(CRFluidos(:,[1 2]),constraintsRelations(:,[2 3]),'rows');
+                %%% HAY QUE AGREGAR AQUELLOS CONTRAINTS DONDE 3 NODOS TIENEN LA MISMA P %%%
+                CRFluidos(aux1,:) = constraintsRelations(nonzeros(aux2),1:end-1);
+                
+            end
+            % Hago un arreglo geometrico ahora para que no traiga problemas despues
+            elementsFondo =  find(sum(elements==nodoInterseccion{2,j,k}(t),2)==1);
+            % Son los que estan pasando la fractura y que quedan conectados al nodo
+            % original. Saco el primero del vector porque ese es parte de la fractura
+            elementsFondo = selectFondoEle(nodesNew, elements, elementsFondo,1);
+            for l = 1:length(elementsFondo)
+                pos = find(elements(elementsFondo(l),:)==nodoInterseccion{2,j,k}(t));
+                elements(elementsFondo(l),pos) = nodosBordesNewIndexINT{2,j,k}(t);
+            end
+        end
+    end
 end
 if debugPlots == 1
     plotMeshColo3D(nodesNew,elements,'w')
 end
 %% INT XZ %%
 for j = 1:nX
-for k = 1:nZ
-for t = 1:length(nodoInterseccion{3,j,k})
-nodesNew_LastPosition   = size(nodesNew,1);
-auxVec                  = [nodesNew(nodoInterseccion{3,j,k}(t),1)+gap/2 nodesNew(nodoInterseccion{3,j,k}(t),2) nodesNew(nodoInterseccion{3,j,k}(t),3)+gap/2 ];
-nodesNew                = [nodesNew
-                           auxVec];
-nodosBordesNewIndexINT{3,j,k}(t) = (nodesNew_LastPosition+1:1:size(nodesNew,1))';
-if isempty(nodosBordesNewIndexINT{3,j,k}(t)) %% NO HAY INTERSECCIONES
-     %%% AGREGO LAS CONSTRAINTS RELATIONS A LAS DE FLUIDOS %%%
-    [aux1,aux2] = ismember(CRFluidos(:,[1 2]),constraintsRelations(:,[2 3]),'rows');
-    %%% HAY QUE AGREGAR AQUELLOS CONTRAINTS DONDE 3 NODOS TIENEN LA MISMA P %%%
-    CRFluidos(aux1,:) = constraintsRelations(nonzeros(aux2),1:end-1);
-else
-    
-    %%% CONSTRAINTS RELATIONS %%%   
-    relationNodes            = intRelatedNodes{3,j,k}(ismember(intRelatedNodes{3,j,k}(:,1),nodoInterseccion{3,j,k}(t)),:);
-    constraintsRelations(counter,:) = [nodosBordesNewIndexINT{3,j,k}(t) relationNodes 0];
-    counter = counter + 1;
-    
-    %%% AGREGO LAS CONSTRAINTS RELATIONS A LAS DE FLUIDOS %%%
-    [aux1,aux2] = ismember(CRFluidos(:,[1 2]),constraintsRelations(:,[2 3]),'rows');
-    %%% HAY QUE AGREGAR AQUELLOS CONTRAINTS DONDE 3 NODOS TIENEN LA MISMA P %%%
-    CRFluidos(aux1,:) = constraintsRelations(nonzeros(aux2),1:end-1);
-    
-end
-% Hago un arreglo geometrico ahora para que no traiga problemas despues
-elementsFondo =  find(sum(elements==nodoInterseccion{3,j,k}(t),2)==1);
-% Son los que estan pasando la fractura y que quedan conectados al nodo
-% original. Saco el primero del vector porque ese es parte de la fractura
-elementsFondo = selectFondoEle(nodesNew, elements, elementsFondo,2);
-for l = 1:length(elementsFondo)
-    pos = find(elements(elementsFondo(l),:)==nodoInterseccion{3,j,k}(t));
-    elements(elementsFondo(l),pos) = nodosBordesNewIndexINT{3,j,k}(t);
-end
-end
-end
+    for k = 1:nZ
+        for t = 1:length(nodoInterseccion{3,j,k})
+            nodesNew_LastPosition   = size(nodesNew,1);
+            auxVec                  = [nodesNew(nodoInterseccion{3,j,k}(t),1)+gap/2 nodesNew(nodoInterseccion{3,j,k}(t),2) nodesNew(nodoInterseccion{3,j,k}(t),3)+gap/2 ];
+            nodesNew                = [nodesNew
+                auxVec];
+            nodosBordesNewIndexINT{3,j,k}(t) = (nodesNew_LastPosition+1:1:size(nodesNew,1))';
+            if isempty(nodosBordesNewIndexINT{3,j,k}(t)) %% NO HAY INTERSECCIONES
+                %%% AGREGO LAS CONSTRAINTS RELATIONS A LAS DE FLUIDOS %%%
+                [aux1,aux2] = ismember(CRFluidos(:,[1 2]),constraintsRelations(:,[2 3]),'rows');
+                %%% HAY QUE AGREGAR AQUELLOS CONTRAINTS DONDE 3 NODOS TIENEN LA MISMA P %%%
+                CRFluidos(aux1,:) = constraintsRelations(nonzeros(aux2),1:end-1);
+            else
+                
+                %%% CONSTRAINTS RELATIONS %%%
+                relationNodes            = intRelatedNodes{3,j,k}(ismember(intRelatedNodes{3,j,k}(:,1),nodoInterseccion{3,j,k}(t)),:);
+                constraintsRelations(counter,:) = [nodosBordesNewIndexINT{3,j,k}(t) relationNodes 0];
+                counter = counter + 1;
+                
+                %%% AGREGO LAS CONSTRAINTS RELATIONS A LAS DE FLUIDOS %%%
+                [aux1,aux2] = ismember(CRFluidos(:,[1 2]),constraintsRelations(:,[2 3]),'rows');
+                %%% HAY QUE AGREGAR AQUELLOS CONTRAINTS DONDE 3 NODOS TIENEN LA MISMA P %%%
+                CRFluidos(aux1,:) = constraintsRelations(nonzeros(aux2),1:end-1);
+                
+            end
+            % Hago un arreglo geometrico ahora para que no traiga problemas despues
+            elementsFondo =  find(sum(elements==nodoInterseccion{3,j,k}(t),2)==1);
+            % Son los que estan pasando la fractura y que quedan conectados al nodo
+            % original. Saco el primero del vector porque ese es parte de la fractura
+            elementsFondo = selectFondoEle(nodesNew, elements, elementsFondo,2);
+            for l = 1:length(elementsFondo)
+                pos = find(elements(elementsFondo(l),:)==nodoInterseccion{3,j,k}(t));
+                elements(elementsFondo(l),pos) = nodosBordesNewIndexINT{3,j,k}(t);
+            end
+        end
+    end
 end
 if debugPlots == 1
     plotMeshColo3D(nodesNew,elements,'w')
@@ -1406,8 +1405,8 @@ infoPlot.elementsFluidos = elementsFluidos;
 infoPlot.elementsFisu    = elementsFisu;
 %% OUTPUTS
 plotMeshSlider(nodes, elements)
-if guardado == 1
-save(nombreOutput,'nodes','elements','cohesivos','elementsFisu','elementsBarra','nodosFluidos','elementsFluidos','anchoX','anchoY','anchoZ','CRFluidos','elementsMediumPlus','constraintsRelations','nodosBoundary');
-movefile([nombreOutput,'.mat'],direccionGuardado)
+if saveData
+    save(nameData,'nodes','elements','cohesivos','elementsFisu','elementsBarra','nodosFluidos','elementsFluidos','anchoX','anchoY','anchoZ','CRFluidos','elementsMediumPlus','constraintsRelations','nodosBoundary','nodesInt');
+    movefile([nameData,'.mat'],direccionGuardado)
 end
     

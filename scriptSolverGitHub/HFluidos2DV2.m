@@ -1,9 +1,14 @@
-function He = HFluidos2DV2(elementsFluidos,iele,hh,MU,cohesivos,nodes,angDilatancy,factor)
+function He = HFluidos2DV2(elementsFluidos,iele,hh,MU,cohesivos,nodes,angDilatancy,factor,dfnPerm)
 nDofNod = 1;                    % Numero de grados de libertad por nodo
 nNodEle = 4;                    % Numero de nodos por elemento
 
 %% Gauss
 
+if dfnPerm == 1
+    casoTestigo = 'poisuille';
+else
+    casoTestigo = 'permDFN';
+end
 a   = 1/sqrt(3);
 % Ubicaciones puntos de Gauss
 upg = [ -a  -a
@@ -67,9 +72,15 @@ for ipg = 1:npg
     
     h = h + dS2*tand(angDilatancy) + dS1*tand(angDilatancy); % apertura efectiva 
     % Matriz H local del elemento en el ipg
-    HL = factor*h^2 / (12 * MU) * [ 1   0
+    switch casoTestigo
+        case 'poisuille'
+            alpha = factor*h^3;
+        case 'permDFN'
+            alpha = dfnPerm;
+    end
+    HL = alpha / (12 * MU) * [ 1   0
                                     0   1];
-    HeE{ipg} =  B'*HL*B*wpg(ipg)*det(jac)*h;
+    HeE{ipg} =  B'*HL*B*wpg(ipg)*det(jac);
 end
 row = repmat((1:nDofNod*nNodEle),nDofNod*nNodEle,1);
 col = row';

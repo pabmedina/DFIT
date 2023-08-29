@@ -3,7 +3,7 @@
 %-------------------------------------------------------------------------%
 indiceTiempo = temporalProperties.drainTimes+1:temporalProperties.nTimes;
 tiempo = cumsum(temporalProperties.deltaTs(indiceTiempo));
-iTimeEspecifico = sum(tiempo <= tiempoTensiones) + temporalProperties.drainTimes;
+iTimeEspecifico = 15;%sum(tiempo <= tiempoTensiones) + temporalProperties.drainTimes;
 %- Tensiones. (Solo esta calculando para un tiempo en particular)
 unod = pGaussParam.upg; 
 stressPG = zeros(paramDiscEle.nel,paramDiscEle.nNodEl,6);%cell(nnodel,size(constitutivas{1},1),nel,length(Time));
@@ -47,17 +47,17 @@ for itime = iTimeEspecifico
             eleDofs = paramDiscEle.nodeDofs(meshInfo.elements(iele,:),:);
             eleDofs = reshape(eleDofs',[],1);
 
-            stressPG(iele,npg,:) = (constitutivas{iele}(:,:,npg))*B*dTimes(eleDofs,itime) + initialStressSolPG{iele}(:,npg);
+%             stressPG(iele,npg,:) = (constitutivas{iele}(:,:,npg))*B*dTimes(eleDofs,itime) + initialStressSolPG{iele}(:,npg);
             
-%             stress(iele,npg,:) = (constitutivas{iele}(:,:,npg))*B*dTimes(eleDofs,itime);
+            stressPG(iele,npg,:) = (constitutivas{iele}(:,:,npg))*B*dTimes(eleDofs,itime);
         end
     end
 end
 
 %- Presiones efectivas.
 presionEfectivaPG = zeros(paramDiscEle.nel,paramDiscEle.nNodEl,6);
-for iTime = iTimeEspecifico
-    pressureTimes = dTimes(paramDiscEle.nDofTot_U+1:paramDiscEle.nDofTot_U+paramDiscEle.nDofTot_P,iTime)*temporalProperties.preCond;
+for itime = iTimeEspecifico
+    pressureTimes = dTimes(paramDiscEle.nDofTot_U+1:paramDiscEle.nDofTot_U+paramDiscEle.nDofTot_P,itime)*temporalProperties.preCond;
     for iele = 1:paramDiscEle.nel
         for nP = 1:size(unod,1)
             
