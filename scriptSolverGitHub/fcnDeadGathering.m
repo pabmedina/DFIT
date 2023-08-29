@@ -16,7 +16,7 @@ boolA = ismember(elementsCohesivos,nod_id(boolC));
 cohesive_id = sum(boolA,2)>0; % me da el id de los elementos cohesivos que voy a tener que activar
 
 deadFlag(cohesive_id,:) = true;
-nodosMuertos = [nodosMuertos; unique(elementsCohesivos(cohesive_id,:))' ];
+nodosMuertos = [nodosMuertos; unique(elementsCohesivos(cohesive_id,:)) ];
 
 struct.deadFlag = deadFlag;
 

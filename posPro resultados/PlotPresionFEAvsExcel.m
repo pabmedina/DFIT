@@ -7,6 +7,8 @@ cutOff = 12000;
 plotCurvaPiloto=1; %Pararlo porque despues hay un close all
 mPa2psi = 145;
 
+mainFolder = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\'; % el mainFolder cambia segun usuario
+
 if plotCurvaPiloto
     addpath('D:\Geomec\paper DFN\ITBA\Piloto\DFIT\posPro resultados\')
     [num, ~, ~] = xlsread('Injection Test ITBA Limpiado.xlsx');
