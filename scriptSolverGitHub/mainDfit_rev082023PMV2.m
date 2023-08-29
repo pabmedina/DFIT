@@ -1,13 +1,15 @@
-clc;close all; format shortg; set(0,'DefaultFigureWindowStyle','docked');
+clc;close all; format shortg; 
+clear
+set(0,'DefaultFigureWindowStyle','docked');
 
 mainFolder = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\';
-caseName = 'noFeatures'; %'weakInterf'; %'WIplusDFNs'; %'tripleInts';%
+caseName = 'WIplusDFNs'; %'weakInterf'; %'noFeatures'; %'tripleInts';%
 casePerm = 'permNerf'; %'permBuff';
 
 setBiot = 0.7; setPropante = true;
 poroElasticity = true; checkPlots = false; isipKC = true; 
 
-meshCase = 'DFIT';%DFN'; %'WI';%
+meshCase = 'DFN'; %'WI';%'DFIT';%
 
 keyPermeador = false;
 activadorDFN = false; 
@@ -31,7 +33,7 @@ direccionGuardado = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\Resultados de corridas
 nombreCorrida     = ['DFIT_' caseName '_' casePerm]; % Nombre de la corrida. La corrida se guarda en la carpeta "Resultado de corridas" en una subcarpeta con este nombre.
 
 cargaDatos     = 'load'; % Forma en la que se cargan las propiedades de entrada. "load" "test" "default" "change".
-archivoLectura = 'DFIT_rev082023_base092023.txt'; %'DFITredDFN_rev082023.txt';
+archivoLectura = 'DFITredDFN_rev082023.txt';%'DFIT_rev082023_WI092023.txt';%'DFIT_rev082023_base092023.txt'; %
 
 tSaveParcial   = []; % Guardado de resultados parciales durante la corrida. Colocar los tiempos en los cuales se quiere guardar algun resultado parcial.
 
@@ -70,6 +72,7 @@ meshInfo = meshVerification(meshInfo);
 
 if ~keyAgusCheck && strcmpi(meshCase,'DFN')
     tolFind = 1e-3;
+    nodesInt = meshInfo.nodesInt; % este parche hay que arreglarlo. Es un tema de nombres
     nodTripleEncuentro = false(size(meshInfo.nodes,1),size(nodesInt.triplesAll,1));
     for i = 1:size(nodesInt.triplesAll,1)
         xInput1 = meshInfo.nodes(nodesInt.triplesAll(i),1); yInput1 = meshInfo.nodes(nodesInt.triplesAll(i),2); zInput1 =  meshInfo.nodes(nodesInt.triplesAll(i),3);

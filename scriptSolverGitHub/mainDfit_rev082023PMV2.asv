@@ -1,12 +1,19 @@
-clc;close all; format shortg; set(0,'DefaultFigureWindowStyle','docked');
+clc;close all; format shortg; 
+clear
+set(0,'DefaultFigureWindowStyle','docked');
 
-caseName = 'noFeatures'; %'weakInterf'
+mainFolder = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\';
+caseName = 'WIplusDFNs'; %'weakInterf'; %'noFeatures'; %'tripleInts';%
+casePerm = 'permNerf'; %'permBuff';
 
 setBiot = 0.7; setPropante = true;
 poroElasticity = true; checkPlots = false; isipKC = true; 
-meshCase = 'DFIT';%DFN'; %'WI';%
+
+meshCase = 'DFN'; %'WI';%'DFIT';%
+
 keyPermeador = false;
 activadorDFN = false; 
+
 kappa_DFN = 1; % para definir la permeabilidad de dfn a mano
 
 KeyInicioIsip=false;
@@ -19,18 +26,18 @@ keyCorteCohesivos= 'Y';
 %% Variables a modificar segun lo requerido en cada corrida:
 % Variables de inicio de corrida.
 guardarCorrida    = 'Y'; % Si se quiere guardar la corrida. "Y" o "N".
-pathAdder
+pathAdderV2
 % direccionGuardado = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\Resultados de corridas (.mat)\';   %Dejo ambos directorios, ir comentando segun quien la use 
 direccionGuardado = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\Resultados de corridas (.mat)\'; 
 % Direccion donde se guarda la informacion.
-nombreCorrida     = 'DFIT_redDFN_v5'; % Nombre de la corrida. La corrida se guarda en la carpeta "Resultado de corridas" en una subcarpeta con este nombre.
+nombreCorrida     = ['DFIT_' caseName '_' casePerm]; % Nombre de la corrida. La corrida se guarda en la carpeta "Resultado de corridas" en una subcarpeta con este nombre.
 
 cargaDatos     = 'load'; % Forma en la que se cargan las propiedades de entrada. "load" "test" "default" "change".
-archivoLectura = 'DFITredDFN_rev082023.txt';%'DFIT_rev052022_WI062023CorridaCorta.txt';%'DFIT_rev052022_WI+DFN062023CorridaCorta.txt';%'Dfit_rev052022_DFIT_062023.txt'; %'Dfit_rev052022_DFIT_WItrial_062023.txt';% Nombre del archivo con las propiedades de entrada. 
+archivoLectura = 'DFITredDFN_rev082023.txt';%'DFIT_rev082023_WI092023.txt';%'DFIT_rev082023_base092023.txt'; %
 
 tSaveParcial   = []; % Guardado de resultados parciales durante la corrida. Colocar los tiempos en los cuales se quiere guardar algun resultado parcial.
 
-restart            = 'Y'; % Si no queremos arrancar la simulacion desde el principio sino que desde algun punto de partida 'Y' en caso contrario 'N'.
+restart            = 'N'; % Si no queremos arrancar la simulacion desde el principio sino que desde algun punto de partida 'Y' en caso contrario 'N'.
 direccionRestart   = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\Resultados de corridas (.mat)\DFIT_red_ReStart_V1\';
 propiedadesRestart = 'resultadosCorrida_DFIT_redDFN_v1ReStart.mat';
 
@@ -62,7 +69,7 @@ end
 
 % Verificacion de malla.
 meshInfo = meshVerification(meshInfo);
-
+nodesInt = meshInfo.
 if ~keyAgusCheck && strcmpi(meshCase,'DFN')
     tolFind = 1e-3;
     nodTripleEncuentro = false(size(meshInfo.nodes,1),size(nodesInt.triplesAll,1));
@@ -91,6 +98,8 @@ if ~keyAgusCheck && strcmpi(meshCase,'DFN')
     elFluidoElementsBool(elFluidoElementID,1) = true;
     allFluidElementsID = unique(find(elFluidoElementsBool)); % aca tengo el ID de todos los elementos de la triple interseccion y ademas de las DFNS
     plotMeshColo3D(meshInfo.nodes,meshInfo.elements,meshInfo.cohesivos.elements(allFluidElementsID,:),'off','off','w','r','k',1)
+else
+    nodTripleEncuentro = [];
 end
 
 %-------------------------------------------------------------------------%
@@ -989,17 +998,17 @@ if strcmpi(guardarCorrida,'Y')
 %     movefile(['Q_',nombreCorrida,'.txt'],[direccionGuardado,nombreCorrida]);
     
     if exist(['resultadosFinISIP_',nombreCorrida,'.mat'],'file') == 2
-        cd([DirectorioMadre 'scriptSolverGitHub\'])
+        cd([mainFolder 'scriptSolverGitHub\'])
         movefile(['resultadosFinISIP_',nombreCorrida,'.mat'],[direccionGuardado,nombreCorrida]);
     end
     if exist(['resultadosFinFractura_',nombreCorrida,'.mat'],'file') == 2
-        cd([DirectorioMadre 'scriptSolverGitHub\'])
+        cd([mainFolder 'scriptSolverGitHub\'])
         movefile(['resultadosFinFractura_',nombreCorrida,'.mat'],[direccionGuardado,nombreCorrida]);
     end
     
     if ~isempty(tSaveParcial)
         for i = 1:numel(tSaveParcial)
-            cd([DirectorioMadre 'scripSolverGitHub\'])
+            cd([mainFolder 'scripSolverGitHub\'])
             movefile(['resultadosPARCIALESCorrida_',nombreCorrida,'_numero_',num2str(i),'.mat'],[direccionGuardado,nombreCorrida]);
         end
     end
