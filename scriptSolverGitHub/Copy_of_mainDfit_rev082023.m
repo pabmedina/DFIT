@@ -4,7 +4,7 @@ setBiot = 0.7; setPropante = true;
 poroElasticity = true; checkPlots = false; isipKC = true; flagPreCierre =false; gapPreCierre = 1; flagCierre = false; gapCierre =3e-1; 
 meshCase = 'WI'; %'WI';% 'DFN';%
 KeyInicioIsip=false;
-wantBuffPermeability = true; % false: la permeabilidad no se altera con el campo de tensiones de la etapa de fractura.
+wantBuffPermeability = false; % false: la permeabilidad no se altera con el campo de tensiones de la etapa de fractura.
 permFactor=1e5; keyAgusCheck = false; factor =1;
 keyCorteCohesivos= 'Y';
 %-------------------------------------------------------------------------%
@@ -15,9 +15,9 @@ keyCorteCohesivos= 'Y';
 guardarCorrida    = 'Y'; % Si se quiere guardar la corrida. "Y" o "N".
 pathAdder
 % direccionGuardado = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\Resultados de corridas (.mat)\';   %Dejo ambos directorios, ir comentando segun quien la use 
-direccionGuardado = 'D:\Corridas\Paper geomec DFN\Santi\DFIT 7 del 23\DFIT\Resultados de corridas (.mat)\'; 
+direccionGuardado = 'D:\Corridas\Paper geomec DFN\Santi\DFIT 7 del 23\Resultados de corridas (.mat)\'; 
 % Direccion donde se guarda la informacion.
-nombreCorrida     = 'DFIT_WI_CorteAumentado_Qextendido_buff'; % Nombre de la corrida. La corrida se guarda en la carpeta "Resultado de corridas" en una subcarpeta con este nombre.
+nombreCorrida     = 'DFIT_WI_CorteAumentado_Qextendido'; % Nombre de la corrida. La corrida se guarda en la carpeta "Resultado de corridas" en una subcarpeta con este nombre.
 
 cargaDatos     = 'load'; % Forma en la que se cargan las propiedades de entrada. "load" "test" "default" "change".
 archivoLectura = 'DFITWI_rev082023.txt';%'DFIT_rev052022_WI062023CorridaCorta.txt';%'DFIT_rev052022_WI+DFN062023CorridaCorta.txt';%'Dfit_rev052022_DFIT_062023.txt'; %'Dfit_rev052022_DFIT_WItrial_062023.txt';% Nombre del archivo con las propiedades de entrada. 
@@ -79,7 +79,7 @@ if ~keyAgusCheck && strcmpi(meshCase,'DFN')
     aa = ismember(meshInfo.elementsFluidos.elements,nodosInterseccionID);
     elCohesiveElementID = find(sum(aa,2)>0);
 else
-   nodTripleEncuentro=zeros(size(meshInfo.nodes,1),1);
+   nodTripleEncuentro=zeros(paramDiscEle.nNod,1);
 end
 
 if ~keyAgusCheck
@@ -944,7 +944,7 @@ end
 %-------------------------------------------------------------------------%
 if strcmpi(guardarCorrida,'Y')
     clear han1 han2
-    cd(direccionGuardado)
+    cd('D:\Geomec\paper DFN\ITBA\Piloto\DFIT\Resultados de corridas (.mat)\')
     mkdir(nombreCorrida) % Crea una subcarpeta en Resultado de corridas donde se guardara la informacion obtenida.
     cd([direccionGuardado,nombreCorrida])
     save(['resultadosCorrida_',nombreCorrida,'.mat']);    % Se guarda la informacion obtenida.
@@ -958,17 +958,17 @@ if strcmpi(guardarCorrida,'Y')
 %     movefile(['Q_',nombreCorrida,'.txt'],[direccionGuardado,nombreCorrida]);
     
     if exist(['resultadosFinISIP_',nombreCorrida,'.mat'],'file') == 2
-        cd([DirectorioMadre 'scriptSolverGitHub\'])
+        cd([DirectorioMadre 'scripSolverGitHub\'])
         movefile(['resultadosFinISIP_',nombreCorrida,'.mat'],[direccionGuardado,nombreCorrida]);
     end
     if exist(['resultadosFinFractura_',nombreCorrida,'.mat'],'file') == 2
-        cd([DirectorioMadre 'scriptSolverGitHub\'])
+        cd([DirectorioMadre 'scripSolverGitHub\'])
         movefile(['resultadosFinFractura_',nombreCorrida,'.mat'],[direccionGuardado,nombreCorrida]);
     end
     
     if ~isempty(tSaveParcial)
         for i = 1:numel(tSaveParcial)
-            cd([DirectorioMadre 'scriptSolverGitHub\'])
+            cd([DirectorioMadre 'scripSolverGitHub\'])
             movefile(['resultadosPARCIALESCorrida_',nombreCorrida,'_numero_',num2str(i),'.mat'],[direccionGuardado,nombreCorrida]);
         end
     end

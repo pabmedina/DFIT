@@ -188,7 +188,7 @@ end
 % title(['\sigma_Z   iTime: ',num2str(tiempoTensiones), '[s]']);
 
 %
-
+% plotColo3D(meshInfo.nodes(1:paramDiscEle.nDofTot_P,:),meshInfo.elements,avgStressEdit(:,1))
 % title(['\sigma_X   iTime: ',num2str(tiempoTensiones), '[s]']);
 % plotColo3D(meshInfo.nodes(1:paramDiscEle.nDofTot_P,:),meshInfo.elements,avgStressEdit(:,2))
 % title(['\sigma_Y   iTime: ',num2str(tiempoTensiones), '[s]']);

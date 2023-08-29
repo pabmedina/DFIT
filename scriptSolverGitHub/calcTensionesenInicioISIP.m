@@ -130,6 +130,7 @@ for iele=1:paramDiscEle.nel
 end
 
 
+
 %  % Promedio de tensiones nodales.
 %   avgStress = zeros(paramDiscEle.nDofTot_P,6); % Descuenta la presion efectiva de las tensiones.
 %   for inode = 1:paramDiscEle.nDofTot_P

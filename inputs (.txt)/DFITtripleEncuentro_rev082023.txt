@@ -84,10 +84,10 @@ drainTimes = 5
 initTimes = 5
 deltaTdrainTimes = 1000000
 deltaT = 0.001
-deltaTMax = 0.1
+deltaTMax = 2.5
 
-tiempoISIP = 20
-deltaTISIP = 0.2
+tiempoISIP = 300
+deltaTISIP = 2
 tiempoProduccion = 10
 deltaTProduccionMax = 1
 
