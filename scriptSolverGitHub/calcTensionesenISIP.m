@@ -123,10 +123,10 @@ for iele = 1:paramDiscEle.nel
     
 end
 
-tensionHidroIsip=zeros(paramDiscEle.nel,1);
+tensionHidroItime=zeros(paramDiscEle.nel,1);
 
 for iele=1:paramDiscEle.nel
-    tensionHidroIsip(iele)=tensionEfectivaNodal(iele,1)+tensionEfectivaNodal(iele,2)+tensionEfectivaNodal(iele,3);
+    tensionHidroItime(iele)=tensionEfectivaNodal(iele,1)+tensionEfectivaNodal(iele,2)+tensionEfectivaNodal(iele,3);
 end
 
 
