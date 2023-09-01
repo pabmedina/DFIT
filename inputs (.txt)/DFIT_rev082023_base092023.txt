@@ -17,7 +17,7 @@
 ---------------------------------------------------------------------------
 -Malla utilizada:
 ---------------------------------------------------------------------------
-selectedMesh = DFITredDFN.mat
+selectedMesh = DFITnoRef.mat
 
 ---------------------------------------------------------------------------
 -Propiedades Constitutivas: [Mpsi][mm]
@@ -83,7 +83,7 @@ TauXZL = 0
 drainTimes = 5
 initTimes = 5
 deltaTdrainTimes = 1000000
-deltaT = 0.001
+deltaT = 0.01
 deltaTMax = 2.5
 
 tiempoISIP = 300

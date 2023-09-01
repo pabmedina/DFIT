@@ -17,7 +17,7 @@
 ---------------------------------------------------------------------------
 -Malla utilizada:
 ---------------------------------------------------------------------------
-selectedMesh = DFITredDFN.mat
+selectedMesh = DFITnoRef.mat
 
 ---------------------------------------------------------------------------
 -Propiedades Constitutivas: [Mpsi][mm]
@@ -83,12 +83,12 @@ TauXZL = 0
 drainTimes = 5
 initTimes = 5
 deltaTdrainTimes = 1000000
-deltaT = 0.001
+deltaT = 0.01
 deltaTMax = 2.5
 
 tiempoISIP = 300
 deltaTISIP = 2
-tiempoProduccion = 10
+tiempoProduccion = 2
 deltaTProduccionMax = 1
 
 ---------------------------------------------------------------------------
@@ -96,7 +96,7 @@ deltaTProduccionMax = 1
 ---------------------------------------------------------------------------
 toleranciaU = 0.005/1
 toleranciaP = 0.005/1
-toleranciaCohesivos = 0.02/1
+toleranciaCohesivos = 0.01/1
 nIterDiv = 10
 nIterFast = 4
 nIterSlow = 8
@@ -105,8 +105,8 @@ precondCT = 1e7
 ---------------------------------------------------------------------------
 -Propiedades de la bomba: [BPM][s][mm]
 ---------------------------------------------------------------------------
-Q =  [0.5   0.5   0.5   0.5  1  1  1  2  2  2  3   3  4  4   5   5   6   6    6  6   3  1   0.1]/3
-tQ = [0     1     2     3    4  5  6  7  8  9 10  11 12  13  14  15  16  17  20  90  92 94  96]
+Q =  [0.5   0.5   0.5   0.5  1  1  1  2  2  2  3   3  4  4   5   5   6   6    6  6   ]/3
+tQ = [0     1     2     3    4  5  6  7  8  9 10  11 12  13  14  15  16  17  20  90  ]
 
 posNodoBomba1 = [0 30000 34000]
 posNodoBomba2 = [0 30000 32000]
@@ -150,8 +150,7 @@ NUI = 0.24
 -NUvI = NUvL
 
 ---------------------------------------------------------------------------
--Propiedades del propante: [Mpsi][][miliDarcy][%]
----------------------------------------------------------------------------
+-Propiedades del propante: [Mpsi][][miliDarcy][---------------------------------------------------------------------------
 propanteKey = N
 EPropante = 10.4
 NuPropante = 0.25
@@ -163,7 +162,7 @@ hPropantePorcentaje = 50
 ---------------------------------------------------------------------------
 -Nota: fijarse bien que las coordenadas que depende de los elementos de 
 -las mallas.
-SRVKey = N
-dX = [0 34]
-dY = [12 24]
-dZ = [9 27]
+SRVKey = Y
+dX = [0 20]
+dY = [25.9 34.1]
+dZ = [19.9 50.1]

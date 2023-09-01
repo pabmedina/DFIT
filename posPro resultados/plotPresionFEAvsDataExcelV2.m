@@ -1,23 +1,42 @@
+% Funcion postPro para relevar data. 
+% Instructivo de como utilizarlo: todos los inputs random tienen que estar
+% en las primeras lineas del codigo, acompañados de una breve explicacion.
+% de que significan. - PM -
+
 clc, close all  
 clearvars
-numeroDeNodosBomba = 3;
 
+%% el mainFolder cambia segun usuario. Indicar carpeta @root o @carpeta madre
+mainFolder = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\'; 
+
+%% indicar \folder\archivo.mat. "folder" va a estar dentro de la carpeta @Resultados de corridas (.mat)@
+% indicar la cantidad de resultados que se quieran cargar. Hasta ahora esta
+% hecho con 3. 
+
+result_1 = '\DFIT_redDFN_v5\resultadosFinISIP_DFIT_redDFN_v5.mat'; 
+result_2 = '\DFIT_redDFN_v3\resultadosFinISIP_DFIT_redDFN_v3.mat';
+result_3 = '\DFIT_redDFN_v1\resultadosFinISIP_DFIT_redDFN_v1.mat';
+
+%% indicar settings iniciales para filtrar data
+numeroDeNodosBomba = 1; % segun corrida que se este evualuando. Generalmente vale 1. 
 cutOff = 12000;
+nTimesOff = 0;%37; % cantidad de tiempos iniciales que se quieren remover de la data
+tInicioISIPRelevadoIndex = 127; % filtra el tiempo a partir de un valor index que indica a partir de que pocision se quiere graficar 
+
 %% Datos Excel
-plotCurvaPiloto=1; %Pararlo porque despues hay un close all
+plotCurvaPiloto=true; %Pararlo porque despues hay un close all
 mPa2psi = 145;
 
-mainFolder = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\'; % el mainFolder cambia segun usuario
 
+pathAdderV2
 if plotCurvaPiloto
-    addpath('D:\Geomec\paper DFN\ITBA\Piloto\DFIT\posPro resultados\')
     [num, ~, ~] = xlsread('Injection Test ITBA Limpiado.xlsx');
     
     tiempoRelevado=num(:,1);
     bhpRelevado = num(:,6);
     caudalRelevado = num(:,8);
     
-    tiempoRelevado = tiempoRelevado - 37;
+    tiempoRelevado = tiempoRelevado - nTimesOff;
     % presion relevada
     figure
     yyaxis left; % Asignar el eje izquierdo a la primera curva
@@ -29,12 +48,11 @@ if plotCurvaPiloto
     title('Curva de Presiones y caudal en todo el DFIT')
     
     % presion relevado solo ISIP
-    
-    tiempoISIPRelevado = 127;
+
     figure;
-    x=tiempoRelevado(tiempoISIPRelevado:end);
-    y1=bhpRelevado(tiempoISIPRelevado:end);
-    y2=caudalRelevado(tiempoISIPRelevado:end);
+    x=tiempoRelevado(tInicioISIPRelevadoIndex:end);
+    y1=bhpRelevado(tInicioISIPRelevadoIndex:end);
+    y2=caudalRelevado(tInicioISIPRelevadoIndex:end);
     yyaxis left; % Asignar el eje izquierdo a la primera curva
     plot(x, y1, 'b-');
     ylabel('Presion PSI');
@@ -47,8 +65,7 @@ end
 %% Levantamos lo resultado de corridas
 
 %% DFIT
-currentDirec = cd('D:\Geomec\paper DFN\ITBA\Piloto\DFIT\Resultados de corridas (.mat)');
-load([currentDirec '\DFIT_NoRef\resultadosFinISIP_DFIT_NoRef.mat']);
+load([mainFolder '\Resultados de corridas (.mat)\' result_1 ]);
 
 
 p_DFIT_FEA=dTimes(paramDiscEle.nDofTot_U+bombaProperties.nodoBomba(1),5:end)*mPa2psi;
@@ -82,8 +99,8 @@ hold on
 plot(x,y1,'r')
 
 %% DFIT WI
-currentDirec = cd('D:\Geomec\paper DFN\ITBA\Piloto\DFIT\Resultados de corridas (.mat)');
-load([currentDirec '\DFIT_WINoRef\resultadosFinISIP_DFIT_WINoRef.mat']);
+
+load([mainFolder '\Resultados de corridas (.mat)\' result_2 ]);
 
 
 p_DFITWI_FEA=dTimes(paramDiscEle.nDofTot_U+bombaProperties.nodoBomba(1),5:end)*mPa2psi;
@@ -118,8 +135,8 @@ plot(x,y1,'r')
 
 
 %% DFIT DFN
-currentDirec = cd('D:\Geomec\paper DFN\ITBA\Piloto\DFIT\Resultados de corridas (.mat)');
-load([currentDirec '\DFIT_DFNNoRef\resultadosFinISIP_DFIT_DFNNoRef.mat']);
+
+load([ mainFolder '\Resultados de corridas (.mat)\' result_3  ]);
 
 p_DFITDFN_FEA=dTimes(paramDiscEle.nDofTot_U+bombaProperties.nodoBomba(1),5:end)*mPa2psi;
 q_DFITDFN_FEA=QTimes(bombaProperties.nodoBomba(1),5:end)*numeroDeNodosBomba*2;

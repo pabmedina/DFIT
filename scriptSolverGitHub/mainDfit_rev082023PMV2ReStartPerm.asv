@@ -4,7 +4,7 @@ set(0,'DefaultFigureWindowStyle','docked');
 
 mainFolder = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\';
 caseName = 'WIplusDFNs'; %'weakInterf'; %'noFeatures'; %'tripleInts';%
-casePerm = 'permNerf'; %'permBuff';
+casePerm = 'permBuff';%'permNerf'; %
 
 setBiot = 0.7; setPropante = true;
 poroElasticity = true; checkPlots = false; isipKC = true; 
@@ -16,9 +16,11 @@ activadorDFN = false;
 
 kappa_DFN = 1; % para definir la permeabilidad de dfn a mano
 
-KeyInicioIsip=false;
-wantBuffPermeability = false; % false: la permeabilidad no se altera con el campo de tensiones de la etapa de fractura.
-permFactor=1e5; keyAgusCheck = false; factor =1;
+KeyInicioIsip=true;
+wantBuffPermeability = true; % false: la permeabilidad no se altera con el campo de tensiones de la etapa de fractura.
+permFactor=1e5;
+
+keyAgusCheck = false; factor =1;
 keyCorteCohesivos= 'Y';
 %-------------------------------------------------------------------------%
 %% %%%%%%%%%%%%%%%%%%%       main DFIT/TShape       %%%%%%%%%%%%%%%%%%%% %%
@@ -30,16 +32,16 @@ pathAdderV2
 % direccionGuardado = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\Resultados de corridas (.mat)\';   %Dejo ambos directorios, ir comentando segun quien la use 
 direccionGuardado = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\Resultados de corridas (.mat)\'; 
 % Direccion donde se guarda la informacion.
-nombreCorrida     = ['DFIT_' caseName '_' casePerm]; % Nombre de la corrida. La corrida se guarda en la carpeta "Resultado de corridas" en una subcarpeta con este nombre.
+nombreCorrida     = ['DFIT_' caseName '_' casePerm 'v1']; % Nombre de la corrida. La corrida se guarda en la carpeta "Resultado de corridas" en una subcarpeta con este nombre.
 
 cargaDatos     = 'load'; % Forma en la que se cargan las propiedades de entrada. "load" "test" "default" "change".
 archivoLectura = 'DFITredDFN_rev082023.txt';%'DFIT_rev082023_WI092023.txt';%'DFIT_rev082023_base092023.txt'; %
 
 tSaveParcial   = []; % Guardado de resultados parciales durante la corrida. Colocar los tiempos en los cuales se quiere guardar algun resultado parcial.
 
-restart            = 'N'; % Si no queremos arrancar la simulacion desde el principio sino que desde algun punto de partida 'Y' en caso contrario 'N'.
-direccionRestart   = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\Resultados de corridas (.mat)\DFIT_red_ReStart_V1\';
-propiedadesRestart = 'resultadosCorrida_DFIT_redDFN_v1ReStart.mat';
+restart            = 'Y'; % Si no queremos arrancar la simulacion desde el principio sino que desde algun punto de partida 'Y' en caso contrario 'N'.
+direccionRestart   = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\Resultados de corridas (.mat)\DFIT_weakInterf_permNerf\';
+propiedadesRestart = 'resultadosFinFractura_DFIT_weakInterf_permNerf.mat';
 
 % Variables del post - procesado.
 tiempoArea      = 0; % Tiempo en el que se quiere visualizar la forma del area de fractura.
@@ -499,21 +501,30 @@ while algorithmProperties.elapsedTime <= temporalProperties.tiempoTotalCorrida
             
             KeyInicioIsip=false; %% Aca vamos a generar la Curva y desp usamos esa
             calcTensionesenInicioISIP 
+            I_ISIP = tensionHidroInicioIsip/3;
             calcTensionesenDrainTimes
+            I_DrainTime = tensionHidroDrainTimes/3;
             DeltaPHidro=abs(abs(tensionHidroDrainTimes(Elem))-abs(tensionHidroInicioIsip(Elem))); %% diferencia de tensionesH entre el itime 2 y donde arranca el Isip
             %%Elem es el elemento Bomba
         end
             calcTensionesenISIP
-            
+            I_itime = tensionHidroItime/3;
             if wantBuffPermeability
-                ImproveFactor=permFactor+(1-permFactor/DeltaPHidro)*(tensionHidroDrainTimes-tensionHidroIsip').*((tensionHidroDrainTimes-tensionHidroIsip')>0);
+                %                 f_1 = 1; f_2 = permFactor;
+                %                 ImproveFactor = f_1 + (f_2-f_1)./abs(abs(I_DrainTime)-abs(I_ISIP)).*abs(abs(I_itime) - abs(I_DrainTime));
+                %                 ImproveFactor = 1 + permFactor./abs(abs(I_DrainTime)-abs(I_ISIP)).*abs(I_itime);
+                ImproveFactor=1-(1-permFactor)*(tensionHidroDrainTimes-tensionHidroItime)./DeltaPHidro;
+                ImproveFactor=(ImproveFactor>permFactor).*permFactor+(ImproveFactor<permFactor).*ImproveFactor;
                 ImproveFactor=(ImproveFactor>1).*ImproveFactor+(ImproveFactor<1).*1;
+%                 
+%                 ImproveFactor=permFactor+(1-permFactor/DeltaPHidro)*(tensionHidroDrainTimes-tensionHidroItime').*((tensionHidroDrainTimes-tensionHidroItime')>0);
+%                 ImproveFactor=(ImproveFactor>1).*ImproveFactor+(ImproveFactor<1).*1;
             else
                 ImproveFactor = ones(paramDiscEle.nel,1);
             end
-%            improvePerm=physicalProperties.fluidoPoral.kappaIntShale;
+            %            improvePerm=physicalProperties.fluidoPoral.kappaIntShale;
            
-            Kperm        = getMatrizPermeabilidadPorElemISIP(physicalProperties,meshInfo,SRVProperties,ImproveFactor,'ISIP','N' );
+            Kperm        = getMatrizPermeabilidadPorElemISIP(physicalProperties,meshInfo,SRVProperties,ImproveFactor,'ISIP','N');
             KC           = getTensor(meshInfo,paramDiscEle,pGaussParam,1,1,Kperm,'KC'); %improvePerm.*factor o solo factor arriba??
             productionKC = 0;
         
