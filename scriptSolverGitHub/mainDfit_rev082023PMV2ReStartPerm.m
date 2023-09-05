@@ -1,11 +1,11 @@
 clc;close all; format shortg; 
-clearvars -except kappa nCase iCase
+clearvars -except kappa nCase iCase iKappa nKappa factorImprove
 set(0,'DefaultFigureWindowStyle','docked');
 mainFolder = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\';
 
-numeroDeCaso = iCase;
+numeroDeCaso = 5;%5
 caseName = 'WIplusDFNs'; %'weakInterf'; %'noFeatures'; %'tripleInts';%
-casePerm = 'permNerf'; %'permBuff';%
+casePerm = 'permBuff';%'permNerf'; %
 
 setBiot = 0.7; setPropante = true;
 poroElasticity = true; checkPlots = false; isipKC = true; 
@@ -15,11 +15,11 @@ meshCase = 'DFN'; %'WI';%'DFIT';%
 keyPermeador = true;
 activadorDFN = false; % este flag me parece que hay que sacarlo de aca
 
-kappa_DFN = kappa(iCase); % para definir la permeabilidad de dfn a mano
+kappa_DFN = 100; % para definir la permeabilidad de dfn a mano
 
-KeyInicioIsip=false;
-wantBuffPermeability = false; % false: la permeabilidad no se altera con el campo de tensiones de la etapa de fractura.
-permFactor=1e5;
+KeyInicioIsip=true;
+wantBuffPermeability = true; % false: la permeabilidad no se altera con el campo de tensiones de la etapa de fractura.
+permFactor= 2.5e6;%2.5e3;
 
 keyAgusCheck = false; factor =1;
 keyCorteCohesivos= 'Y';
@@ -33,7 +33,7 @@ pathAdderV2
 % direccionGuardado = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\Resultados de corridas (.mat)\';   %Dejo ambos directorios, ir comentando segun quien la use 
 direccionGuardado = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\Resultados de corridas (.mat)\'; 
 % Direccion donde se guarda la informacion.
-nombreCorrida     = ['DFIT_' caseName '_' casePerm 'DFNsKappaVariable' num2str(numeroDeCaso) ]; % Nombre de la corrida. La corrida se guarda en la carpeta "Resultado de corridas" en una subcarpeta con este nombre.
+nombreCorrida     = ['DFIT_' caseName '_' casePerm 'Kappa' num2str(kappa_DFN) 'ISIP' num2str(numeroDeCaso) 'ReStartBilineal' ]; % Nombre de la corrida. La corrida se guarda en la carpeta "Resultado de corridas" en una subcarpeta con este nombre.
 
 cargaDatos     = 'load'; % Forma en la que se cargan las propiedades de entrada. "load" "test" "default" "change".
 archivoLectura = 'DFITredDFN_rev082023.txt';%'DFITredDFN_rev082023TesterMain.txt';%'DFIT_rev082023_WI092023.txt';%'DFIT_rev082023_base092023.txt'; %
@@ -41,13 +41,13 @@ archivoLectura = 'DFITredDFN_rev082023.txt';%'DFITredDFN_rev082023TesterMain.txt
 tSaveParcial   = []; iSaveParcial = 1; % Guardado de resultados parciales durante la corrida. Colocar los tiempos en los cuales se quiere guardar algun resultado parcial.
 
 restart            = 'Y'; % Si no queremos arrancar la simulacion desde el principio sino que desde algun punto de partida 'Y' en caso contrario 'N'.
-direccionRestart   = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\Resultados de corridas (.mat)\DFIT_WIplusDFNs_permNerfDFNsKappaBase\';
-propiedadesRestart = 'resultadosPARCIALESCorrida_DFIT_WIplusDFNs_permNerfDFNsKappaBase.mat';
+direccionRestart   = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\Resultados de corridas (.mat)\DFIT_WIplusDFNs_permBuffKappa100ISIP5\';
+propiedadesRestart = 'resultadosFinISIP_DFIT_WIplusDFNs_permBuffKappa100ISIP5.mat'; %'resultadosFinFractura_DFIT_WIplusDFNs_permNerfDFNsKappaVariable1.mat';
 
 % Variables del post - procesado.
 tiempoArea      = 0; % Tiempo en el que se quiere visualizar la forma del area de fractura.
 tiempoTensiones = 0; % Tiempo en el que se quiere visualizar las tensiones. Tiempo 0 equivale al final de los drainTimes.
-keyPlots        = false; % Para plotear graficos intermedios. Separacion normal entre caras, presion de fractura y errores de convergencia.
+keyPlots        = true; % Para plotear graficos intermedios. Separacion normal entre caras, presion de fractura y errores de convergencia.
 %%
 %-------------------------------------------------------------------------%
 %%                             PRE - PROCESO                             %%

@@ -4,7 +4,7 @@ clearvars
 mainFolder = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\'; 
 pathAdderV3
 resultsFolder = str5;
-wantOnlyISIP = false;
+wantOnlyISIP = true;
 
 deltaP_Dyn = 1800-60; %Asumimos una cierta cantidad de psi
 numberOfFolders = 5;
@@ -34,7 +34,7 @@ switch dataRead
         resultFolder4 = 'DFIT_WIplusDFNs_permBuffKappa100ISIP2\'; % a la corrida base + el kappaDFN = 100 le aumentamos el SRV en funcion del invariante. (ImproveFactor = 1e4)
         resultFolder5 = 'DFIT_WIplusDFNs_permBuffKappa100ISIP3\'; % a la corrida base + el kappaDFN = 100 le aumentamos el SRV en funcion del invariante. (ImproveFactor = 1e5) 
         resultFolder6 = 'DFIT_WIplusDFNs_permBuffKappa100ISIP4\'; % a la corrida base + el kappaDFN = 100 le aumentamos el SRV en funcion del invariante. (ImproveFactor = 1e6)
-        resultFolder7 = 'DFIT_WIplusDFNs_permBuffKappa100ISIP5ReStartBilineal\'; % a la corrida base + el kappaDFN = 100 le aumentamos el SRV en funcion del invariante. (ImproveFactor = 2.5e6)
+        resultFolder7 = 'DFIT_WIplusDFNs_permBuffKappa100ISIP5\'; % a la corrida base + el kappaDFN = 100 le aumentamos el SRV en funcion del invariante. (ImproveFactor = 2.5e6)
         resultFolder8 = 'DFIT_WIplusDFNs_permBuffKappa100ISIP6\'; % a la corrida base + el kappaDFN = 100 le aumentamos el SRV en funcion del invariante. (ImproveFactor = 5e6)
 end
 
@@ -136,7 +136,7 @@ presionCrudaISIP = table2array(T(122:430,6)); % valor de presion para los 300 se
 tiempoCrudoAll = table2array(T(33:430,1));
 presionCrudaAll = table2array(T(33:430,6));
 
-corrimientoEnX = -33; % en toria voy a estar corriendo 33 segundos el problema. Porque el tiempo de fractura lo reduje
+corrimientoEnX = -21; % en toria voy a estar corriendo 33 segundos el problema. Porque el tiempo de fractura lo reduje
 tiempoCorregidoISIP = tiempoCrudoISIP + corrimientoEnX;
 tiempoCorregidoAll = tiempoCrudoAll - 21;
 
