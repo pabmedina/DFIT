@@ -19,7 +19,7 @@ pathAdder
 direccionGuardado = 'D:\Corridas\Paper geomec DFN\Santi\DFIT 7 del 23\Resultados de corridas (.mat)';   %Dejo ambos directorios, ir comentando segun quien la use 
 % direccionGuardado = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\Resultados de corridas (.mat)\'; 
 % Direccion donde se guarda la informacion.
-nombreCorrida     = 'DFIT_DFN_Qextendido_buff_God'; % Nombre de la corrida. La corrida se guarda en la carpeta "Resultado de corridas" en una subcarpeta con este nombre.
+nombreCorrida     = 'DFIT_DFN_Qextendido_buff_God_300ISIP'; % Nombre de la corrida. La corrida se guarda en la carpeta "Resultado de corridas" en una subcarpeta con este nombre.
 
 cargaDatos     = 'load'; % Forma en la que se cargan las propiedades de entrada. "load" "test" "default" "change".
 archivoLectura = 'DFITtripleEncuentro_rev082023.txt';%'DFIT_rev052022_WI062023CorridaCorta.txt';%'DFIT_rev052022_WI+DFN062023CorridaCorta.txt';%'Dfit_rev052022_DFIT_062023.txt'; %'Dfit_rev052022_DFIT_WItrial_062023.txt';% Nombre del archivo con las propiedades de entrada. 
@@ -518,7 +518,7 @@ while algorithmProperties.elapsedTime <= temporalProperties.tiempoTotalCorrida
             calcTensionesenISIP
             
             if wantBuffPermeability
-                ImproveFactor=1-(1-permFactor)*(tensionHidroDrainTimes-tensionHidroIsip)./DeltaPHidro(Elem);
+                ImproveFactor=1-(1-permFactor)*(tensionHidroDrainTimes-tensionHidroItime)./DeltaPHidro(Elem);
                 ImproveFactor=(ImproveFactor>permFactor).*permFactor+(ImproveFactor<permFactor).*ImproveFactor;
                 ImproveFactor=(ImproveFactor>1).*ImproveFactor+(ImproveFactor<1).*1;
             else
@@ -1022,7 +1022,7 @@ if strcmpi(guardarCorrida,'Y')
     
     if ~isempty(tSaveParcial)
         for i = 1:numel(tSaveParcial)
-            cd([DirectorioMadre 'scripSolverGitHub\'])
+            cd([DirectorioMadre 'scriptSolverGitHub\'])
             movefile(['resultadosPARCIALESCorrida_',nombreCorrida,'_numero_',num2str(i),'.mat'],[direccionGuardado,nombreCorrida]);
         end
     end

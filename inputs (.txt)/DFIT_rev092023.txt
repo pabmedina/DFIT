@@ -17,7 +17,7 @@
 ---------------------------------------------------------------------------
 -Malla utilizada:
 ---------------------------------------------------------------------------
-selectedMesh = DFIT+DFN+WI_noRef_angle.mat
+selectedMesh = DFITnoRef.mat
 
 ---------------------------------------------------------------------------
 -Propiedades Constitutivas: [Mpsi][mm]
@@ -86,8 +86,8 @@ deltaTdrainTimes = 1000000
 deltaT = 0.001
 deltaTMax = 0.1
 
-tiempoISIP = 400
-deltaTISIP = 1
+tiempoISIP = 20
+deltaTISIP = 0.2
 tiempoProduccion = 10
 deltaTProduccionMax = 1
 
