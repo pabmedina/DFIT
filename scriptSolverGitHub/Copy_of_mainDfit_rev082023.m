@@ -17,7 +17,7 @@ pathAdder
 % direccionGuardado = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\Resultados de corridas (.mat)\';   %Dejo ambos directorios, ir comentando segun quien la use 
 direccionGuardado = 'D:\Corridas\Paper geomec DFN\Santi\DFIT 7 del 23\DFIT\Resultados de corridas (.mat)\'; 
 % Direccion donde se guarda la informacion.
-nombreCorrida     = 'DFIT_WI_CorteAumentado_Qextendido_buff'; % Nombre de la corrida. La corrida se guarda en la carpeta "Resultado de corridas" en una subcarpeta con este nombre.
+nombreCorrida     = 'DFIT_WI_CorteAumentado_Qextendido_buffReview'; % Nombre de la corrida. La corrida se guarda en la carpeta "Resultado de corridas" en una subcarpeta con este nombre.
 
 cargaDatos     = 'load'; % Forma en la que se cargan las propiedades de entrada. "load" "test" "default" "change".
 archivoLectura = 'DFITWI_rev082023.txt';%'DFIT_rev052022_WI062023CorridaCorta.txt';%'DFIT_rev052022_WI+DFN062023CorridaCorta.txt';%'Dfit_rev052022_DFIT_062023.txt'; %'Dfit_rev052022_DFIT_WItrial_062023.txt';% Nombre del archivo con las propiedades de entrada. 
@@ -478,18 +478,19 @@ while algorithmProperties.elapsedTime <= temporalProperties.tiempoTotalCorrida
         restartKC = 0;
     elseif isipKC && algorithmProperties.elapsedTime >= temporalProperties.tInicioISIP % Se establece el valor de permeabilidad mas elevado para el SRV que se activa durante la produccion. 
 
-        if KeyInicioIsip
+if KeyInicioIsip
             
             KeyInicioIsip=false; %% Aca vamos a generar la Curva y desp usamos esa
             calcTensionesenInicioISIP 
             calcTensionesenDrainTimes
-            DeltaPHidro=abs(abs(tensionHidroDrainTimes(Elem))-abs(tensionHidroInicioIsip(Elem))); %% diferencia de tensionesH entre el itime 2 y donde arranca el Isip
+            DeltaPHidro=abs(tensionHidroDrainTimes-tensionHidroInicioIsip); %% diferencia de tensionesH entre el itime 2 y donde arranca el Isip
             %%Elem es el elemento Bomba
         end
             calcTensionesenISIP
             
             if wantBuffPermeability
-                ImproveFactor=permFactor+(1-permFactor/DeltaPHidro)*(tensionHidroDrainTimes-tensionHidroIsip').*((tensionHidroDrainTimes-tensionHidroIsip')>0);
+                ImproveFactor=1-(1-permFactor)*(tensionHidroDrainTimes-tensionHidroIsip)./DeltaPHidro(Elem);
+                ImproveFactor=(ImproveFactor>permFactor).*permFactor+(ImproveFactor<permFactor).*ImproveFactor;
                 ImproveFactor=(ImproveFactor>1).*ImproveFactor+(ImproveFactor<1).*1;
             else
                 ImproveFactor = ones(paramDiscEle.nel,1);

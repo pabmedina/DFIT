@@ -69,9 +69,10 @@ end
 
 % Verificacion de malla.
 meshInfo = meshVerification(meshInfo);
-nodesInt = meshInfo.
+
 if ~keyAgusCheck && strcmpi(meshCase,'DFN')
     tolFind = 1e-3;
+    nodesInt = meshInfo.nodesInt; % este parche hay que arreglarlo. Es un tema de nombres
     nodTripleEncuentro = false(size(meshInfo.nodes,1),size(nodesInt.triplesAll,1));
     for i = 1:size(nodesInt.triplesAll,1)
         xInput1 = meshInfo.nodes(nodesInt.triplesAll(i),1); yInput1 = meshInfo.nodes(nodesInt.triplesAll(i),2); zInput1 =  meshInfo.nodes(nodesInt.triplesAll(i),3);
@@ -97,7 +98,7 @@ if ~keyAgusCheck && strcmpi(meshCase,'DFN')
     elFluidoElementsBool(elFluidoElementID_X,1) = true;
     elFluidoElementsBool(elFluidoElementID,1) = true;
     allFluidElementsID = unique(find(elFluidoElementsBool)); % aca tengo el ID de todos los elementos de la triple interseccion y ademas de las DFNS
-    plotMeshColo3D(meshInfo.nodes,meshInfo.elements,meshInfo.cohesivos.elements(allFluidElementsID,:),'off','off','w','r','k',1)
+    plotMeshColo3D(meshInfo.nodes,meshInfo.elements,meshInfo.cohesivos.elements(allFluidElementsID,:),'off','on','w','r','k',1)
 else
     nodTripleEncuentro = [];
 end

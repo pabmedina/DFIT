@@ -98,7 +98,7 @@ if ~keyAgusCheck && strcmpi(meshCase,'DFN')
     elFluidoElementsBool(elFluidoElementID_X,1) = true;
     elFluidoElementsBool(elFluidoElementID,1) = true;
     allFluidElementsID = unique(find(elFluidoElementsBool)); % aca tengo el ID de todos los elementos de la triple interseccion y ademas de las DFNS
-    plotMeshColo3D(meshInfo.nodes,meshInfo.elements,meshInfo.cohesivos.elements(allFluidElementsID,:),'off','off','w','r','k',1)
+    plotMeshColo3D(meshInfo.nodes,meshInfo.elements,meshInfo.cohesivos.elements(allFluidElementsID,:),'off','on','w','r','k',1)
 else
     nodTripleEncuentro = [];
 end

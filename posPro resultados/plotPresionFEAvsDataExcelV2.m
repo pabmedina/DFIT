@@ -8,7 +8,7 @@ clearvars
 
 %% el mainFolder cambia segun usuario. Indicar carpeta @root o @carpeta madre
 mainFolder = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\'; 
-
+cd = mainFolder;
 %% indicar \folder\archivo.mat. "folder" va a estar dentro de la carpeta @Resultados de corridas (.mat)@
 % indicar la cantidad de resultados que se quieran cargar. Hasta ahora esta
 % hecho con 3. 
