@@ -1,4 +1,4 @@
-function [eFisu, eBarra, Boundary] = datos_celda2estruct(elementsFisu,elementsBarra,nodosBoundary,nX,nY,nZ,Boundary)
+function [eFisu, eBarra, Boundary,intNodes] = datos_celda2estruct(elementsFisu,elementsBarra,nodosBoundary,nX,nY,nZ,Boundary,nodesInt)
 % Todas las variables que hay que exportar para el solver y estan guardadas
 % en celdas tengo que pasarlas a estructuras con el formato compatible, me
 % base en las variables que se suelen exportar, si se agrega alguna
@@ -65,4 +65,30 @@ Boundary = setfield(Boundary,nombre,'sinInt',nodosBoundary.sinInt{3,i});
 end
 Boundary = rmfield(Boundary, 'borrar');
 Boundary.all = Boundary;
+%% NODOS INTERSECCIONES
+intNodes = struct('borrar', []);
+intNodes = setfield(intNodes,'ALL',nodesInt.all);
+intNodes = setfield(intNodes,'Triples',nodesInt.triplesAll);
+intNodes = setfield(intNodes,'Dobles',setdiff(nodesInt.all,nodesInt.triplesAll));
+for i = 1:nX
+    for j = 1:nY
+        nombre = ['X',char(num2str(i)),'Y',char(num2str(j))];
+        intNodes = setfield(intNodes,nombre,nodesInt.dobles{1,i,j});
+        for k = 1:nZ
+            nombre = ['X',char(num2str(i)),'Y',char(num2str(j)),'Z',char(num2str(k))];
+            intNodes = setfield(intNodes,nombre,nodesInt.triples{i,j,k});
+        end
+    end
+    for k = 1:nZ
+        nombre = ['X',char(num2str(i)),'Z',char(num2str(k))];
+        intNodes = setfield(intNodes,nombre,nodesInt.dobles{3,i,k});
+    end
+end
+for i = 1:nY
+    for j = 1:nZ
+        nombre = ['Y',char(num2str(i)),'Z',char(num2str(j))];
+        intNodes = setfield(intNodes,nombre,nodesInt.dobles{2,i,j});
+    end
+end
+intNodes = rmfield(intNodes, 'borrar');
 end

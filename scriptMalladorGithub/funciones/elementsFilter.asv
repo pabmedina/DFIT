@@ -1,0 +1,35 @@
+function filtered = elementsFilter(cohesivos, nameFrac, nodes, elementsFisu, yLim, zLim)
+
+
+eleFrac = cohesivos.elements(cohesivos.name == nameFrac, :);
+eleFracNodes = cohesivos.related8Nodes(cohesivos.name == nameFrac, :); 
+nElements = size(eleFracNodes,1);
+
+coordFisu = nameFrac(1);
+numFisu = str2double(nameFrac(2));
+
+switch coordFisu
+    case 'X'
+        indexFisu = elementsFisu.index{1, numFisu};
+    case 'Y'
+        indexFisu = elementsFisu.index{2, numFisu};
+    case 'Z'
+        indexFisu = elementsFisu.index{2, numFisu};
+end
+
+
+for iElement = 1:nElements
+    eleCoordY = nodes(eleFracNodes(iElement,:), 2);
+    eleCoordZ = nodes(eleFracNodes(iElement,:), 3);
+    
+    filtered = zeros(nElements, 1);
+    if all(eleCoordY > yLim(1)) && all(eleCoordY < yLim(2)) && ...
+            all(eleCoordZ > zLim(1)) && all(eleCoordZ < zLim(2))
+                
+        filtered(iElement) = eleFrac(iElement);
+    end
+end
+
+filtered(filtered == 0) = [];
+
+end

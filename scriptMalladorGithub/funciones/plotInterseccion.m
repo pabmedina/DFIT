@@ -8,7 +8,7 @@ nodes           = infoPlot.nodes;
 elements        = infoPlot.elements;
 nodesCohesivos  = infoPlot.nodesCohesivos;
 
-fig = figure();hold on;
+fig = figure('Name', 'Intersecciones','NumberTitle','off');hold on;
     set(fig, 'Position', [175, 75, 1000, 500])
     set(fig,'DeleteFcn',@deleteFile);
     auxiliar = elements(eleID,[1 2 6 5 2 3 7 6 3 4 8 7 4 1 5 8 1 2 3 4 5 6 7 8]);
@@ -114,9 +114,9 @@ fig = figure();hold on;
 
 %% Actualizar la figura
     function meshPlot(filtered,nodes,nodesSinRotar, elements, elementsFluidos,elementsFisu,eleID,nodesCohesivos)
-        filtered = unique(filtered{1}(find(ismember(filtered{1},filtered{2}(find(ismember(filtered{2},filtered{3})))))));
+        filter = unique(filtered{1}(find(ismember(filtered{1},filtered{2}(find(ismember(filtered{2},filtered{3})))))));
         cla
-        plotIntersecciones(nodes,nodesSinRotar, elements, elementsFluidos,elementsFisu,eleID(filtered),nodesCohesivos)
+        plotIntersecciones(nodes,nodesSinRotar, elements, elementsFluidos,elementsFisu,eleID(filter),nodesCohesivos)
         function plotIntersecciones(nodes,nodesSinRotar, elements, elementsFluidos,elementsFisu,eleID,nodesCohesivos)       
         eleInt = elements(eleID,[1 2 6 5 2 3 7 6 3 4 8 7 4 1 5 8 1 2 3 4 5 6 7 8]);
         eleInter  = reshape(eleInt',4,[])' ;

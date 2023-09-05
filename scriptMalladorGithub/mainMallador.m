@@ -2,12 +2,12 @@
 clc; clear; close all;
 nameData = 'testDFN'; % Nombre del archivo de salida.
 
-saveData = true;
+saveData = false;
 debugPlots = 0;
 barrerasFlag = 0;
 DFN_flag = 1;
 
-mainFolder = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\'; % el mainFolder cambia segun usuario
+mainFolder = '/Users/leilafraga/Documents/GitHub/DFIT/'; % el mainFolder cambia segun usuario
 pathDir
 
 %% MESH PARAMETERS %%
@@ -1040,7 +1040,7 @@ elementsFluidos.elements    = zeros(nelEleFisu,4);
 elementsFluidos.int         = [];
 cohesivos.elements          = zeros(nelEleFisu,4);
 cohesivos.related8Nodes     = zeros(nelEleFisu,8);
-cohesivos.type              = zeros(nelEleFisu,1); %% Este indica si es fractura, Z, Y, O X
+% cohesivos.type              = zeros(nelEleFisu,1); %% Este indica si es fractura, Z, Y, O X
 cohesivos.name              = strings(nelEleFisu,1);
 cohesivos.boundary          = [];
 counter                     = 0;
@@ -1125,8 +1125,8 @@ for i = 1:nX
         end
         cohesivos.elements(counter,:)          = nodesInFisu(correctOrder);
         cohesivos.relatedEB(counter,:)         = relatedEB(correctOrder);
-        cohesivos.type(counter)                = 1;
-        cohesivos.name(counter)                = 'X';
+        cohesivos.type(counter)                = 'X';
+        cohesivos.name(counter,:)              = ['X',num2str(i)];
         cohesivos.nodesEle(:,:,counter)        = [nodesEleRot(correctOrder,2) nodesEleRot(correctOrder,3)];
         
         cohesivos.T(:,:,counter)               = T;
@@ -1211,8 +1211,8 @@ for i = 1:nY
         
         cohesivos.elements(counter,:)      = nodesInFisu(correctOrder);
         cohesivos.relatedEB(counter,:)     = relatedEB(correctOrder);
-        cohesivos.type(counter)            = 2;
-        cohesivos.name(counter)            = 'Y';
+        cohesivos.type(counter)            = 'Y';
+        cohesivos.name(counter,:)          = ['Y',num2str(i)];
         cohesivos.nodesEle(:,:,counter)    = [nodesEleRot(correctOrder,2) nodesEleRot(correctOrder,3)];
         cohesivos.T(:,:,counter)           = T;
 
@@ -1294,8 +1294,8 @@ for i = 1:nZ
         
         cohesivos.elements(counter,:)      = nodesInFisu(correctOrder);
         cohesivos.relatedEB(counter,:)     = relatedEB(correctOrder);
-        cohesivos.type(counter)            = 3;
-        cohesivos.name(counter)            = 'Z';
+        cohesivos.type(counter)            = 'Z';
+        cohesivos.name(counter,:)          = ['Z',num2str(i)];
         cohesivos.nodesEle(:,:,counter)    = [nodesEleRot(correctOrder,2) nodesEleRot(correctOrder,3)];
         cohesivos.T(:,:,counter)           =T;
 
@@ -1392,17 +1392,21 @@ if DFN_flag==1
     
     
 end
-handle = figure('Name', 'Plot Cohesivos','NumberTitle','off', 'Position',[130 100 900 500]);
+handle = figure('Name', 'Plot Cohesivos','NumberTitle','off', 'Position',[175, 75, 1000, 500]);
 subplot(1,2,1);
-PlotMesh(nodes,elementsFluidos.elements);
+PlotMesh(nodes,elementsFluidos.elements);hold on
+scatter3(nodes(nodesInt.all,1),nodes(nodesInt.all,2),nodes(nodesInt.all,3),'bo')
 subplot(2,2,2); PlotMesh(nodes, elementsFluidos.elements);view(0,90);
 subplot(2,2,4); PlotMesh(nodes, elementsFluidos.elements);view(90,0);
-[elementsFisu, elementsBarra, nodosBoundary] = datos_celda2estruct(elementsFisu,elementsBarra,nodosBoundary,nX,nY,nZ, Boundary);
+[elementsFisu, elementsBarra, nodosBoundary,nodesInt] = datos_celda2estruct(elementsFisu,elementsBarra,nodosBoundary,nX,nY,nZ, Boundary,nodesInt);
 % Armo una estructura que voy a necesitar para el plot de intersecciones
 infoPlot.nodes           = nodes;
 infoPlot.elements        = elements;
 infoPlot.elementsFluidos = elementsFluidos;
 infoPlot.elementsFisu    = elementsFisu;
+if nX~=0 && nY~=0 && nZ~=0 && debugPlots == 1
+    plotInterseccion(elementsTripleInt{1,1,1},infoPlot);
+end
 %% OUTPUTS
 plotMeshSlider(nodes, elements)
 if saveData

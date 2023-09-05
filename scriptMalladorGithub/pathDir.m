@@ -1,11 +1,11 @@
 
 dirActual = pwd;
 
-str1=[dirActual '\funciones\'];
+str1=[dirActual '/funciones/'];
 addpath(str1);
-str2=[dirActual '\Mallas\'];
+str2=[dirActual '/Mallas/'];
 addpath(str2);
 
-str3 = [mainFolder '\Mallas read data (.mat)\'];
+str3 = [mainFolder '/Mallas read data (.mat)/'];
 
 direccionGuardado = str3;
