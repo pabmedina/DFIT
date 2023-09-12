@@ -36,6 +36,15 @@ switch dataRead
         resultFolder6 = 'DFIT_WIplusDFNs_permBuffKappa100ISIP4\'; % a la corrida base + el kappaDFN = 100 le aumentamos el SRV en funcion del invariante. (ImproveFactor = 1e6)
         resultFolder7 = 'DFIT_WIplusDFNs_permBuffKappa100ISIP5ReStartBilineal\'; % a la corrida base + el kappaDFN = 100 le aumentamos el SRV en funcion del invariante. (ImproveFactor = 2.5e6)
         resultFolder8 = 'DFIT_WIplusDFNs_permBuffKappa100ISIP6\'; % a la corrida base + el kappaDFN = 100 le aumentamos el SRV en funcion del invariante. (ImproveFactor = 5e6)
+        resultFolder9 = 'DFIT_WIplusDFNs_permNerfFractSensivity1\';
+        resultFolder10 = 'DFIT_WIplusDFNs_permNerfFractSensivityMiniDFNs0\';
+        resultFolder11 = 'DFIT_WIplusDFNs_permNerfFractSensivityMiniDFNs1\';
+        resultFolder12 = 'DFIT_WIplusDFNs_permNerfFractSensivityMiniDFNs3\';
+        resultFolder13 = 'DFIT_WIplusDFNs_permNerfFractSensivity5\';
+
+        
+        
+%         resultFolder10 = 'DFIT_WIplusDFNs_permNerfFractSensivity2\';
 end
 
 % resultFolder1 = 'DFIT_redDFN_v1\';
@@ -47,7 +56,9 @@ result{1} = resultFolder1; result{2} = resultFolder2;
 result{3} = resultFolder3; result{4} = resultFolder4; 
 result{5} = resultFolder5; result{6} = resultFolder6; 
 result{7} = resultFolder7; result{8} = resultFolder8;
-
+result{9} = resultFolder9; result{10} = resultFolder10;
+result{11} = resultFolder11; result{12} = resultFolder12;
+result{13} = resultFolder13; 
 % result = [ resultFolder1 ; resultFolder2 ; resultFolder3 ; resultFolder4];
 
 addpath([resultsFolder, resultFolder1])
@@ -58,10 +69,15 @@ addpath([resultsFolder, resultFolder5])
 addpath([resultsFolder, resultFolder6])
 addpath([resultsFolder, resultFolder7])
 addpath([resultsFolder, resultFolder8])
+addpath([resultsFolder, resultFolder9])
+addpath([resultsFolder, resultFolder10])
+addpath([resultsFolder, resultFolder11])
+addpath([resultsFolder, resultFolder12])
+addpath([resultsFolder, resultFolder13])
 figure; hold on
 %% estandar
 p = {numberOfFolders};
-for i=1:size(result,2)
+for i=11:12%9:size(result,2)
     
 %     load(['resultadosFinISIP_' result{i}(1:end-1) '.mat'],'iTime','temporalProperties','paramDiscEle','bombaProperties','dTimes')
     load(['resultadosCorrida_' result{i}(1:end-1) '.mat'],'iTime','temporalProperties','paramDiscEle','bombaProperties','dTimes')
@@ -148,5 +164,7 @@ else
     d = plot(tiempoCorregidoAll,presionCrudaAll,'m','lineWidth',2);
 end
 title(['ISIP DFNs vs Data' dataRead])
-legend([p{1} p{2} p{3} p{4} p{5} p{6} p{7} p{8} d ],'Base',['Base' dataRead],[dataRead 'f=1e3'],[dataRead 'f=1e4'],[dataRead 'f=1e5'],[dataRead 'f=1e6'],[dataRead 'f=2.5e6'],[dataRead 'f=5e6'],'DATA1031h')
+legend([p{9} p{10} p{11} p{12} p{13}  d ],'kappa bajo','miniDFNS1' ,'miniDFNS2' ,'miniDFNS3' ,'kappa alto','DATA1031h')
+
+% legend([p{7} p{9} p{13}  d ],'Base',['Base' dataRead],[dataRead 'f=1e3'],[dataRead 'f=1e4'],[dataRead 'f=1e5'],[dataRead 'f=1e6'],[dataRead 'f=2.5e6'],[dataRead 'f=5e6'],'DATA1031h')
 

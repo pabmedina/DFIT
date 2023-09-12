@@ -3,7 +3,7 @@
 %-------------------------------------------------------------------------%
 indiceTiempo = temporalProperties.drainTimes+1:temporalProperties.nTimes;
 tiempo = cumsum(temporalProperties.deltaTs(indiceTiempo));
-iTimeEspecifico = 15;%sum(tiempo <= tiempoTensiones) + temporalProperties.drainTimes;
+iTimeEspecifico = 5;%sum(tiempo <= tiempoTensiones) + temporalProperties.drainTimes;
 %- Tensiones. (Solo esta calculando para un tiempo en particular)
 unod = pGaussParam.upg; 
 stressPG = zeros(paramDiscEle.nel,paramDiscEle.nNodEl,6);%cell(nnodel,size(constitutivas{1},1),nel,length(Time));
