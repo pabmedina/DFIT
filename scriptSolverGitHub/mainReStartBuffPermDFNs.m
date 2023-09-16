@@ -8,7 +8,7 @@ nKappa = size(kappa,1);
 % nCase = size(factorImprove,1);
 
 % for iCase = 6
-for iKappa = 1:nKappa
-    mainDfit_rev082023PMFractSensisivity
+for iKappa = 1:2
+    mainDfit_rev092023_4DFNs_FractSensisivity
 end
 % end

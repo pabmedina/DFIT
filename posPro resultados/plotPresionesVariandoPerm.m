@@ -41,7 +41,9 @@ switch dataRead
         resultFolder11 = 'DFIT_WIplusDFNs_permNerfFractSensivityMiniDFNs1\';
         resultFolder12 = 'DFIT_WIplusDFNs_permNerfFractSensivityMiniDFNs3\';
         resultFolder13 = 'DFIT_WIplusDFNs_permNerfFractSensivity5\';
-
+        resultFolder14 = 'DFIT_WIplusDFNs_permBuffFractSensivityMiniDFNs4DFNs1\';
+        resultFolder15 = 'DFIT_WIplusDFNs_permBuffFractSensivityMiniDFNs4DFNs2\';
+        resultFolder16 = 'DFIT_WIplusDFNs_permBuffFractSensivityMiniDFNs4DFNs5\';
         
         
 %         resultFolder10 = 'DFIT_WIplusDFNs_permNerfFractSensivity2\';
@@ -58,7 +60,8 @@ result{5} = resultFolder5; result{6} = resultFolder6;
 result{7} = resultFolder7; result{8} = resultFolder8;
 result{9} = resultFolder9; result{10} = resultFolder10;
 result{11} = resultFolder11; result{12} = resultFolder12;
-result{13} = resultFolder13; 
+result{13} = resultFolder13;  result{14} = resultFolder14; 
+result{15} = resultFolder15;  result{16} = resultFolder16; 
 % result = [ resultFolder1 ; resultFolder2 ; resultFolder3 ; resultFolder4];
 
 addpath([resultsFolder, resultFolder1])
@@ -74,10 +77,13 @@ addpath([resultsFolder, resultFolder10])
 addpath([resultsFolder, resultFolder11])
 addpath([resultsFolder, resultFolder12])
 addpath([resultsFolder, resultFolder13])
+addpath([resultsFolder, resultFolder14])
+addpath([resultsFolder, resultFolder15])
+addpath([resultsFolder, resultFolder16])
 figure; hold on
 %% estandar
 p = {numberOfFolders};
-for i=11:12%9:size(result,2)
+for i=11:size(result,2)
     
 %     load(['resultadosFinISIP_' result{i}(1:end-1) '.mat'],'iTime','temporalProperties','paramDiscEle','bombaProperties','dTimes')
     load(['resultadosCorrida_' result{i}(1:end-1) '.mat'],'iTime','temporalProperties','paramDiscEle','bombaProperties','dTimes')
@@ -164,7 +170,8 @@ else
     d = plot(tiempoCorregidoAll,presionCrudaAll,'m','lineWidth',2);
 end
 title(['ISIP DFNs vs Data' dataRead])
-legend([p{9} p{10} p{11} p{12} p{13}  d ],'kappa bajo','miniDFNS1' ,'miniDFNS2' ,'miniDFNS3' ,'kappa alto','DATA1031h')
-
+legend([ p{11} p{12} p{13} p{14} p{15} p{16}  d ],'miniDFNS2' ,'miniDFNS3' ,'kappa alto','mini4DFNS1','mini4DFNS2','mini4DFNS3','DATA1031h')
+grid minor
+xlim([50 200])
 % legend([p{7} p{9} p{13}  d ],'Base',['Base' dataRead],[dataRead 'f=1e3'],[dataRead 'f=1e4'],[dataRead 'f=1e5'],[dataRead 'f=1e6'],[dataRead 'f=2.5e6'],[dataRead 'f=5e6'],'DATA1031h')
 

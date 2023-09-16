@@ -3,9 +3,9 @@ clearvars -except kappa nCase iCase iKappa nKappa factorImprove
 set(0,'DefaultFigureWindowStyle','docked');
 mainFolder = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\';
 
-numeroDeCaso = iKappa;%5
+numeroDeCaso = 5%5
 caseName = 'WIplusDFNs'; %'weakInterf'; %'noFeatures'; %'tripleInts';%
-casePerm = 'permNerf'; %'permBuff';%
+casePerm = 'permBuff';%'permNerf'; %
 
 setBiot = 0.7; setPropante = true;
 poroElasticity = true; checkPlots = false; isipKC = true; 
@@ -15,9 +15,9 @@ meshCase = 'DFN'; %'WI';%'DFIT';%
 keyPermeador = false; % este flag me parece que hay que sacarlo de aca. Solo puede servir con reStart
 activadorDFN = false; % este flag me parece que hay que sacarlo de aca
 
-kappa_DFN = kappa(iKappa); % para definir la permeabilidad de dfn a mano
+kappa_DFN =  1e-6; % para definir la permeabilidad de dfn a mano
 
-KeyInicioIsip=true;
+KeyInicioIsip = true;
 wantBuffPermeability = true; % false: la permeabilidad no se altera con el campo de tensiones de la etapa de fractura.
 permFactor= 2.5e6;%2.5e3;
 
@@ -33,10 +33,10 @@ pathAdderV2
 % direccionGuardado = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\Resultados de corridas (.mat)\';   %Dejo ambos directorios, ir comentando segun quien la use 
 direccionGuardado = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\Resultados de corridas (.mat)\'; 
 % Direccion donde se guarda la informacion.
-nombreCorrida     = ['DFIT_' caseName '_' casePerm 'FractSensivityMiniDFNs' num2str(numeroDeCaso) ]; % Nombre de la corrida. La corrida se guarda en la carpeta "Resultado de corridas" en una subcarpeta con este nombre.
+nombreCorrida     = ['DFIT_' caseName '_' casePerm 'FractSensivityMiniDFNs' '4DFNs' num2str(numeroDeCaso) ]; % Nombre de la corrida. La corrida se guarda en la carpeta "Resultado de corridas" en una subcarpeta con este nombre.
 
 cargaDatos     = 'load'; % Forma en la que se cargan las propiedades de entrada. "load" "test" "default" "change".
-archivoLectura = 'DFITredDFN_rev082023CasoFractura.txt';%'DFITredDFN_rev082023.txt';%'DFITredDFN_rev082023TesterMain.txt';%'DFIT_rev082023_WI092023.txt';%'DFIT_rev082023_base092023.txt'; %
+archivoLectura = 'DFITred4DFN_rev092023CasoFractura.txt';%'DFITredDFN_rev082023CasoFractura.txt';%'DFITredDFN_rev082023.txt';%'DFITredDFN_rev082023TesterMain.txt';%'DFIT_rev082023_WI092023.txt';%'DFIT_rev082023_base092023.txt'; %
 
 tSaveParcial   = []; iSaveParcial = 1; % Guardado de resultados parciales durante la corrida. Colocar los tiempos en los cuales se quiere guardar algun resultado parcial.
 
@@ -76,9 +76,9 @@ meshInfo = meshVerification(meshInfo);
 if ~keyAgusCheck && strcmpi(meshCase,'DFN')
     tolFind = 1e-3;
     nodesInt = meshInfo.nodesInt; % este parche hay que arreglarlo. Es un tema de nombres
-    nodTripleEncuentro = false(size(meshInfo.nodes,1),size(nodesInt.triplesAll,1));
-    for i = 1:size(nodesInt.triplesAll,1)
-        xInput1 = meshInfo.nodes(nodesInt.triplesAll(i),1); yInput1 = meshInfo.nodes(nodesInt.triplesAll(i),2); zInput1 =  meshInfo.nodes(nodesInt.triplesAll(i),3);
+    nodTripleEncuentro = false(size(meshInfo.nodes,1),size(meshInfo.nodesInt.Triples,1));
+    for i = 1:size(meshInfo.nodesInt.Triples,1)
+        xInput1 = meshInfo.nodes(meshInfo.nodesInt.Triples(i),1); yInput1 = meshInfo.nodes(meshInfo.nodesInt.Triples(i),2); zInput1 =  meshInfo.nodes(meshInfo.nodesInt.Triples(i),3);
         nodTripleEncuentro(:,i) = findTriple(meshInfo,xInput1,yInput1,zInput1,tolFind);
         
     end
@@ -94,15 +94,15 @@ if ~keyAgusCheck && strcmpi(meshCase,'DFN')
     elFluidoElementBool_X = false(size(meshInfo.cohesivos.elements,1),1);
     for j = 1:size(meshInfo.cohesivos.elements,1)
         cohesiveName = meshInfo.cohesivos.name(j);
-        if strcmpi(cohesiveName,'X') 
+        if strcmpi(cohesiveName,'X1')||strcmpi(cohesiveName,'X3')
             elFluidoElementBool_X(j) = true;
         end
     end
     elFluidoElementID_X = find(elFluidoElementBool_X); 
     
     elFluidoElementsBool = false(size(meshInfo.elementsFluidos.elements,1),1);
-    elFluidoElementsBool(elFluidoElementID_X,1) = true;
-    elFluidoElementsBool(elFluidoElementID,1) = true;
+    elFluidoElementsBool(elFluidoElementBool_X,1) = true;
+%     elFluidoElementsBool(elFluidoElementID,1) = true;
 %     allFluidElementsID = unique(find(elFluidoElementsBool)); % aca tengo el ID de todos los elementos de la triple interseccion y ademas de las DFNS
     yFilterInf = 2.8e4; yFilterSup = 3.2e4; 
     zFilterInf = 3.2e4; zFilterSup = 3.6e4;

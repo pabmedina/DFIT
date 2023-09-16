@@ -22,7 +22,7 @@ for iElement = 1:nElements
     eleCoordZ = nodes(eleFracNodes(iElement,:), 3);
     
     if all(eleCoordY >= yLim(1)) && all(eleCoordY <= yLim(2)) && ...
-            all(eleCoordZ >= zLim(1)) && all(eleCoordZ <= zLim(2)) && strcmpi(cohesivos.name(1),'X')
+            all(eleCoordZ >= zLim(1)) && all(eleCoordZ <= zLim(2)) && (strcmpi(cohesivos.name(iElement),'X1')||strcmpi(cohesivos.name(iElement),'X3'))
                 
         filtered(iElement,:) = eleFrac(iElement,:);
     end

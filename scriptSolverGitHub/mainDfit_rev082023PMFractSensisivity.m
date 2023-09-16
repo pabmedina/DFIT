@@ -403,9 +403,9 @@ while algorithmProperties.elapsedTime <= temporalProperties.tiempoTotalCorrida
     % Parte adaptada del codigo de multiples fracturas a este. Poreso
     % hay referencias a muchas fracturas y otros comentarios al
     % respecto.
-        
+    
     if algorithmProperties.elapsedTime >= temporalProperties.tInicioISIP && iProp == 1 && strcmpi(propanteProperties.Key,'Y')
-        iProp = 0;        
+        iProp = 0;
         % Identificacion de cohesivos de fracturas que finalizaron.
         cohesivosVar                             = (1:size(meshInfo.cohesivos.elements,1))'; % Elementos a los cuales hay que cambiarles las propiedades.
         meshInfo.cohesivos.dN0(cohesivosVar,:)   = ones(numel(cohesivosVar),4); % Se cambia la separacion normal para que no se rompan mas cohesivos.
@@ -425,16 +425,16 @@ while algorithmProperties.elapsedTime <= temporalProperties.tiempoTotalCorrida
         %KCGap - KCPropante
         displacements                      = reshape(dTimes(1:paramDiscEle.nDofTot_U,iTime),3,[])';
         [nodosDesplazados,aperturasNormal] = getNodosDesplazados2(meshInfo.nodes,propantesVar,meshInfo.cohesivos,propanteProperties,meshInfo.cohesivos.dNCalculado); % No usar separacion promedio.
-
-       
+        
+        
         nodesEle = zeros(paramDiscEle.nNodEl,paramDiscEle.nDofNod,nPropantesVar);
         col      = cell(nPropantesVar,1);
         row      = cell(nPropantesVar,1);
-   
+        
         for iEle = 1:nPropantesVar
             col{iEle}          = repmat(propantesH8Var(iEle,:)',1,paramDiscEle.nNodEl);
             row{iEle}          = col{iEle}';
-            nodesEle(:,:,iEle) = nodosDesplazados{iEle}; 
+            nodesEle(:,:,iEle) = nodosDesplazados{iEle};
         end
         
         KpermP = repmat(propanteProperties.kappaP*eye(3,3),1,1,8);
@@ -445,14 +445,14 @@ while algorithmProperties.elapsedTime <= temporalProperties.tiempoTotalCorrida
                 warning(['Valor de la diagonal en el KCeP negativo del elemento: ',num2str(iEle)])
             end
         end
-        KCPVar = sparse(vertcat(row{:}),vertcat(col{:}),vertcat(KCeP{:}),paramDiscEle.nDofTot_P,paramDiscEle.nDofTot_P);       
+        KCPVar = sparse(vertcat(row{:}),vertcat(col{:}),vertcat(KCeP{:}),paramDiscEle.nDofTot_P,paramDiscEle.nDofTot_P);
         KCP    = KCP + KCPVar;
         
         SeP = cell(nPropantesVar,1);
         for iEle = 1:nPropantesVar
             SeP{iEle} = poral_temporal(pGaussParam.npg,pGaussParam.upg,pGaussParam.wpg,nodesEle(:,:,iEle),paramDiscEle.nNodEl,physicalProperties.storativity.M);
         end
-        SPVar = sparse(vertcat(row{:}),vertcat(col{:}),vertcat(SeP{:}),paramDiscEle.nDofTot_P,paramDiscEle.nDofTot_P);      
+        SPVar = sparse(vertcat(row{:}),vertcat(col{:}),vertcat(SeP{:}),paramDiscEle.nDofTot_P,paramDiscEle.nDofTot_P);
         SP = SP + SPVar;
         
         % Actualizacion de valores totales.
@@ -464,7 +464,7 @@ while algorithmProperties.elapsedTime <= temporalProperties.tiempoTotalCorrida
         propanteProperties.aperturaFinal(propantesVar,:) = propanteProperties.hP*meshInfo.cohesivos.dNCalculado(propantesVar,:);
         propanteProperties.aperturaFinal(propanteProperties.aperturaFinal<0) = 0;
         deltaPropante = getDeltaForRPropante(propanteProperties,meshInfo,paramDiscEle,meshInfo.cohesivos);
-    end   
+    end
     
     
     %% ACTUALIZO VARIABLES DEL TIEMPO ANTERIOR %
@@ -535,8 +535,8 @@ while algorithmProperties.elapsedTime <= temporalProperties.tiempoTotalCorrida
             end
             %            improvePerm=physicalProperties.fluidoPoral.kappaIntShale;
            
-            Kperm        = getMatrizPermeabilidadPorElemISIP(physicalProperties,meshInfo,SRVProperties,ImproveFactor,'ISIP','N');
-            KC           = getTensor(meshInfo,paramDiscEle,pGaussParam,1,1,Kperm,'KC'); %improvePerm.*factor o solo factor arriba??
+            Kperm             = getMatrizPermeabilidadPorElemISIP(physicalProperties,meshInfo,SRVProperties,ImproveFactor,'ISIP','N');
+            KC                   = getTensor(meshInfo,paramDiscEle,pGaussParam,1,1,Kperm,'KC'); %improvePerm.*factor o solo factor arriba??
             productionKC = 0;
         
     end
