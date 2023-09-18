@@ -3,7 +3,7 @@ clearvars -except kappa nCase iCase iKappa nKappa factorImprove
 set(0,'DefaultFigureWindowStyle','docked');
 mainFolder = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\';
 
-numeroDeCaso = 2;%5
+numeroDeCaso = 3;%5
 caseName = 'WIplusDFNs'; %'weakInterf'; %'noFeatures'; %'tripleInts';%
 casePerm = 'permNerf'; %'permBuff';%
 
@@ -41,8 +41,8 @@ archivoLectura = 'DFITredDFN_rev082023CasoFractura.txt';%'DFITredDFN_rev082023.t
 tSaveParcial   = []; iSaveParcial = 1; % Guardado de resultados parciales durante la corrida. Colocar los tiempos en los cuales se quiere guardar algun resultado parcial.
 
 restart            = 'Y'; % Si no queremos arrancar la simulacion desde el principio sino que desde algun punto de partida 'Y' en caso contrario 'N'.
-direccionRestart   = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\Resultados de corridas (.mat)\DFIT_WIplusDFNs_permNerfFractSensivityMiniDFNsReStart1\';
-propiedadesRestart = 'resultadosFinISIP_DFIT_WIplusDFNs_permNerfFractSensivityMiniDFNsReStart1.mat'; %'resultadosFinFractura_DFIT_WIplusDFNs_permNerfDFNsKappaVariable1.mat';
+direccionRestart   = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\Resultados de corridas (.mat)\DFIT_WIplusDFNs_permNerfFractSensivityMiniDFNsReStart2\';
+propiedadesRestart = 'resultadosFinISIP_DFIT_WIplusDFNs_permNerfFractSensivityMiniDFNsReStart2.mat'; %'resultadosFinFractura_DFIT_WIplusDFNs_permNerfDFNsKappaVariable1.mat';
 
 % Variables del post - procesado.
 tiempoArea      = 0; % Tiempo en el que se quiere visualizar la forma del area de fractura.

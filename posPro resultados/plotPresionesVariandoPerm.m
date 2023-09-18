@@ -104,7 +104,7 @@ for i=11:size(result,2)
         end
     end
     iTimeInicioISIP = sum(tiempo<=temporalProperties.tInicioISIP)+temporalProperties.drainTimes;
-    iTimeFinalISIP = sum(tiempo<=temporalProperties.tiempoISIP)+temporalProperties.drainTimes;
+    iTimeFinalISIP = sum(tiempo<=temporalProperties.tiempoISIP);%+temporalProperties.drainTimes;
     
     pRawAll = pFEA(temporalProperties.drainTimes+1:iTimeFinalISIP)*1e6/6894.76;
     
@@ -158,18 +158,18 @@ T = readtable('Injection Test ITBA.xlsx');
 % presionCrudaISIP = table2array(T(122:430,6)); % valor de presion para los 300 segundos de declinacion 
 % 
 % tiempoCrudoAll = table2array(T(33:430,1));
-% presionCrudaAll = table2array(T(33:430,6));
+% presionCrudaAll = table2array(T(33:430,6));T
 % 
 % corrimientoEnX = -33; % en toria voy a estar corriendo 33 segundos el problema. Porque el tiempo de fractura lo reduje
 % tiempoCorregidoISIP = tiempoCrudoISIP + corrimientoEnX;
 % tiempoCorregidoAll = tiempoCrudoAll - 21;
 
 % opcion larga
-tiempoCrudoISIP = table2array(T(122:10801,1)); % 300 segundos de DFIT
-presionCrudaISIP = table2array(T(122:10801,6)); % valor de presion para los 300 segundos de declinacion 
+tiempoCrudoISIP = table2array(T(122:43221,1)); % 300 segundos de DFIT
+presionCrudaISIP = table2array(T(122:43221,6)); % valor de presion para los 300 segundos de declinacion 
 
-tiempoCrudoAll = table2array(T(33:10801,1));
-presionCrudaAll = table2array(T(33:10801,6));
+tiempoCrudoAll = table2array(T(33:43221,1));
+presionCrudaAll = table2array(T(33:43221,6));
 
 corrimientoEnX = -33; % en toria voy a estar corriendo 33 segundos el problema. Porque el tiempo de fractura lo reduje
 tiempoCorregidoISIP = tiempoCrudoISIP + corrimientoEnX;
@@ -178,7 +178,7 @@ tiempoCorregidoAll = tiempoCrudoAll - 21;
 % presionCorregida = presionCruda - deltaP_Dyn;
 % plot(tiempoCrudo,presionCruda,'g','lineWidth',2)
 if wantOnlyISIP
-    d = plot(tiempoCorregidoISIP,presionCrudaISIP,'m','lineWidth',2);
+    d = plot(tiempoCorregidoISIP,presionCrudaISIP,'m','lineWidth',2);T
 else
     d = plot(tiempoCorregidoAll,presionCrudaAll,'m','lineWidth',2);
 end
