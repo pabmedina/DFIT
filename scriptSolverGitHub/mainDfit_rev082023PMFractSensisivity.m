@@ -3,7 +3,7 @@ clearvars -except kappa nCase iCase iKappa nKappa factorImprove
 set(0,'DefaultFigureWindowStyle','docked');
 mainFolder = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\';
 
-numeroDeCaso = iKappa;%5
+numeroDeCaso = 2;%5
 caseName = 'WIplusDFNs'; %'weakInterf'; %'noFeatures'; %'tripleInts';%
 casePerm = 'permNerf'; %'permBuff';%
 
@@ -15,7 +15,7 @@ meshCase = 'DFN'; %'WI';%'DFIT';%
 keyPermeador = false; % este flag me parece que hay que sacarlo de aca. Solo puede servir con reStart
 activadorDFN = false; % este flag me parece que hay que sacarlo de aca
 
-kappa_DFN = kappa(iKappa); % para definir la permeabilidad de dfn a mano
+kappa_DFN = 1e-6; % para definir la permeabilidad de dfn a mano
 
 KeyInicioIsip=true;
 wantBuffPermeability = true; % false: la permeabilidad no se altera con el campo de tensiones de la etapa de fractura.
@@ -33,16 +33,16 @@ pathAdderV2
 % direccionGuardado = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\Resultados de corridas (.mat)\';   %Dejo ambos directorios, ir comentando segun quien la use 
 direccionGuardado = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\Resultados de corridas (.mat)\'; 
 % Direccion donde se guarda la informacion.
-nombreCorrida     = ['DFIT_' caseName '_' casePerm 'FractSensivityMiniDFNs' num2str(numeroDeCaso) ]; % Nombre de la corrida. La corrida se guarda en la carpeta "Resultado de corridas" en una subcarpeta con este nombre.
+nombreCorrida     = ['DFIT_' caseName '_' casePerm 'FractSensivityMiniDFNs' 'ReStart' num2str(numeroDeCaso) ]; % Nombre de la corrida. La corrida se guarda en la carpeta "Resultado de corridas" en una subcarpeta con este nombre.
 
 cargaDatos     = 'load'; % Forma en la que se cargan las propiedades de entrada. "load" "test" "default" "change".
 archivoLectura = 'DFITredDFN_rev082023CasoFractura.txt';%'DFITredDFN_rev082023.txt';%'DFITredDFN_rev082023TesterMain.txt';%'DFIT_rev082023_WI092023.txt';%'DFIT_rev082023_base092023.txt'; %
 
 tSaveParcial   = []; iSaveParcial = 1; % Guardado de resultados parciales durante la corrida. Colocar los tiempos en los cuales se quiere guardar algun resultado parcial.
 
-restart            = 'N'; % Si no queremos arrancar la simulacion desde el principio sino que desde algun punto de partida 'Y' en caso contrario 'N'.
-direccionRestart   = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\Resultados de corridas (.mat)\DFIT_WIplusDFNs_permBuffKappa100ISIP5\';
-propiedadesRestart = 'resultadosFinISIP_DFIT_WIplusDFNs_permBuffKappa100ISIP5.mat'; %'resultadosFinFractura_DFIT_WIplusDFNs_permNerfDFNsKappaVariable1.mat';
+restart            = 'Y'; % Si no queremos arrancar la simulacion desde el principio sino que desde algun punto de partida 'Y' en caso contrario 'N'.
+direccionRestart   = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\Resultados de corridas (.mat)\DFIT_WIplusDFNs_permNerfFractSensivityMiniDFNsReStart1\';
+propiedadesRestart = 'resultadosFinISIP_DFIT_WIplusDFNs_permNerfFractSensivityMiniDFNsReStart1.mat'; %'resultadosFinFractura_DFIT_WIplusDFNs_permNerfDFNsKappaVariable1.mat';
 
 % Variables del post - procesado.
 tiempoArea      = 0; % Tiempo en el que se quiere visualizar la forma del area de fractura.
@@ -107,7 +107,7 @@ if ~keyAgusCheck && strcmpi(meshCase,'DFN')
     yFilterInf = 2.8e4; yFilterSup = 3.2e4; 
     zFilterInf = 3.2e4; zFilterSup = 3.6e4;
     yFilter = [yFilterInf yFilterSup];  zFilter = [zFilterInf zFilterSup];
-    allFluidElementsIDFilter = elementsFilter(meshInfo.cohesivos, meshInfo.cohesivos.name, meshInfo.nodes, yFilter, zFilter);
+    allFluidElementsIDFilter = elementsFilterEdit(meshInfo.cohesivos, meshInfo.cohesivos.name, meshInfo.nodes, yFilter, zFilter);
     allFluidElementsBool = allFluidElementsIDFilter & elFluidoElementsBool;
     elFluidoElementID_X = find(allFluidElementsBool); 
 %     allFluidElementsID = unique(find(allFluidElementsBool));

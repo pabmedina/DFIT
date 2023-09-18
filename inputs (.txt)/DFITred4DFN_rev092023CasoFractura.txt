@@ -88,7 +88,7 @@ deltaTMax = 2.5
 
 tiempoISIP = 100
 deltaTISIP = 2
-tiempoProduccion = 10
+tiempoProduccion = 5
 deltaTProduccionMax = 2
 
 ---------------------------------------------------------------------------

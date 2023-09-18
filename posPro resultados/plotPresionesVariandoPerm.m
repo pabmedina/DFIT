@@ -38,7 +38,7 @@ switch dataRead
         resultFolder8 = 'DFIT_WIplusDFNs_permBuffKappa100ISIP6\'; % a la corrida base + el kappaDFN = 100 le aumentamos el SRV en funcion del invariante. (ImproveFactor = 5e6)
         resultFolder9 = 'DFIT_WIplusDFNs_permNerfFractSensivity1\';
         resultFolder10 = 'DFIT_WIplusDFNs_permNerfFractSensivityMiniDFNs0\';
-        resultFolder11 = 'DFIT_WIplusDFNs_permNerfFractSensivityMiniDFNs1\';
+        resultFolder11 = 'DFIT_WIplusDFNs_permNerfFractSensivityMiniDFNsReStart2\';
         resultFolder12 = 'DFIT_WIplusDFNs_permNerfFractSensivityMiniDFNs3\';
         resultFolder13 = 'DFIT_WIplusDFNs_permNerfFractSensivity5\';
         resultFolder14 = 'DFIT_WIplusDFNs_permBuffFractSensivityMiniDFNs4DFNs1\';
@@ -104,9 +104,10 @@ for i=11:size(result,2)
         end
     end
     iTimeInicioISIP = sum(tiempo<=temporalProperties.tInicioISIP)+temporalProperties.drainTimes;
-    iTimeFinalISIP = sum(tiempo<=temporalProperties.tFinalISIP)+temporalProperties.drainTimes;
+    iTimeFinalISIP = sum(tiempo<=temporalProperties.tiempoISIP)+temporalProperties.drainTimes;
     
     pRawAll = pFEA(temporalProperties.drainTimes+1:iTimeFinalISIP)*1e6/6894.76;
+    
     pCorregidaAll = pFEA(temporalProperties.drainTimes+1:iTimeFinalISIP)*1e6/6894.76 + deltaP_Dyn;
     
     pRawISIP = pFEA(iTimeInicioISIP:iTimeFinalISIP,1)*1e6/6894.76;
@@ -152,11 +153,23 @@ end
 
 T = readtable('Injection Test ITBA.xlsx');
 
-tiempoCrudoISIP = table2array(T(122:430,1)); % 300 segundos de DFIT
-presionCrudaISIP = table2array(T(122:430,6)); % valor de presion para los 300 segundos de declinacion 
+% % opcion corta
+% tiempoCrudoISIP = table2array(T(122:430,1)); % 300 segundos de DFIT
+% presionCrudaISIP = table2array(T(122:430,6)); % valor de presion para los 300 segundos de declinacion 
+% 
+% tiempoCrudoAll = table2array(T(33:430,1));
+% presionCrudaAll = table2array(T(33:430,6));
+% 
+% corrimientoEnX = -33; % en toria voy a estar corriendo 33 segundos el problema. Porque el tiempo de fractura lo reduje
+% tiempoCorregidoISIP = tiempoCrudoISIP + corrimientoEnX;
+% tiempoCorregidoAll = tiempoCrudoAll - 21;
 
-tiempoCrudoAll = table2array(T(33:430,1));
-presionCrudaAll = table2array(T(33:430,6));
+% opcion larga
+tiempoCrudoISIP = table2array(T(122:10801,1)); % 300 segundos de DFIT
+presionCrudaISIP = table2array(T(122:10801,6)); % valor de presion para los 300 segundos de declinacion 
+
+tiempoCrudoAll = table2array(T(33:10801,1));
+presionCrudaAll = table2array(T(33:10801,6));
 
 corrimientoEnX = -33; % en toria voy a estar corriendo 33 segundos el problema. Porque el tiempo de fractura lo reduje
 tiempoCorregidoISIP = tiempoCrudoISIP + corrimientoEnX;
