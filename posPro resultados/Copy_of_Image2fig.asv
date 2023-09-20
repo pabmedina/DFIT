@@ -1,4 +1,4 @@
-clc, clear all
+clc, clear all, close all
 imagen = imread('graficoSOLOLimpio.png'); 
 
 canal_rojo = imagen(:,:,1);
@@ -6,13 +6,15 @@ canal_verde = imagen(:,:,2);
 canal_azul = imagen(:,:,3);
 
 
-umbral_rojo = 180; 
-mascara_roja = (canal_rojo > umbral_rojo) & (canal_verde < umbral_rojo) & (canal_azul < umbral_rojo);
+umbral_verde = 100; 
+umbral_rojo = 50;
+umbral_azul = 50;
+mascara_verde = (canal_verde > umbral_verde) & (canal_rojo < umbral_rojo) & (canal_azul < umbral_azul);
 
-region_roja = imagen;
-region_roja(repmat(~mascara_roja,[1 1 3])) = 0; 
+region_verde = imagen;
+region_verde(repmat(~mascara_verde,[1 1 3])) = 0; 
 
-imshow(region_roja);
+imshow(region_verde);
 
 
 
