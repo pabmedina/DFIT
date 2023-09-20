@@ -86,8 +86,8 @@ deltaTdrainTimes = 1000000
 deltaT = 0.001
 deltaTMax = 2.5
 
-tiempoISIP = 12*60*60
-deltaTISIP = 100
+tiempoISIP = 300
+deltaTISIP = 2
 tiempoProduccion = 10
 deltaTProduccionMax = 2
 
@@ -150,8 +150,7 @@ NUI = 0.24
 -NUvI = NUvL
 
 ---------------------------------------------------------------------------
--Propiedades del propante: [Mpsi][][miliDarcy][%]
----------------------------------------------------------------------------
+-Propiedades del propante: [Mpsi][][miliDarcy][---------------------------------------------------------------------------
 propanteKey = N
 EPropante = 10.4
 NuPropante = 0.25

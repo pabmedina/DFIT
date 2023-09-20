@@ -1,21 +1,21 @@
 %% START %%
 clc; clear; close all;
-nameData = 'testDFN'; % Nombre del archivo de salida.
+nameData = 'test4DFN'; % Nombre del archivo de salida.
 
-saveData = false;
+saveData = true;
 debugPlots = 0;
 barrerasFlag = 0;
 DFN_flag = 1;
 
-mainFolder = '/Users/leilafraga/Documents/GitHub/DFIT/'; % el mainFolder cambia segun usuario
+mainFolder = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\'; % el mainFolder cambia segun usuario
 pathDir
 
 %% MESH PARAMETERS %%
 gap = 1e-4;
-nX = 3; nY = 1; nZ = 5; %Cantidad de fracturas en cada direccion
-DFN_ang  = 15;
+nX = 4; nY = 1; nZ = 5; %Cantidad de fracturas en cada direccion
+DFN_ang  = 0;
 
-X0 = 1e4; %Ubicacion inicial fractura normal X
+X0 = 0.6e4; %Ubicacion inicial fractura normal X
 dX = 4e3; %Distancia entre fracturas X
 
 Z0  = 24e3; %Ubicacion inicial fractura normal Z

@@ -17,7 +17,7 @@
 ---------------------------------------------------------------------------
 -Malla utilizada:
 ---------------------------------------------------------------------------
-selectedMesh = DFITredDFN.mat
+selectedMesh = test4DFN.mat
 
 ---------------------------------------------------------------------------
 -Propiedades Constitutivas: [Mpsi][mm]
@@ -86,9 +86,9 @@ deltaTdrainTimes = 1000000
 deltaT = 0.001
 deltaTMax = 2.5
 
-tiempoISIP = 12*60*60
-deltaTISIP = 100
-tiempoProduccion = 10
+tiempoISIP = 100
+deltaTISIP = 2
+tiempoProduccion = 5
 deltaTProduccionMax = 2
 
 ---------------------------------------------------------------------------

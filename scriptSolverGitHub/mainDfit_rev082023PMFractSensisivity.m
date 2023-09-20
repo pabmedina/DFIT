@@ -3,7 +3,7 @@ clearvars -except kappa nCase iCase iKappa nKappa factorImprove
 set(0,'DefaultFigureWindowStyle','docked');
 mainFolder = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\';
 
-numeroDeCaso = 1;%5
+numeroDeCaso = 3;%5
 caseName = 'WIplusDFNs'; %'weakInterf'; %'noFeatures'; %'tripleInts';%
 casePerm = 'permNerf'; %'permBuff';%
 
@@ -12,13 +12,13 @@ poroElasticity = true; checkPlots = false; isipKC = true;
 
 meshCase = 'DFN'; %'WI';%'DFIT';%
 
-keyPermeador = true;
+keyPermeador = false; % este flag me parece que hay que sacarlo de aca. Solo puede servir con reStart
 activadorDFN = false; % este flag me parece que hay que sacarlo de aca
 
-kappa_DFN = 100; % para definir la permeabilidad de dfn a mano
+kappa_DFN = 1e-6; % para definir la permeabilidad de dfn a mano
 
-KeyInicioIsip=false;
-wantBuffPermeability = false; % false: la permeabilidad no se altera con el campo de tensiones de la etapa de fractura.
+KeyInicioIsip=true;
+wantBuffPermeability = true; % false: la permeabilidad no se altera con el campo de tensiones de la etapa de fractura.
 permFactor= 2.5e6;%2.5e3;
 
 keyAgusCheck = false; factor =1;
@@ -33,21 +33,21 @@ pathAdderV2
 % direccionGuardado = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\Resultados de corridas (.mat)\';   %Dejo ambos directorios, ir comentando segun quien la use 
 direccionGuardado = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\Resultados de corridas (.mat)\'; 
 % Direccion donde se guarda la informacion.
-nombreCorrida     = ['DFIT_' caseName '_' casePerm 'FractSensivity' num2str(numeroDeCaso) ]; % Nombre de la corrida. La corrida se guarda en la carpeta "Resultado de corridas" en una subcarpeta con este nombre.
+nombreCorrida     = ['DFIT_' caseName '_' casePerm 'FractSensivityMiniDFNs' 'ReStart' num2str(numeroDeCaso) ]; % Nombre de la corrida. La corrida se guarda en la carpeta "Resultado de corridas" en una subcarpeta con este nombre.
 
 cargaDatos     = 'load'; % Forma en la que se cargan las propiedades de entrada. "load" "test" "default" "change".
 archivoLectura = 'DFITredDFN_rev082023CasoFractura.txt';%'DFITredDFN_rev082023.txt';%'DFITredDFN_rev082023TesterMain.txt';%'DFIT_rev082023_WI092023.txt';%'DFIT_rev082023_base092023.txt'; %
 
 tSaveParcial   = []; iSaveParcial = 1; % Guardado de resultados parciales durante la corrida. Colocar los tiempos en los cuales se quiere guardar algun resultado parcial.
 
-restart            = 'N'; % Si no queremos arrancar la simulacion desde el principio sino que desde algun punto de partida 'Y' en caso contrario 'N'.
-direccionRestart   = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\Resultados de corridas (.mat)\DFIT_WIplusDFNs_permBuffKappa100ISIP5\';
-propiedadesRestart = 'resultadosFinISIP_DFIT_WIplusDFNs_permBuffKappa100ISIP5.mat'; %'resultadosFinFractura_DFIT_WIplusDFNs_permNerfDFNsKappaVariable1.mat';
+restart            = 'Y'; % Si no queremos arrancar la simulacion desde el principio sino que desde algun punto de partida 'Y' en caso contrario 'N'.
+direccionRestart   = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\Resultados de corridas (.mat)\DFIT_WIplusDFNs_permNerfFractSensivityMiniDFNsReStart2\';
+propiedadesRestart = 'resultadosFinISIP_DFIT_WIplusDFNs_permNerfFractSensivityMiniDFNsReStart2.mat'; %'resultadosFinFractura_DFIT_WIplusDFNs_permNerfDFNsKappaVariable1.mat';
 
 % Variables del post - procesado.
 tiempoArea      = 0; % Tiempo en el que se quiere visualizar la forma del area de fractura.
 tiempoTensiones = 0; % Tiempo en el que se quiere visualizar las tensiones. Tiempo 0 equivale al final de los drainTimes.
-keyPlots        = true; % Para plotear graficos intermedios. Separacion normal entre caras, presion de fractura y errores de convergencia.
+keyPlots        = false; % Para plotear graficos intermedios. Separacion normal entre caras, presion de fractura y errores de convergencia.
 %%
 %-------------------------------------------------------------------------%
 %%                             PRE - PROCESO                             %%
@@ -84,6 +84,9 @@ if ~keyAgusCheck && strcmpi(meshCase,'DFN')
     end
     nodTripleEncuentro = any(nodTripleEncuentro,2);
     nodosInterseccionID = unique(find(nodTripleEncuentro));
+%     nodosInterseccionID = nodosInterseccionID((meshInfo.nodes(nodosInterseccionID,1)>17e3));
+%     nodTripleEncuentro = false(size(meshInfo.nodes,1),1);
+%     nodTripleEncuentro(nodosInterseccionID) = true;
     d = ismember(meshInfo.elementsFluidos.elements,nodosInterseccionID);
     elFluidoElementID= find(sum(d,2)>0); % aca tengo el ID de todos los elementos de fluido que rodean a los nodos de la triple interseccion
     plotMeshColo3D(meshInfo.nodes,meshInfo.elements,meshInfo.cohesivos.elements(elFluidoElementID,:),'off','off','w','r','k',1)
@@ -100,8 +103,15 @@ if ~keyAgusCheck && strcmpi(meshCase,'DFN')
     elFluidoElementsBool = false(size(meshInfo.elementsFluidos.elements,1),1);
     elFluidoElementsBool(elFluidoElementID_X,1) = true;
     elFluidoElementsBool(elFluidoElementID,1) = true;
-    allFluidElementsID = unique(find(elFluidoElementsBool)); % aca tengo el ID de todos los elementos de la triple interseccion y ademas de las DFNS
-    plotMeshColo3D(meshInfo.nodes,meshInfo.elements,meshInfo.cohesivos.elements(allFluidElementsID,:),'on','on','w','r','k',1)
+%     allFluidElementsID = unique(find(elFluidoElementsBool)); % aca tengo el ID de todos los elementos de la triple interseccion y ademas de las DFNS
+    yFilterInf = 2.8e4; yFilterSup = 3.2e4; 
+    zFilterInf = 3.2e4; zFilterSup = 3.6e4;
+    yFilter = [yFilterInf yFilterSup];  zFilter = [zFilterInf zFilterSup];
+    allFluidElementsIDFilter = elementsFilterEdit(meshInfo.cohesivos, meshInfo.cohesivos.name, meshInfo.nodes, yFilter, zFilter);
+    allFluidElementsBool = allFluidElementsIDFilter & elFluidoElementsBool;
+    elFluidoElementID_X = find(allFluidElementsBool); 
+%     allFluidElementsID = unique(find(allFluidElementsBool));
+    plotMeshColo3D(meshInfo.nodes,meshInfo.elements,meshInfo.cohesivos.elements(elFluidoElementID_X,:),'off','on','w','r','k',1)
 else
     nodTripleEncuentro = [];
 end
@@ -222,7 +232,7 @@ initialSressExtS = [physicalProperties.cargasTectonicas.ShX
                     physicalProperties.cargasTectonicas.SvZ
                     physicalProperties.cargasTectonicas.TauXY
                     physicalProperties.cargasTectonicas.TauYZ
-                    physicalProperties.cargasTectonicas.TauXZ]*0;   
+                    physicalProperties.cargasTectonicas.TauXZ];   
                 
 initialStrainExtS = [-6e-4
                      -1.5e-4
@@ -393,9 +403,9 @@ while algorithmProperties.elapsedTime <= temporalProperties.tiempoTotalCorrida
     % Parte adaptada del codigo de multiples fracturas a este. Poreso
     % hay referencias a muchas fracturas y otros comentarios al
     % respecto.
-        
+    
     if algorithmProperties.elapsedTime >= temporalProperties.tInicioISIP && iProp == 1 && strcmpi(propanteProperties.Key,'Y')
-        iProp = 0;        
+        iProp = 0;
         % Identificacion de cohesivos de fracturas que finalizaron.
         cohesivosVar                             = (1:size(meshInfo.cohesivos.elements,1))'; % Elementos a los cuales hay que cambiarles las propiedades.
         meshInfo.cohesivos.dN0(cohesivosVar,:)   = ones(numel(cohesivosVar),4); % Se cambia la separacion normal para que no se rompan mas cohesivos.
@@ -415,16 +425,16 @@ while algorithmProperties.elapsedTime <= temporalProperties.tiempoTotalCorrida
         %KCGap - KCPropante
         displacements                      = reshape(dTimes(1:paramDiscEle.nDofTot_U,iTime),3,[])';
         [nodosDesplazados,aperturasNormal] = getNodosDesplazados2(meshInfo.nodes,propantesVar,meshInfo.cohesivos,propanteProperties,meshInfo.cohesivos.dNCalculado); % No usar separacion promedio.
-
-       
+        
+        
         nodesEle = zeros(paramDiscEle.nNodEl,paramDiscEle.nDofNod,nPropantesVar);
         col      = cell(nPropantesVar,1);
         row      = cell(nPropantesVar,1);
-   
+        
         for iEle = 1:nPropantesVar
             col{iEle}          = repmat(propantesH8Var(iEle,:)',1,paramDiscEle.nNodEl);
             row{iEle}          = col{iEle}';
-            nodesEle(:,:,iEle) = nodosDesplazados{iEle}; 
+            nodesEle(:,:,iEle) = nodosDesplazados{iEle};
         end
         
         KpermP = repmat(propanteProperties.kappaP*eye(3,3),1,1,8);
@@ -435,14 +445,14 @@ while algorithmProperties.elapsedTime <= temporalProperties.tiempoTotalCorrida
                 warning(['Valor de la diagonal en el KCeP negativo del elemento: ',num2str(iEle)])
             end
         end
-        KCPVar = sparse(vertcat(row{:}),vertcat(col{:}),vertcat(KCeP{:}),paramDiscEle.nDofTot_P,paramDiscEle.nDofTot_P);       
+        KCPVar = sparse(vertcat(row{:}),vertcat(col{:}),vertcat(KCeP{:}),paramDiscEle.nDofTot_P,paramDiscEle.nDofTot_P);
         KCP    = KCP + KCPVar;
         
         SeP = cell(nPropantesVar,1);
         for iEle = 1:nPropantesVar
             SeP{iEle} = poral_temporal(pGaussParam.npg,pGaussParam.upg,pGaussParam.wpg,nodesEle(:,:,iEle),paramDiscEle.nNodEl,physicalProperties.storativity.M);
         end
-        SPVar = sparse(vertcat(row{:}),vertcat(col{:}),vertcat(SeP{:}),paramDiscEle.nDofTot_P,paramDiscEle.nDofTot_P);      
+        SPVar = sparse(vertcat(row{:}),vertcat(col{:}),vertcat(SeP{:}),paramDiscEle.nDofTot_P,paramDiscEle.nDofTot_P);
         SP = SP + SPVar;
         
         % Actualizacion de valores totales.
@@ -454,7 +464,7 @@ while algorithmProperties.elapsedTime <= temporalProperties.tiempoTotalCorrida
         propanteProperties.aperturaFinal(propantesVar,:) = propanteProperties.hP*meshInfo.cohesivos.dNCalculado(propantesVar,:);
         propanteProperties.aperturaFinal(propanteProperties.aperturaFinal<0) = 0;
         deltaPropante = getDeltaForRPropante(propanteProperties,meshInfo,paramDiscEle,meshInfo.cohesivos);
-    end   
+    end
     
     
     %% ACTUALIZO VARIABLES DEL TIEMPO ANTERIOR %
@@ -525,8 +535,8 @@ while algorithmProperties.elapsedTime <= temporalProperties.tiempoTotalCorrida
             end
             %            improvePerm=physicalProperties.fluidoPoral.kappaIntShale;
            
-            Kperm        = getMatrizPermeabilidadPorElemISIP(physicalProperties,meshInfo,SRVProperties,ImproveFactor,'ISIP','N');
-            KC           = getTensor(meshInfo,paramDiscEle,pGaussParam,1,1,Kperm,'KC'); %improvePerm.*factor o solo factor arriba??
+            Kperm             = getMatrizPermeabilidadPorElemISIP(physicalProperties,meshInfo,SRVProperties,ImproveFactor,'ISIP','N');
+            KC                   = getTensor(meshInfo,paramDiscEle,pGaussParam,1,1,Kperm,'KC'); %improvePerm.*factor o solo factor arriba??
             productionKC = 0;
         
     end
