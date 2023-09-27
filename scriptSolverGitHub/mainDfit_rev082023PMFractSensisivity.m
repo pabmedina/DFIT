@@ -511,7 +511,7 @@ while algorithmProperties.elapsedTime <= temporalProperties.tiempoTotalCorrida
         if KeyInicioIsip
             
             KeyInicioIsip=false; %% Aca vamos a generar la Curva y desp usamos esa
-            calcTensionesenInicioISIP 
+            calcTensionesenInicioISIP e
             I_ISIP = tensionHidroInicioIsip/3;
             calcTensionesenDrainTimes
             I_DrainTime = tensionHidroDrainTimes/3;
