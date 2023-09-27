@@ -3,7 +3,7 @@ clearvars -except kappa nCase iCase iKappa nKappa factorImprove
 set(0,'DefaultFigureWindowStyle','docked');
 mainFolder = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\';
 
-numeroDeCaso = 1;%5
+numeroDeCaso = 5;%5
 caseName = 'WIplusDFNs'; %'weakInterf'; %'noFeatures'; %'tripleInts';%
 casePerm = 'permBuff';%'permNerf'; %
 
@@ -40,7 +40,7 @@ archivoLectura = 'DFITredDFN_rev082023.txt';%'DFITredDFN_rev082023TesterMain.txt
 
 tSaveParcial   = []; iSaveParcial = 1; % Guardado de resultados parciales durante la corrida. Colocar los tiempos en los cuales se quiere guardar algun resultado parcial.
 
-restart            = 'N'; % Si no queremos arrancar la simulacion desde el principio sino que desde algun punto de partida 'Y' en caso contrario 'N'.
+restart            = 'Y'; % Si no queremos arrancar la simulacion desde el principio sino que desde algun punto de partida 'Y' en caso contrario 'N'.
 direccionRestart   = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\Resultados de corridas (.mat)\DFIT_WIplusDFNs_permBuffKappa100ISIP5\';
 propiedadesRestart = 'resultadosFinISIP_DFIT_WIplusDFNs_permBuffKappa100ISIP5.mat'; %'resultadosFinFractura_DFIT_WIplusDFNs_permNerfDFNsKappaVariable1.mat';
 
