@@ -1,4 +1,4 @@
-clc, clear all, close all
+
 
 load('pforGfunction.mat')
 load('tforGfunction.mat')
@@ -16,7 +16,6 @@ gT=(4/3)*((1+delta).^1.5-delta.^1.5-1);
 g0=(4/3)*((1+delta0).^1.5-delta0.^1.5-1);
 
 G=4/pi*(gT-g0);
-G=G';
 figure;hold on
 plot(G,pIsip)
 title('P en funcion de G')
@@ -25,9 +24,9 @@ pendiente=diff(pIsip) ./ diff(G);
 
 figure; hold on
 plot(G(1:end-1),pendiente)
-title('dP/dG en funcion de G')
-
 valoresY=G(1:end-1).*pendiente;
+tite('dP/dG en funcion de G')
+
 figure; hold on
 plot(G(1:end-1),valoresY)
 title('G*dp/dG en funcion de G')

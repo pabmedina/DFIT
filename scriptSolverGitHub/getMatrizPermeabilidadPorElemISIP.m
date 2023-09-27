@@ -60,6 +60,7 @@ switch type
         end
 end
 if strcmpi(key,'Y') && ~strcmpi(type,'single') % Plot para verificar los valores de permeabilidad en el dominio. 
+    KpermPlotH(KpermPlotH<4)=1;
     plotElemental(meshInfo.nodes,meshInfo.elements,KpermPlotH,'Y','Permeabilidad Sin Promediar Horizontal','x [mm]','y [mm]','z [mm]','k [mD]')
     plotElemental(meshInfo.nodes,meshInfo.elements,KpermPlotV,'Y','Permeabilidad Sin Promediar Vertical','x [mm]','y [mm]','z [mm]','k [mD]')
 end
