@@ -33,7 +33,7 @@ pathAdderV2
 % direccionGuardado = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\Resultados de corridas (.mat)\';   %Dejo ambos directorios, ir comentando segun quien la use 
 direccionGuardado = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\Resultados de corridas (.mat)\'; 
 % Direccion donde se guarda la informacion.
-nombreCorrida     = ['DFIT_' caseName '_' casePerm 'Kappa' num2str(kappa_DFN) 'ISIP' num2str(numeroDeCaso) 'ReStartBilineal' ]; % Nombre de la corrida. La corrida se guarda en la carpeta "Resultado de corridas" en una subcarpeta con este nombre.
+nombreCorrida     = ['DFIT_' caseName '_' casePerm 'Kappa' num2str(kappa_DFN) 'ISIP' num2str(numeroDeCaso) ]; % Nombre de la corrida. La corrida se guarda en la carpeta "Resultado de corridas" en una subcarpeta con este nombre.
 
 cargaDatos     = 'load'; % Forma en la que se cargan las propiedades de entrada. "load" "test" "default" "change".
 archivoLectura = 'DFITredDFN_rev082023.txt';%'DFITredDFN_rev082023TesterMain.txt';%'DFIT_rev082023_WI092023.txt';%'DFIT_rev082023_base092023.txt'; %
