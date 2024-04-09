@@ -6,13 +6,16 @@ pathAdderV3
 resultsFolder = str5;
 wantOnlyISIP = false;
 
-deltaP_Dyn = 1800-60; %Asumimos una cierta cantidad de psi
+deltaP_Dyn = 2000-60; %Asumimos una cierta cantidad de psi
 numberOfFolders = 5;
 
-dataRead = 'kappaDFN_{100}';%'kappaDFN_{0.1}';%  'DFNs';%'kappaDFN_{10}'; %'kappaDFN_{1}'; %
-resultFolder1 = 'DFIT_WIplusDFNs_permNerfDFNsKappaBase\'; % corridaBase
-
+dataRead = 'DFNs';%'virgin';%'kappaDFN_{100}';%'kappaDFN_{0.1}';%  'kappaDFN_{10}'; %'kappaDFN_{1}'; %
+% resultFolder1 = 'DFIT_WIplusDFNs_permNerfDFNsKappaBase\'; % corridaBase ----- OJO DESCOMENTAR
+resultFolder1 = 'DFIT_WIplusDFNs_permNerf\';
 switch dataRead
+    case 'virgin'
+        resultFolder2 = 'DFIT_weakInterf_permNerf\'; % corridaBase
+        resultFolder3 = 'DFIT_noFeatures_permNerf\'; % corridaBase
     case 'kappaDFN_{0.1}'
         resultFolder2 = 'DFIT_WIplusDFNs_permNerfDFNsKappaVariable1\'; % a la corridaBase le damos una permeabilidad de DFN (kappaDFN = 0.1)
         resultFolder3 = 'DFIT_WIplusDFNs_permBuffKappa0.1ISIP1\'; % a la corrida base + el kappaDFN = 0.1 le aumentamos el SRV en funcion del invariante. (ImproveFactor = 1e3)
@@ -60,33 +63,33 @@ result = {numberOfFolders};
 result{1} = resultFolder1; result{2} = resultFolder2; 
 result{3} = resultFolder3; result{4} = resultFolder4; 
 result{5} = resultFolder5; %result{6} = resultFolder6; 
-result{7} = resultFolder7; result{8} = resultFolder8;
-result{9} = resultFolder9; result{10} = resultFolder10;
-result{11} = resultFolder11; result{12} = resultFolder12;
-result{13} = resultFolder13;  result{14} = resultFolder14; 
-result{15} = resultFolder15;  result{16} = resultFolder16; 
+% result{7} = resultFolder7; result{8} = resultFolder8;
+% result{9} = resultFolder9; result{10} = resultFolder10;
+% result{11} = resultFolder11; result{12} = resultFolder12;
+% result{13} = resultFolder13;  result{14} = resultFolder14; 
+% result{15} = resultFolder15;  result{16} = resultFolder16; 
 % result = [ resultFolder1 ; resultFolder2 ; resultFolder3 ; resultFolder4];
 
 addpath([resultsFolder, resultFolder1])
 addpath([resultsFolder, resultFolder2])
 addpath([resultsFolder, resultFolder3])
-addpath([resultsFolder, resultFolder4])
-addpath([resultsFolder, resultFolder5])
-addpath([resultsFolder, resultFolder6])
-addpath([resultsFolder, resultFolder7])
-addpath([resultsFolder, resultFolder8])
-addpath([resultsFolder, resultFolder9])
-addpath([resultsFolder, resultFolder10])
-addpath([resultsFolder, resultFolder11])
-addpath([resultsFolder, resultFolder12])
-addpath([resultsFolder, resultFolder13])
-addpath([resultsFolder, resultFolder14])
-addpath([resultsFolder, resultFolder15])
-addpath([resultsFolder, resultFolder16])
+% addpath([resultsFolder, resultFolder4])
+% addpath([resultsFolder, resultFolder5])
+% addpath([resultsFolder, resultFolder6])
+% addpath([resultsFolder, resultFolder7])
+% addpath([resultsFolder, resultFolder8])
+% addpath([resultsFolder, resultFolder9])
+% addpath([resultsFolder, resultFolder10])
+% addpath([resultsFolder, resultFolder11])
+% addpath([resultsFolder, resultFolder12])
+% addpath([resultsFolder, resultFolder13])
+% addpath([resultsFolder, resultFolder14])
+% addpath([resultsFolder, resultFolder15])
+% addpath([resultsFolder, resultFolder16])
 figure; hold on
 %% estandar
 p = {numberOfFolders};
-for i=11:size(result,2)
+for i=1:size(result,2)
     
 %     load(['resultadosFinISIP_' result{i}(1:end-1) '.mat'],'iTime','temporalProperties','paramDiscEle','bombaProperties','dTimes')
     load(['resultadosCorrida_' result{i}(1:end-1) '.mat'],'iTime','temporalProperties','paramDiscEle','bombaProperties','dTimes')

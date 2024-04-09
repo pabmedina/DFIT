@@ -1,8 +1,8 @@
 %% START %%
 clc; clear; close all;
-nameData = 'test4DFN'; % Nombre del archivo de salida.
+nameData = 'testComun'; % Nombre del archivo de salida.
 
-saveData = true;
+saveData = false;
 debugPlots = 0;
 barrerasFlag = 0;
 DFN_flag = 1;
@@ -12,10 +12,10 @@ pathDir
 
 %% MESH PARAMETERS %%
 gap = 1e-4;
-nX = 4; nY = 1; nZ = 5; %Cantidad de fracturas en cada direccion
-DFN_ang  = 0;
+nX = 3; nY = 1; nZ = 5; %Cantidad de fracturas en cada direccion
+DFN_ang  = 15;
 
-X0 = 0.6e4; %Ubicacion inicial fractura normal X
+X0 = 1e4; %Ubicacion inicial fractura normal X
 dX = 4e3; %Distancia entre fracturas X
 
 Z0  = 24e3; %Ubicacion inicial fractura normal Z
@@ -1383,8 +1383,8 @@ if DFN_flag==1
     nodesFisu.coords{1,1} = nodes(nodesFisu.index{1,1},:);
     nodesFisu.coords{2,1} = nodes(nodesFisu.index{2,1},:);
     if debugPlots == 1
-    figure
-    scatter3(nodes(:,1),nodes(:,2),nodes(:,3),'k.')
+        figure
+        scatter3(nodes(:,1),nodes(:,2),nodes(:,3),'k.')
     end
     anchoX = max(nodes(:,1));
     anchoY = max(nodes(:,2));

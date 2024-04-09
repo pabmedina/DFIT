@@ -4,3 +4,5 @@
 *.zip
 posPro resultados/posProV2.m
 posPro resultados/posProV2.asv
+*.vtk
+*.0001ISIP50

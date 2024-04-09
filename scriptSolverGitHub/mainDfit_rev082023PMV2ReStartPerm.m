@@ -3,19 +3,19 @@ clearvars -except kappa nCase iCase iKappa nKappa factorImprove
 set(0,'DefaultFigureWindowStyle','docked');
 mainFolder = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\';
 
-numeroDeCaso = 1;%5
+numeroDeCaso = 50;%5
 caseName = 'WIplusDFNs'; %'weakInterf'; %'noFeatures'; %'tripleInts';%
-casePerm = 'permBuff';%'permNerf'; %
+casePerm = 'permNerf'; %'permBuff';%
 
 setBiot = 0.7; setPropante = true;
 poroElasticity = true; checkPlots = false; isipKC = true; 
 
 meshCase = 'DFN'; %'WI';%'DFIT';%
 
-keyPermeador = true;
+keyPermeador = false;
 activadorDFN = false; % este flag me parece que hay que sacarlo de aca
 
-kappa_DFN = 0.1; % para definir la permeabilidad de dfn a mano
+kappa_DFN = 1e-2; % para definir la permeabilidad de dfn a mano
 
 KeyInicioIsip=true;
 wantBuffPermeability = true; % false: la permeabilidad no se altera con el campo de tensiones de la etapa de fractura.
@@ -36,7 +36,7 @@ direccionGuardado = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\Resultados de corridas
 nombreCorrida     = ['DFIT_' caseName '_' casePerm 'Kappa' num2str(kappa_DFN) 'ISIP' num2str(numeroDeCaso) ]; % Nombre de la corrida. La corrida se guarda en la carpeta "Resultado de corridas" en una subcarpeta con este nombre.
 
 cargaDatos     = 'load'; % Forma en la que se cargan las propiedades de entrada. "load" "test" "default" "change".
-archivoLectura = 'DFITredDFN_rev082023.txt';%'DFITredDFN_rev082023TesterMain.txt';%'DFIT_rev082023_WI092023.txt';%'DFIT_rev082023_base092023.txt'; %
+archivoLectura = 'propiedades_DFIT_WIplusDFNs_permBuffKappa0.1ISIP1.txt';%'DFITredDFN_rev082023TesterMain.txt';%'DFIT_rev082023_WI092023.txt';%'DFIT_rev082023_base092023.txt'; %
 
 tSaveParcial   = []; iSaveParcial = 1; % Guardado de resultados parciales durante la corrida. Colocar los tiempos en los cuales se quiere guardar algun resultado parcial.
 
@@ -89,19 +89,35 @@ if ~keyAgusCheck && strcmpi(meshCase,'DFN')
     plotMeshColo3D(meshInfo.nodes,meshInfo.elements,meshInfo.cohesivos.elements(elFluidoElementID,:),'off','off','w','r','k',1)
     
     elFluidoElementBool_X = false(size(meshInfo.cohesivos.elements,1),1);
-    for j = 1:size(meshInfo.cohesivos.elements,1)
-        cohesiveName = meshInfo.cohesivos.name(j);
-        if strcmpi(cohesiveName,'X') 
-            elFluidoElementBool_X(j) = true;
-        end
-    end
-    elFluidoElementID_X = find(elFluidoElementBool_X); 
+%     for j = 1:size(meshInfo.cohesivos.elements,1)
+%         cohesiveName = meshInfo.cohesivos.name(j);
+%         if strcmpi(cohesiveName,'X') 
+%             elFluidoElementBool_X(j) = true;
+%         end
+%     end
+%     elFluidoElementID_X = find(elFluidoElementBool_X); 
     
-    elFluidoElementsBool = false(size(meshInfo.elementsFluidos.elements,1),1);
-    elFluidoElementsBool(elFluidoElementID_X,1) = true;
-    elFluidoElementsBool(elFluidoElementID,1) = true;
-    allFluidElementsID = unique(find(elFluidoElementsBool)); % aca tengo el ID de todos los elementos de la triple interseccion y ademas de las DFNS
-    plotMeshColo3D(meshInfo.nodes,meshInfo.elements,meshInfo.cohesivos.elements(allFluidElementsID,:),'on','on','w','r','k',1)
+    arrayVec_Y1 = [28 32 32 36 36 32 32 34 34 32 32 28 28 26 26 28 28 24 24 28 28]*1e3;
+    arrayVec_Z1 = [24 24 28 28 32 32 36 36 38 38 44 44 38 38 36 36 32 32 28 28 24]*1e3;
+    arrayInt1 = 1:150;
+    boolId_1 = dfnID(meshInfo,arrayVec_Y1,arrayVec_Z1,arrayInt1);
+    
+    arrayVec_Y2 = [28 32 34 34 32 32 28 28 26 26 28 28]*1e3;
+    arrayVec_Z2 = [24 24 26 30 30 34 34 30 30 26 26 24]*1e3;
+    arrayInt2 = 151:300;
+    boolId_2 = dfnID(meshInfo,arrayVec_Y2,arrayVec_Z2,arrayInt2);
+    
+    arrayVec_Y3 = [28 32 32 36 36 32 32 28 28 24 24 28 28]*1e3;
+    arrayVec_Z3 = [30 30 34 34 36 36 38 38 36 36 34 34 30]*1e3;
+    arrayInt3 = 301:450;
+    boolId_3 = dfnID(meshInfo,arrayVec_Y3,arrayVec_Z3,arrayInt3);
+    
+    elFluidoElementBool_X(boolId_1 | boolId_2 | boolId_3,1 ) = true;
+%     elFluidoElementsBool = false(size(meshInfo.elementsFluidos.elements,1),1);
+%     elFluidoElementsBool(elFluidoElementID_X,1) = true;
+    elFluidoElementID_X = find(elFluidoElementBool_X); 
+%     allFluidElementsID = unique(find(elFluidoElementsBool)); % aca tengo el ID de todos los elementos de la triple interseccion y ademas de las DFNS
+    plotMeshColo3D(meshInfo.nodes,meshInfo.elements,meshInfo.cohesivos.elements(elFluidoElementID_X,:),'off','off','w','b','k',1)
 else
     nodTripleEncuentro = [];
 end

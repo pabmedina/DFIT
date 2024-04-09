@@ -9,10 +9,12 @@ wantOnlyISIP = false;
 deltaP_Dyn = 1800-60; %Asumimos una cierta cantidad de psi
 numberOfFolders = 5;
 
-dataRead = 'kappaDFN_{100}';%'kappaDFN_{10}'; %'kappaDFN_{1}'; %'kappaDFN_{0.1}';%  
+dataRead = 'kappaDFN_{100}';%'kappaDFN_{0.1}';%  'DFNs';%'kappaDFN_{10}'; %'kappaDFN_{1}'; %
 resultFolder1 = 'DFIT_WIplusDFNs_permNerfDFNsKappaBase\'; % corridaBase
-
+resultFolder1 = 'DFIT_WIplusDFNs_permNerf\';
 switch dataRead
+    case 'virgin'
+        resultFolder2 = 'DFIT_WIplusDFNs_permNerfDFNsKappaBase\'; % corridaBase
     case 'kappaDFN_{0.1}'
         resultFolder2 = 'DFIT_WIplusDFNs_permNerfDFNsKappaVariable1\'; % a la corridaBase le damos una permeabilidad de DFN (kappaDFN = 0.1)
         resultFolder3 = 'DFIT_WIplusDFNs_permBuffKappa0.1ISIP1\'; % a la corrida base + el kappaDFN = 0.1 le aumentamos el SRV en funcion del invariante. (ImproveFactor = 1e3)
@@ -38,15 +40,17 @@ switch dataRead
         resultFolder8 = 'DFIT_WIplusDFNs_permBuffKappa100ISIP6\'; % a la corrida base + el kappaDFN = 100 le aumentamos el SRV en funcion del invariante. (ImproveFactor = 5e6)
         resultFolder9 = 'DFIT_WIplusDFNs_permNerfFractSensivity1\';
         resultFolder10 = 'DFIT_WIplusDFNs_permNerfFractSensivityMiniDFNs0\';
-        resultFolder11 = 'DFIT_WIplusDFNs_permNerfFractSensivityMiniDFNsReStart2\';
+        resultFolder11 = 'DFIT_WIplusDFNs_permNerfFractSensivityMiniDFNs2\';
         resultFolder12 = 'DFIT_WIplusDFNs_permNerfFractSensivityMiniDFNs3\';
         resultFolder13 = 'DFIT_WIplusDFNs_permNerfFractSensivity5\';
         resultFolder14 = 'DFIT_WIplusDFNs_permBuffFractSensivityMiniDFNs4DFNs1\';
         resultFolder15 = 'DFIT_WIplusDFNs_permBuffFractSensivityMiniDFNs4DFNs2\';
         resultFolder16 = 'DFIT_WIplusDFNs_permBuffFractSensivityMiniDFNs4DFNs5\';
     case 'DFNs'
-        
-        
+        resultFolder2 = 'DFIT_WIplusDFNs_permNerfDFNsKappaVariable1\';
+        resultFolder3 = 'DFIT_WIplusDFNs_permNerfDFNsKappaVariable2\';
+        resultFolder4 = 'DFIT_WIplusDFNs_permNerfDFNsKappaVariable3\';
+        resultFolder5 = 'DFIT_WIplusDFNs_permNerfDFNsKappaVariable4\'; %
 %         resultFolder10 = 'DFIT_WIplusDFNs_permNerfFractSensivity2\';
 end
 
@@ -57,7 +61,7 @@ end
 result = {numberOfFolders};
 result{1} = resultFolder1; result{2} = resultFolder2; 
 result{3} = resultFolder3; result{4} = resultFolder4; 
-result{5} = resultFolder5; result{6} = resultFolder6; 
+result{5} = resultFolder5; %result{6} = resultFolder6; 
 result{7} = resultFolder7; result{8} = resultFolder8;
 result{9} = resultFolder9; result{10} = resultFolder10;
 result{11} = resultFolder11; result{12} = resultFolder12;
@@ -84,7 +88,7 @@ addpath([resultsFolder, resultFolder16])
 figure; hold on
 %% estandar
 p = {numberOfFolders};
-for i=11:size(result,2)
+for i=11%:size(result,2)
     
 %     load(['resultadosFinISIP_' result{i}(1:end-1) '.mat'],'iTime','temporalProperties','paramDiscEle','bombaProperties','dTimes')
     load(['resultadosCorrida_' result{i}(1:end-1) '.mat'],'iTime','temporalProperties','paramDiscEle','bombaProperties','dTimes')
@@ -183,9 +187,11 @@ if wantOnlyISIP
 else
     d = plot(tiempoCorregidoAll,presionCrudaAll,'m','lineWidth',2);
 end
-title(['ISIP DFNs vs Data' dataRead])
+% title(['ISIP DFNs vs Data' dataRead])
 legend([ p{11} p{12} p{13} p{14} p{15} p{16}  d ],'miniDFNS2' ,'miniDFNS3' ,'kappa alto','mini4DFNS1','mini4DFNS2','mini4DFNS3','DATA1031h')
+% legend([ p{1} p{2} p{3} p{4} p{5} d],'Base' ,'kappaDFN=0.1' ,'kappaDFN=1','kappaDFN=1','kappaDFN=100','Data1031h')
+
 grid minor
-xlim([50 200])
+xlim([40 200])
 % legend([p{7} p{9} p{13}  d ],'Base',['Base' dataRead],[dataRead 'f=1e3'],[dataRead 'f=1e4'],[dataRead 'f=1e5'],[dataRead 'f=1e6'],[dataRead 'f=2.5e6'],[dataRead 'f=5e6'],'DATA1031h')
 
