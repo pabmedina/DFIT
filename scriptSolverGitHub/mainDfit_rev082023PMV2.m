@@ -16,7 +16,7 @@ activadorDFN = false;
 
 kappa_DFN = 1; % para definir la permeabilidad de dfn a mano
 
-KeyInicioIsip=false;
+KeyInicioIsip=false;  
 wantBuffPermeability = false; % false: la permeabilidad no se altera con el campo de tensiones de la etapa de fractura.
 permFactor=1e5; keyAgusCheck = false; factor =1;
 keyCorteCohesivos= 'Y';

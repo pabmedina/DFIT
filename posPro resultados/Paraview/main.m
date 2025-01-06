@@ -115,24 +115,24 @@ end
 
 
 % incate folder outputname eg:vtkTest
-movefile mesh* vtkNoFeatures
+movefile mesh* vtNow
 %   clf
-%         subplot(1,2,1)
-%         bandplot(mat.meshInfo.cohesivos.elements,mat.meshInfo.nodes,mat.meshInfo.cohesivos.dNTimes(:,:,50))
-%         axis square
-%         view(-45,20)
-%         daspect([1 1 1])
-%         hold on
-%         %         scatter3(meshInfo.nodes(reshape(meshInfo.elementsBarra.ALL(unique(meshInfo.cohesivos.relatedEB(logical(meshInfo.cohesivos.deadFlagTimes(:,:,iTime)))),:),[],1),1),meshInfo.nodes(reshape(meshInfo.elementsBarra.ALL(unique(meshInfo.cohesivos.relatedEB(logical(meshInfo.cohesivos.deadFlagTimes(:,:,iTime)))),:),[],1),2),meshInfo.nodes(reshape(meshInfo.elementsBarra.ALL(unique(meshInfo.cohesivos.relatedEB(logical(meshInfo.cohesivos.deadFlagTimes(:,:,iTime)))),:),[],1),3),'r')
-% 
-%         title(['iTime: ',num2str(50)])
-% 
-%         subplot(1,2,2)
-%         
-%         plotColo(mat.meshInfo.nodes,mat.meshInfo.elementsFluidos.elements,fieldPressure(:,50))
-%         axis square
-%         view(-45,20)
-%         daspect([1 1 1])
-%         title(['iTime: ',num2str(50)])
-%         drawnow
+        subplot(1,2,1)
+        bandplot(mat.meshInfo.cohesivos.elements,mat.meshInfo.nodes,mat.meshInfo.cohesivos.dNTimes(:,:,50))
+        axis square
+        view(-45,20)
+        daspect([1 1 1])
+        hold on
+        %         scatter3(meshInfo.nodes(reshape(meshInfo.elementsBarra.ALL(unique(meshInfo.cohesivos.relatedEB(logical(meshInfo.cohesivos.deadFlagTimes(:,:,iTime)))),:),[],1),1),meshInfo.nodes(reshape(meshInfo.elementsBarra.ALL(unique(meshInfo.cohesivos.relatedEB(logical(meshInfo.cohesivos.deadFlagTimes(:,:,iTime)))),:),[],1),2),meshInfo.nodes(reshape(meshInfo.elementsBarra.ALL(unique(meshInfo.cohesivos.relatedEB(logical(meshInfo.cohesivos.deadFlagTimes(:,:,iTime)))),:),[],1),3),'r')
+
+       % title(['iTime: ',num2str(50)])
+
+        subplot(1,2,2)
+        
+        plotColo(mat.meshInfo.nodes,mat.meshInfo.elementsFluidos.elements,fieldPressure(:,50)*mpa2psi)
+        axis square
+        view(-45,20)
+        daspect([1 1 1])
+        %title(['iTime: ',num2str(50)])
+        drawnow
 

@@ -3,9 +3,9 @@ clc; clear; close all;
 nameData = 'testComun'; % Nombre del archivo de salida.
 
 saveData = false;
-debugPlots = 0;
+debugPlots = 1;
 barrerasFlag = 0;
-DFN_flag = 1;
+DFN_flag = 0;
 
 mainFolder = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\'; % el mainFolder cambia segun usuario
 pathDir

@@ -1,27 +1,13 @@
-clc;close all; format shortg; 
-clearvars -except kappa nCase iCase iKappa nKappa factorImprove
-set(0,'DefaultFigureWindowStyle','docked');
-mainFolder = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\';
-
-numeroDeCaso = 50;%5
-caseName = 'WIplusDFNs'; %'weakInterf'; %'noFeatures'; %'tripleInts';%
-casePerm = 'permNerf'; %'permBuff';%
+clc;close all; format shortg; set(0,'DefaultFigureWindowStyle','docked');
 
 setBiot = 0.7; setPropante = true;
 poroElasticity = true; checkPlots = false; isipKC = true; 
+meshCase = 'DFIT'; %'WI';% 'DFN';% 
+keyPermeador = false;
 
-meshCase = 'DFN'; %'WI';%'DFIT';%
-
-keyPermeador = true;
-activadorDFN = false; % este flag me parece que hay que sacarlo de aca
-
-kappa_DFN = 1e-4; % para definir la permeabilidad de dfn a mano
-
-KeyInicioIsip=true;
-wantBuffPermeability = true; % false: la permeabilidad no se altera con el campo de tensiones de la etapa de fractura.
-permFactor= 2.5e6;%2.5e3;
-
-keyAgusCheck = false; factor =1;
+KeyInicioIsip=false;
+wantBuffPermeability = false; % false: la permeabilidad no se altera con el campo de tensiones de la etapa de fractura.
+permFactor=1e5; keyAgusCheck = false; factor =1;
 keyCorteCohesivos= 'Y';
 %-------------------------------------------------------------------------%
 %% %%%%%%%%%%%%%%%%%%%       main DFIT/TShape       %%%%%%%%%%%%%%%%%%%% %%
@@ -29,20 +15,20 @@ keyCorteCohesivos= 'Y';
 %% Variables a modificar segun lo requerido en cada corrida:
 % Variables de inicio de corrida.
 guardarCorrida    = 'Y'; % Si se quiere guardar la corrida. "Y" o "N".
-pathAdderV2
+pathAdder
 % direccionGuardado = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\Resultados de corridas (.mat)\';   %Dejo ambos directorios, ir comentando segun quien la use 
 direccionGuardado = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\Resultados de corridas (.mat)\'; 
 % Direccion donde se guarda la informacion.
-nombreCorrida     = ['DFIT_' caseName '_' casePerm 'Kappa' num2str(kappa_DFN) 'ISIP' num2str(numeroDeCaso) ]; % Nombre de la corrida. La corrida se guarda en la carpeta "Resultado de corridas" en una subcarpeta con este nombre.
+nombreCorrida     = 'DFIT_base'; % Nombre de la corrida. La corrida se guarda en la carpeta "Resultado de corridas" en una subcarpeta con este nombre.
 
 cargaDatos     = 'load'; % Forma en la que se cargan las propiedades de entrada. "load" "test" "default" "change".
-archivoLectura = 'propiedades_DFIT_WIplusDFNs_permBuffKappa0.1ISIP1.txt';%'DFITredDFN_rev082023TesterMain.txt';%'DFIT_rev082023_WI092023.txt';%'DFIT_rev082023_base092023.txt'; %
+archivoLectura = 'DFIT_base.txt';%'DFIT_rev052022_WI062023CorridaCorta.txt';%'DFIT_rev052022_WI+DFN062023CorridaCorta.txt';%'Dfit_rev052022_DFIT_062023.txt'; %'Dfit_rev052022_DFIT_WItrial_062023.txt';% Nombre del archivo con las propiedades de entrada. 
 
-tSaveParcial   = []; iSaveParcial = 1; % Guardado de resultados parciales durante la corrida. Colocar los tiempos en los cuales se quiere guardar algun resultado parcial.
+tSaveParcial   = []; % Guardado de resultados parciales durante la corrida. Colocar los tiempos en los cuales se quiere guardar algun resultado parcial.
 
 restart            = 'N'; % Si no queremos arrancar la simulacion desde el principio sino que desde algun punto de partida 'Y' en caso contrario 'N'.
-direccionRestart   = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\Resultados de corridas (.mat)\DFIT_WIplusDFNs_permBuffKappa100ISIP5\';
-propiedadesRestart = 'resultadosFinISIP_DFIT_WIplusDFNs_permBuffKappa100ISIP5.mat'; %'resultadosFinFractura_DFIT_WIplusDFNs_permNerfDFNsKappaVariable1.mat';
+direccionRestart   = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\Resultados de corridas (.mat)\reStartPropagacionDFN\';
+propiedadesRestart = 'resultadosCorrida_DFIT_DFN_trialReStart.mat';
 
 % Variables del post - procesado.
 tiempoArea      = 0; % Tiempo en el que se quiere visualizar la forma del area de fractura.
@@ -73,55 +59,74 @@ end
 % Verificacion de malla.
 meshInfo = meshVerification(meshInfo);
 
+
 if ~keyAgusCheck && strcmpi(meshCase,'DFN')
+    % esta parte la tiene que arreglar Agus con el mallador
+    % colocamos una keyAgusCheck = false;
+    
+    %     xInput1 = 1e4; yInput1 = 3e4; zInput1 = 3.4e4; tolFind = 1e-4;
+    %     nodTripleEncuentro = findTriple(meshInfo,xInput1,yInput1,zInput1,tolFind);
+    %     c = ismember(meshInfo.cohesivos.elements,find(nodTripleEncuentro));
+    %     elCohesiveGathering = find(sum(c,2)>0);
+    %
+    %
+    %     xInput2 = 2e4; yInput2 = 3e4; zInput2 = 3.4e4;
+    %     nodEncuentroYZ = findDoble(meshInfo,xInput2,yInput2,zInput2,tolFind);
+    %
+    %     xInput3 = 1e4; yInput3 = 3e4; zInput1_3 = 2e4; zInput2_3 =5e4;
+    %     nodEncuentroXY = findDobleBis(meshInfo,xInput3,yInput3,zInput1_3,zInput2_3,tolFind);
+    %
+    %     nodosInterseccionID = [find(nodEncuentroXY) ; find(nodEncuentroYZ)];
+    %     nodosInterseccionID = unique(nodosInterseccionID);
+    %     aa = ismember(meshInfo.elementsFluidos.elements,nodosInterseccionID);
+    %     elCohesiveElementID = find(sum(aa,2)>0);
+    %
+    %
+    %     nodosFluidosID = unique(meshInfo.elementsFluidos.elements);
+    %     nodBool = false(size(meshInfo.nodes,1),1);
+    %     nodBool(nodosFluidosID) = true;
+    %
+    %     % esta parte la tiene que arreglar Agus con el mallador
+    %     % colocamos una keyAgusCheck = false;
+    %
+    %     xInput1 = []; yInput1 = []; zInput1 = 3.4e4; tolFind = 1e-4;
+    %     nodFactura_Z = findTriple(meshInfo,xInput1,yInput1,zInput1,tolFind);
+    %     nodFracturaId_Z = unique(meshInfo.elementsFluidos.elements(ismember(meshInfo.elementsFluidos.elements,find(nodFactura_Z))));
+    %
+    %     xInput1 = []; yInput1 = 3e4; zInput1 = []; tolFind = 1e-4;
+    %     nodFactura_Y = findTriple(meshInfo,xInput1,yInput1,zInput1,tolFind);
+    %     nodFracturaId_Y = unique(meshInfo.elementsFluidos.elements(ismember(meshInfo.elementsFluidos.elements,find(nodFactura_Y))));
+    %
+    %
+    %     nodBoolIntYX = false(size(meshInfo.nodes,1),1);
+    %     nodBoolIntYX(meshInfo.nodesInt.dobles{1}) = true;
+    %
+    %     nodBoolIntZX = false(size(meshInfo.nodes,1),1);
+    %     nodBoolIntZX(meshInfo.nodesInt.dobles{3}) = true;
+    %
+    %     nodBooltripleInf = false(size(meshInfo.nodes,1),1);
+    %     nodBooltripleInf(meshInfo.nodesInt.triplesAll) = true;
+    %
+    %     nodFracturaId_X = nodBool & ~nodFactura_Z & ~nodFactura_Y | nodBoolIntYX | nodBoolIntZX | nodBooltripleInf;
     tolFind = 1e-3;
-    nodesInt = meshInfo.nodesInt; % este parche hay que arreglarlo. Es un tema de nombres
-    nodTripleEncuentro = false(size(meshInfo.nodes,1),size(nodesInt.triplesAll,1));
     for i = 1:size(nodesInt.triplesAll,1)
         xInput1 = meshInfo.nodes(nodesInt.triplesAll(i),1); yInput1 = meshInfo.nodes(nodesInt.triplesAll(i),2); zInput1 =  meshInfo.nodes(nodesInt.triplesAll(i),3);
-        nodTripleEncuentro(:,i) = findTriple(meshInfo,xInput1,yInput1,zInput1,tolFind);
-        
+        nodTripleEncuentro = findTriple(meshInfo,xInput1,yInput1,zInput1,tolFind);
     end
-    nodTripleEncuentro = any(nodTripleEncuentro,2);
-    nodosInterseccionID = unique(find(nodTripleEncuentro));
-    d = ismember(meshInfo.elementsFluidos.elements,nodosInterseccionID);
-    elFluidoElementID= find(sum(d,2)>0); % aca tengo el ID de todos los elementos de fluido que rodean a los nodos de la triple interseccion
-    plotMeshColo3D(meshInfo.nodes,meshInfo.elements,meshInfo.cohesivos.elements(elFluidoElementID,:),'off','on','w','r','k',1)
     
-    elFluidoElementBool_X = false(size(meshInfo.cohesivos.elements,1),1);
-%     for j = 1:size(meshInfo.cohesivos.elements,1)
-%         cohesiveName = meshInfo.cohesivos.name(j);
-%         if strcmpi(cohesiveName,'X') 
-%             elFluidoElementBool_X(j) = true;
-%         end
-%     end
-%     elFluidoElementID_X = find(elFluidoElementBool_X); 
     
-    arrayVec_Y1 = [28 32 32 36 36 32 32 34 34 32 32 28 28 26 26 28 28 24 24 28 28]*1e3;
-    arrayVec_Z1 = [24 24 28 28 32 32 36 36 38 38 44 44 38 38 36 36 32 32 28 28 24]*1e3;
-    arrayInt1 = 1:150;
-    boolId_1 = dfnID(meshInfo,arrayVec_Y1,arrayVec_Z1,arrayInt1);
     
-    arrayVec_Y2 = [28 32 34 34 32 32 28 28 26 26 28 28]*1e3;
-    arrayVec_Z2 = [24 24 26 30 30 34 34 30 30 26 26 24]*1e3;
-    arrayInt2 = 151:300;
-    boolId_2 = dfnID(meshInfo,arrayVec_Y2,arrayVec_Z2,arrayInt2);
+    nodFracturaId_X = false(size(meshInfo.nodes,1),1);
     
-    arrayVec_Y3 = [28 32 32 36 36 32 32 28 28 24 24 28 28]*1e3;
-    arrayVec_Z3 = [30 30 34 34 36 36 38 38 36 36 34 34 30]*1e3;
-    arrayInt3 = 301:450;
-    boolId_3 = dfnID(meshInfo,arrayVec_Y3,arrayVec_Z3,arrayInt3);
     
-    elFluidoElementBool_X(boolId_)
-    elFluidoElementsBool = false(size(meshInfo.elementsFluidos.elements,1),1);
-    elFluidoElementsBool(elFluidoElementID_X,1) = true;
-%     elFluidoElementsBool(elFluidoElementID,1) = true;
-    allFluidElementsID = unique(find(elFluidoElementsBool)); % aca tengo el ID de todos los elementos de la triple interseccion y ademas de las DFNS
-    plotMeshColo3D(meshInfo.nodes,meshInfo.elements,meshInfo.cohesivos.elements(allFluidElementsID,:),'off','on','w','r','k',1)
-else
-    nodTripleEncuentro = [];
+    nodFracturaId_X(nodesInt.triplesAll,1) = true;
+    d = ismember(meshInfo.elementsFluidos.elements,find(nodFracturaId_X));
+    elFluidoElementID_X = find(sum(d,2)>0);
+    plotMeshColo3D(meshInfo.nodes,meshInfo.elements,meshInfo.cohesivos.elements(elFluidoElementID_X,:),'off','on','w','r','k',1) % Se plotea la malla
 end
-
+if ~keyAgusCheck
+    vec = testingMesh(meshInfo.elements,meshInfo.nodes); % isempty(find(vec)) = true -> esto esta de mas y ya esta arreglado en el mallador.
+end
 %-------------------------------------------------------------------------%
 %%%                         INPUTS y PROPERTIES                         %%%
 %-------------------------------------------------------------------------%
@@ -323,7 +328,7 @@ QTimes  = zeros(paramDiscEle.nDofTot_P,1);
 hhTimes = zeros(meshInfo.nElEB,1);
 iTime = 0;
 
-
+iSaveParcial = 1;
 flagSaveFrac = 1;
 flagSaveISIP = 1;
 restartKC    = 1;
@@ -402,7 +407,7 @@ end
 % clc
 % 
 % load('incorporacionPropante.mat')
-
+activadorDFN = false;
 
 while algorithmProperties.elapsedTime <= temporalProperties.tiempoTotalCorrida
     %% Activacion de propantes luego de la fractura.
@@ -518,30 +523,21 @@ while algorithmProperties.elapsedTime <= temporalProperties.tiempoTotalCorrida
             
             KeyInicioIsip=false; %% Aca vamos a generar la Curva y desp usamos esa
             calcTensionesenInicioISIP 
-            I_ISIP = tensionHidroInicioIsip/3;
             calcTensionesenDrainTimes
-            I_DrainTime = tensionHidroDrainTimes/3;
             DeltaPHidro=abs(abs(tensionHidroDrainTimes(Elem))-abs(tensionHidroInicioIsip(Elem))); %% diferencia de tensionesH entre el itime 2 y donde arranca el Isip
             %%Elem es el elemento Bomba
         end
             calcTensionesenISIP
-            I_itime = tensionHidroItime/3;
+            
             if wantBuffPermeability
-                %                 f_1 = 1; f_2 = permFactor;
-                %                 ImproveFactor = f_1 + (f_2-f_1)./abs(abs(I_DrainTime)-abs(I_ISIP)).*abs(abs(I_itime) - abs(I_DrainTime));
-                %                 ImproveFactor = 1 + permFactor./abs(abs(I_DrainTime)-abs(I_ISIP)).*abs(I_itime);
-                ImproveFactor=1-(1-permFactor)*(tensionHidroDrainTimes-tensionHidroItime)./DeltaPHidro;
-                ImproveFactor=(ImproveFactor>permFactor).*permFactor+(ImproveFactor<permFactor).*ImproveFactor;
+                ImproveFactor=permFactor+(1-permFactor/DeltaPHidro)*(tensionHidroDrainTimes-tensionHidroIsip').*((tensionHidroDrainTimes-tensionHidroIsip')>0);
                 ImproveFactor=(ImproveFactor>1).*ImproveFactor+(ImproveFactor<1).*1;
-%                 
-%                 ImproveFactor=permFactor+(1-permFactor/DeltaPHidro)*(tensionHidroDrainTimes-tensionHidroItime').*((tensionHidroDrainTimes-tensionHidroItime')>0);
-%                 ImproveFactor=(ImproveFactor>1).*ImproveFactor+(ImproveFactor<1).*1;
             else
                 ImproveFactor = ones(paramDiscEle.nel,1);
             end
-            %            improvePerm=physicalProperties.fluidoPoral.kappaIntShale;
+%            improvePerm=physicalProperties.fluidoPoral.kappaIntShale;
            
-            Kperm        = getMatrizPermeabilidadPorElemISIP(physicalProperties,meshInfo,SRVProperties,ImproveFactor,'ISIP','N');
+            Kperm        = getMatrizPermeabilidadPorElemISIP(physicalProperties,meshInfo,SRVProperties,ImproveFactor,'ISIP','N' );
             KC           = getTensor(meshInfo,paramDiscEle,pGaussParam,1,1,Kperm,'KC'); %improvePerm.*factor o solo factor arriba??
             productionKC = 0;
         
@@ -673,7 +669,7 @@ while algorithmProperties.elapsedTime <= temporalProperties.tiempoTotalCorrida
                 aux2     = aux2+1;
             else
                 if boolToPerm(iEle)
-                    dfnPerm = kappa_DFN;
+                    dfnPerm = 1e3;
                 else
                     dfnPerm = 1;
                 end
@@ -992,10 +988,9 @@ while algorithmProperties.elapsedTime <= temporalProperties.tiempoTotalCorrida
     %% Guardados parciales.
     if ~isempty(tSaveParcial) && iSaveParcial <= numel(tSaveParcial) && strcmpi(guardarCorrida,'Y')
         if algorithmProperties.elapsedTime >= tSaveParcial(iSaveParcial)
-            
+            iSaveParcial = iSaveParcial + 1;
             temporalProperties.nTimes = iTime;
             save(['resultadosPARCIALESCorrida_',nombreCorrida,'_numero_',num2str(iSaveParcial),'.mat']);    % Se guarda la informacion obtenida.
-            iSaveParcial = iSaveParcial + 1;
         end
     end
     if algorithmProperties.elapsedTime >= temporalProperties.tInicioISIP && flagSaveFrac == 1
@@ -1028,17 +1023,17 @@ if strcmpi(guardarCorrida,'Y')
 %     movefile(['Q_',nombreCorrida,'.txt'],[direccionGuardado,nombreCorrida]);
     
     if exist(['resultadosFinISIP_',nombreCorrida,'.mat'],'file') == 2
-        cd([mainFolder 'scriptSolverGitHub\'])
+        cd([DirectorioMadre 'scriptSolverGitHub\'])
         movefile(['resultadosFinISIP_',nombreCorrida,'.mat'],[direccionGuardado,nombreCorrida]);
     end
     if exist(['resultadosFinFractura_',nombreCorrida,'.mat'],'file') == 2
-        cd([mainFolder 'scriptSolverGitHub\'])
+        cd([DirectorioMadre 'scriptSolverGitHub\'])
         movefile(['resultadosFinFractura_',nombreCorrida,'.mat'],[direccionGuardado,nombreCorrida]);
     end
     
     if ~isempty(tSaveParcial)
         for i = 1:numel(tSaveParcial)
-            cd([mainFolder 'scriptSolverGitHub\'])
+            cd([DirectorioMadre 'scripSolverGitHub\'])
             movefile(['resultadosPARCIALESCorrida_',nombreCorrida,'_numero_',num2str(i),'.mat'],[direccionGuardado,nombreCorrida]);
         end
     end

@@ -6,15 +6,16 @@ pathAdderV3
 resultsFolder = str5;
 wantOnlyISIP = false;
 
-deltaP_Dyn = 1800-60; %Asumimos una cierta cantidad de psi
+deltaP_Dyn = 2000-60; %Asumimos una cierta cantidad de psi
 numberOfFolders = 5;
 
-dataRead = 'kappaDFN_{100}';%'kappaDFN_{0.1}';%  'DFNs';%'kappaDFN_{10}'; %'kappaDFN_{1}'; %
-resultFolder1 = 'DFIT_WIplusDFNs_permNerfDFNsKappaBase\'; % corridaBase
+dataRead = 'kappaDFN_{100}';%'DFNs';%'virgin';%'kappaDFN_{0.1}';%  'kappaDFN_{10}'; %'kappaDFN_{1}'; %
+% resultFolder1 = 'DFIT_WIplusDFNs_permNerfDFNsKappaBase\'; % corridaBase ----- OJO DESCOMENTAR
 resultFolder1 = 'DFIT_WIplusDFNs_permNerf\';
 switch dataRead
     case 'virgin'
-        resultFolder2 = 'DFIT_WIplusDFNs_permNerfDFNsKappaBase\'; % corridaBase
+        resultFolder2 = 'DFIT_weakInterf_permNerf\'; % corridaBase
+        resultFolder3 = 'DFIT_noFeatures_permNerf\'; % corridaBase
     case 'kappaDFN_{0.1}'
         resultFolder2 = 'DFIT_WIplusDFNs_permNerfDFNsKappaVariable1\'; % a la corridaBase le damos una permeabilidad de DFN (kappaDFN = 0.1)
         resultFolder3 = 'DFIT_WIplusDFNs_permBuffKappa0.1ISIP1\'; % a la corrida base + el kappaDFN = 0.1 le aumentamos el SRV en funcion del invariante. (ImproveFactor = 1e3)
@@ -61,12 +62,12 @@ end
 result = {numberOfFolders};
 result{1} = resultFolder1; result{2} = resultFolder2; 
 result{3} = resultFolder3; result{4} = resultFolder4; 
-result{5} = resultFolder5; %result{6} = resultFolder6; 
+result{5} = resultFolder5; result{6} = resultFolder6; 
 result{7} = resultFolder7; result{8} = resultFolder8;
 result{9} = resultFolder9; result{10} = resultFolder10;
-result{11} = resultFolder11; result{12} = resultFolder12;
-result{13} = resultFolder13;  result{14} = resultFolder14; 
-result{15} = resultFolder15;  result{16} = resultFolder16; 
+% result{11} = resultFolder11; result{12} = resultFolder12;
+% result{13} = resultFolder13;  result{14} = resultFolder14; 
+% result{15} = resultFolder15;  result{16} = resultFolder16; 
 % result = [ resultFolder1 ; resultFolder2 ; resultFolder3 ; resultFolder4];
 
 addpath([resultsFolder, resultFolder1])
@@ -79,16 +80,16 @@ addpath([resultsFolder, resultFolder7])
 addpath([resultsFolder, resultFolder8])
 addpath([resultsFolder, resultFolder9])
 addpath([resultsFolder, resultFolder10])
-addpath([resultsFolder, resultFolder11])
-addpath([resultsFolder, resultFolder12])
-addpath([resultsFolder, resultFolder13])
-addpath([resultsFolder, resultFolder14])
-addpath([resultsFolder, resultFolder15])
-addpath([resultsFolder, resultFolder16])
+% addpath([resultsFolder, resultFolder11])
+% addpath([resultsFolder, resultFolder12])
+% addpath([resultsFolder, resultFolder13])
+% addpath([resultsFolder, resultFolder14])
+% addpath([resultsFolder, resultFolder15])
+% addpath([resultsFolder, resultFolder16])
 figure; hold on
 %% estandar
 p = {numberOfFolders};
-for i=11%:size(result,2)
+for i=1:size(result,2)
     
 %     load(['resultadosFinISIP_' result{i}(1:end-1) '.mat'],'iTime','temporalProperties','paramDiscEle','bombaProperties','dTimes')
     load(['resultadosCorrida_' result{i}(1:end-1) '.mat'],'iTime','temporalProperties','paramDiscEle','bombaProperties','dTimes')
@@ -188,8 +189,8 @@ else
     d = plot(tiempoCorregidoAll,presionCrudaAll,'m','lineWidth',2);
 end
 % title(['ISIP DFNs vs Data' dataRead])
-legend([ p{11} p{12} p{13} p{14} p{15} p{16}  d ],'miniDFNS2' ,'miniDFNS3' ,'kappa alto','mini4DFNS1','mini4DFNS2','mini4DFNS3','DATA1031h')
-% legend([ p{1} p{2} p{3} p{4} p{5} d],'Base' ,'kappaDFN=0.1' ,'kappaDFN=1','kappaDFN=1','kappaDFN=100','Data1031h')
+% legend([ p{11} p{12} p{13} p{14} p{15} p{16}  d ],'miniDFNS2' ,'miniDFNS3' ,'kappa alto','mini4DFNS1','mini4DFNS2','mini4DFNS3','DATA1031h')
+legend([ p{1} p{2} p{3} p{4} p{5} p{6} p{7} p{8} p{9} p{10} d],'Base' ,'permNerfDFNsKappaVariable4' ,'permBuffKappa100ISIP1','permBuffKappa100ISIP2','permBuffKappa100ISIP3','kappaDFN=1','kappaDFN=100','Data1031h')
 
 grid minor
 xlim([40 200])

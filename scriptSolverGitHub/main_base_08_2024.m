@@ -1,45 +1,25 @@
-clc;close all; format shortg; 
-clear
-set(0,'DefaultFigureWindowStyle','docked');
-
-mainFolder = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\';
-caseName = 'WIplusDFNs'; %'weakInterf'; %'noFeatures'; %'tripleInts';%
-casePerm = 'permNerf'; %'permBuff';
-
+clear;clc;close all; format shortg;
 setBiot = 0.7; setPropante = true;
-poroElasticity = true; checkPlots = false; isipKC = true; 
-
-meshCase = 'DFN'; %'WI';%'DFIT';%
-
-keyPermeador = false;
-activadorDFN = false; 
-
-kappa_DFN = 1; % para definir la permeabilidad de dfn a mano
-
-KeyInicioIsip=false;
-wantBuffPermeability = false; % false: la permeabilidad no se altera con el campo de tensiones de la etapa de fractura.
-permFactor=1e5; keyAgusCheck = false; factor =1;
-keyCorteCohesivos= 'Y';
+poroElasticity = true; checkFaces = false;
+meshCase = 'DFIT'; %'WI';% 'DFN';%
 %-------------------------------------------------------------------------%
 %% %%%%%%%%%%%%%%%%%%%       main DFIT/TShape       %%%%%%%%%%%%%%%%%%%% %%
 %-------------------------------------------------------------------------%
 %% Variables a modificar segun lo requerido en cada corrida:
 % Variables de inicio de corrida.
 guardarCorrida    = 'Y'; % Si se quiere guardar la corrida. "Y" o "N".
-pathAdderV2
-% direccionGuardado = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\Resultados de corridas (.mat)\';   %Dejo ambos directorios, ir comentando segun quien la use 
-direccionGuardado = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\Resultados de corridas (.mat)\'; 
-% Direccion donde se guarda la informacion.
-nombreCorrida     = ['DFIT_' caseName '_' casePerm]; % Nombre de la corrida. La corrida se guarda en la carpeta "Resultado de corridas" en una subcarpeta con este nombre.
+pathAdder
+direccionGuardado = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\Resultados de corridas (.mat)\'; % Direccion donde se guarda la informacion.
+nombreCorrida     = 'DFIT_base'; % Nombre de la corrida. La corrida se guarda en la carpeta "Resultado de corridas" en una subcarpeta con este nombre.
 
 cargaDatos     = 'load'; % Forma en la que se cargan las propiedades de entrada. "load" "test" "default" "change".
-archivoLectura = 'DFITredDFN_rev082023.txt';%'DFIT_rev082023_WI092023.txt';%'DFIT_rev082023_base092023.txt'; %
+archivoLectura = 'DFIT_base.txt';%'DFIT_rev052022_WI062023CorridaCorta.txt';%'DFIT_rev052022_WI+DFN062023CorridaCorta.txt';%'Dfit_rev052022_DFIT_062023.txt'; %'Dfit_rev052022_DFIT_WItrial_062023.txt';% Nombre del archivo con las propiedades de entrada. 
 
 tSaveParcial   = []; % Guardado de resultados parciales durante la corrida. Colocar los tiempos en los cuales se quiere guardar algun resultado parcial.
 
-restart            = 'N'; % Si no queremos arrancar la simulacion desde el principio sino que desde algun punto de partida 'Y' en caso contrario 'N'.
-direccionRestart   = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\Resultados de corridas (.mat)\DFIT_red_ReStart_V1\';
-propiedadesRestart = 'resultadosCorrida_DFIT_redDFN_v1ReStart.mat';
+restart            = ''; % Si no queremos arrancar la simulacion desde el principio sino que desde algun punto de partida 'Y' en caso contrario 'N'.
+direccionRestart   = '';
+propiedadesRestart = '';
 
 % Variables del post - procesado.
 tiempoArea      = 0; % Tiempo en el que se quiere visualizar la forma del area de fractura.
@@ -66,43 +46,16 @@ if islogical(meshInfo.elementsFisu.ALL.minusNodes)
 else
     meshInfo.elementsFisu.ALL.minusNodes = cast(meshInfo.elementsFisu.ALL.minusNodes,'logical');
 end
+plotMeshColo3D(meshInfo.nodes,meshInfo.elements,meshInfo.cohesivos.elements,'off','on','w','r','k',1) % Se plotea la malla
+plotMeshColo3D(meshInfo.nodes,meshInfo.elements,meshInfo.cohesivos.elements,'on','on','w','r','k',1) % Se plotea la malla
 
 % Verificacion de malla.
 meshInfo = meshVerification(meshInfo);
 
-if ~keyAgusCheck && strcmpi(meshCase,'DFN')
-    tolFind = 1e-3;
-    nodesInt = meshInfo.nodesInt; % este parche hay que arreglarlo. Es un tema de nombres
-    nodTripleEncuentro = false(size(meshInfo.nodes,1),size(nodesInt.triplesAll,1));
-    for i = 1:size(nodesInt.triplesAll,1)
-        xInput1 = meshInfo.nodes(nodesInt.triplesAll(i),1); yInput1 = meshInfo.nodes(nodesInt.triplesAll(i),2); zInput1 =  meshInfo.nodes(nodesInt.triplesAll(i),3);
-        nodTripleEncuentro(:,i) = findTriple(meshInfo,xInput1,yInput1,zInput1,tolFind);
-        
-    end
-    nodTripleEncuentro = any(nodTripleEncuentro,2);
-    nodosInterseccionID = unique(find(nodTripleEncuentro));
-    d = ismember(meshInfo.elementsFluidos.elements,nodosInterseccionID);
-    elFluidoElementID= find(sum(d,2)>0); % aca tengo el ID de todos los elementos de fluido que rodean a los nodos de la triple interseccion
-    plotMeshColo3D(meshInfo.nodes,meshInfo.elements,meshInfo.cohesivos.elements(elFluidoElementID,:),'off','off','w','r','k',1)
-    
-    elFluidoElementBool_X = false(size(meshInfo.cohesivos.elements,1),1);
-    for j = 1:size(meshInfo.cohesivos.elements,1)
-        cohesiveName = meshInfo.cohesivos.name(j);
-        if strcmpi(cohesiveName,'X') 
-            elFluidoElementBool_X(j) = true;
-        end
-    end
-    elFluidoElementID_X = find(elFluidoElementBool_X); 
-    
-    elFluidoElementsBool = false(size(meshInfo.elementsFluidos.elements,1),1);
-    elFluidoElementsBool(elFluidoElementID_X,1) = true;
-    elFluidoElementsBool(elFluidoElementID,1) = true;
-    allFluidElementsID = unique(find(elFluidoElementsBool)); % aca tengo el ID de todos los elementos de la triple interseccion y ademas de las DFNS
-    plotMeshColo3D(meshInfo.nodes,meshInfo.elements,meshInfo.cohesivos.elements(allFluidElementsID,:),'off','on','w','r','k',1)
-else
-    nodTripleEncuentro = [];
-end
-
+vec = testingMesh(meshInfo.elements,meshInfo.nodes);
+% meshInfo.nodes(vec,:) = []; 
+% [a,b] = ismember(meshInfo.elements,4525);
+% meshInfo.elements(find(b)) = 4524;
 %-------------------------------------------------------------------------%
 %%%                         INPUTS y PROPERTIES                         %%%
 %-------------------------------------------------------------------------%
@@ -111,23 +64,9 @@ temporalProperties   = setTemporalPropertiesLabel(cargaDatos,archivoLectura);   
 algorithmProperties  = setAlgorithmPropertiesLabel(cargaDatos,archivoLectura);            % Propiedades del algoritmo de convergencia.                             
 bombaProperties      = setBombaPropertiesLabel(meshInfo,'off',cargaDatos,archivoLectura); % Propiedades de la bomba.
 produccionProperties = setProduccionPropertiesLabel(cargaDatos,archivoLectura);
-
-if strcmp(keyCorteCohesivos,'Y')
-    [meshInfo,cohesivosProperties] = setCohesivosPropertiesLabelCorteModificado(meshInfo,physicalProperties,temporalProperties,bombaProperties,'off',cargaDatos,archivoLectura);  % Propiedades de los elementos cohesivos. 
-else
-    [meshInfo,cohesivosProperties] = setCohesivosPropertiesLabel(meshInfo,physicalProperties,temporalProperties,bombaProperties,'off',cargaDatos,archivoLectura);  % Propiedades de los elementos cohesivos. 
-end
-
+[meshInfo,cohesivosProperties] = setCohesivosPropertiesLabel(meshInfo,physicalProperties,temporalProperties,bombaProperties,'off',cargaDatos,archivoLectura);  % Propiedades de los elementos cohesivos. 
 propanteProperties   = setPropantePropertiesLabel(cargaDatos,physicalProperties,meshInfo,setPropante,archivoLectura);
 SRVProperties        = setSRVPropertiesLabel(cargaDatos,'N',meshInfo,archivoLectura);
-SRVProperties.elementsIndex=meshInfo.elementsFisu.ALL.index;
-
-if checkPlots
-    plotMeshColo3D(meshInfo.nodes,meshInfo.elements,meshInfo.cohesivos.elements,'off','on','w','r','k',1) % Se plotea la malla
-    hold on
-    plotMeshColo3D(meshInfo.nodes,meshInfo.elements(SRVProperties.elementsIndex,:),meshInfo.cohesivos.elements,'off','off','r','r','k',1) % Se plotea la malla
-    hold off
-end
 %%
 %-------------------------------------------------------------------------%
 %%%                             PARAMETROS                              %%%
@@ -142,8 +81,7 @@ pGaussParam = getPGaussParam(); % Obtencion de puntos de gauss y pesos.
 
 % -- Nodos de caras.
 [nodosCara,cara] = getNodosCaras(meshInfo,paramDiscEle);
-
-if checkPlots
+if checkFaces
     plotCara(meshInfo,'on',cara.oeste)
 end
 
@@ -157,19 +95,19 @@ filterOverContrainedBorde(meshInfo.constraintsRelations(:,[2 3])) = true;      %
 nodesToRemove               = cara.oeste & filterOverContrainedBorde;      % quedar pegados a la fractura, entonces voy a estar pidiendo simetria y
 cara.oeste(nodesToRemove)   = false;                                      % al mismo tiempo pidiendo contraints.
 
-if ~keyAgusCheck % -> hardcodeo para parchar el mallador.
-    switch meshCase
-        case 'DFIT'
-            meshInfo.constraintsRelations = normalConstraintsDFITHardCodeado(meshInfo.constraintsRelations,meshInfo.nodosBoundary);
-        case 'WI'
-            meshInfo.constraintsRelations = normalConstraintsWIHardCodeado(meshInfo.constraintsRelations,meshInfo.nodosBoundary);
-        case 'DFN'
-            meshInfo.constraintsRelations = meshInfo.constraintsRelations; % normalConstraintsDFN(meshInfo.constraintsRelations,meshInfo.nodosBoundary);
-    end
+switch meshCase
+    case 'DFIT'
+        meshInfo.constraintsRelations = normalConstraintsDFITHardCodeado(meshInfo.constraintsRelations,meshInfo.nodosBoundary);
+    case 'WI'
+        meshInfo.constraintsRelations = normalConstraintsWIHardCodeado(meshInfo.constraintsRelations,meshInfo.nodosBoundary);
+    case 'DFN'
+        meshInfo.constraintsRelations = normalConstraintsDFN(meshInfo.constraintsRelations,meshInfo.nodosBoundary);
 end
-if checkPlots
-    plotOverCT(meshInfo,'on',nodesToRemove)
-end
+
+
+
+plotOverCT(meshInfo,'on',nodesToRemove)
+
 % Fijacion de las direcciones normales a cada cara.
 bc(cara.este,1)     = true; 
 bc(cara.oeste,1)    = true;  % La condicion de borde de simetria sigue siendo la misma.
@@ -221,8 +159,8 @@ initialSressExtS = [physicalProperties.cargasTectonicas.ShX
                     physicalProperties.cargasTectonicas.TauYZ
                     physicalProperties.cargasTectonicas.TauXZ]*0;   
                 
-initialStrainExtS = [-6e-4
-                     -1.5e-4
+initialStrainExtS = [-1.5e-4
+                     -6e-4
                      -2e-3
                       0
                       0
@@ -268,7 +206,7 @@ SP = sparse(paramDiscEle.nDofTot_P,paramDiscEle.nDofTot_P); % Tensor de storativ
 
 %-- Solidos. (Para borde de fractura con y sin interseccion). 
 % [ CTFrac ,nCREqFrac ] = getCTFrac(paramDiscEle.nodeDofs,meshInfo.constraintsRelations,algorithmProperties.precondCT,paramDiscEle.nDofTot_U);
-[ CTFrac ,nCREqFrac ] = getCTFracNormalPromedioHardCodeado(paramDiscEle.nodeDofs,meshInfo.constraintsRelations,algorithmProperties.precondCT,paramDiscEle.nDofTot_U,meshInfo); % esto hay que revisar algo para la DFN
+[ CTFrac ,nCREqFrac ] = getCTFracNormalPromedioHardCodeado(paramDiscEle.nodeDofs,meshInfo.constraintsRelations,algorithmProperties.precondCT,paramDiscEle.nDofTot_U,meshInfo);
 %-- Juntado de Constraints.
 zerosCTFluidosU = sparse(paramDiscEle.nDofTot_U,nCREqFluidos);
 zerosCTFracP    = sparse(paramDiscEle.nDofTot_P,nCREqFrac);
@@ -327,56 +265,55 @@ end
 % cada paso temporal se realizan una serie de iteraciones.
 
 
-if strcmpi(restart,'Y') 
-    variablesRestart = load([direccionRestart,propiedadesRestart],'iTime','algorithmProperties','temporalProperties','dTimes','QTimes','hhTimes','meshInfo');
-    
-    iTime = variablesRestart.iTime;
-    dTimes = variablesRestart.dTimes;
-
-    QTimes = variablesRestart.QTimes;
-    hhTimes = variablesRestart.hhTimes;
-    
-    algorithmProperties.elapsedTime = variablesRestart.algorithmProperties.elapsedTime;
-    
-    temporalProperties.deltaTs = variablesRestart.temporalProperties.deltaTs;
-   
-    meshInfo.cohesivos.dS1Times = variablesRestart.meshInfo.cohesivos.dS1Times;
-    meshInfo.cohesivos.dS2Times = variablesRestart.meshInfo.cohesivos.dS2Times;
-    meshInfo.cohesivos.dNTimes = variablesRestart.meshInfo.cohesivos.dNTimes;
-    meshInfo.cohesivos.KnTimes  = variablesRestart.meshInfo.cohesivos.KnTimes;
-    meshInfo.cohesivos.Ks1Times = variablesRestart.meshInfo.cohesivos.Ks1Times;
-    meshInfo.cohesivos.Ks2Times = variablesRestart.meshInfo.cohesivos.Ks2Times;
-    meshInfo.cohesivos.KnPrevTime = variablesRestart.meshInfo.cohesivos.KnPrevTime;
-    meshInfo.cohesivos.Ks1PrevTime = variablesRestart.meshInfo.cohesivos.Ks1PrevTime;
-    meshInfo.cohesivos.Ks2PrevTime  = variablesRestart.meshInfo.cohesivos.Ks2PrevTime;
-    meshInfo.cohesivos.biot = variablesRestart.meshInfo.cohesivos.biot;
-    meshInfo.cohesivos.elementsFluidosActivos  = variablesRestart.meshInfo.cohesivos.elementsFluidosActivos;
-    meshInfo.cohesivos.deadFlagTimes = variablesRestart.meshInfo.cohesivos.deadFlagTimes;
-    
-    meshInfo.cohesivos.positiveFlag     = variablesRestart.meshInfo.cohesivos.positiveFlag;
-    meshInfo.cohesivos.dN1              = variablesRestart.meshInfo.cohesivos.dN1;
-    meshInfo.cohesivos.damageFlagN      = variablesRestart.meshInfo.cohesivos.damageFlagN;
-    meshInfo.cohesivos.deadFlag         = variablesRestart.meshInfo.cohesivos.deadFlag;
-    meshInfo.cohesivos.KnIter           = variablesRestart.meshInfo.cohesivos.KnIter;
-    meshInfo.cohesivos.lastPositiveKn   = variablesRestart.meshInfo.cohesivos.lastPositiveKn;
-    meshInfo.cohesivos.dNMat            = variablesRestart.meshInfo.cohesivos.dNMat;
-    meshInfo.cohesivos.firstDmgFlagN    = variablesRestart.meshInfo.cohesivos.firstDmgFlagN;
-    
-    
-    meshInfo.cohesivos.dS1_1        = variablesRestart.meshInfo.cohesivos.dS1_1;
-    meshInfo.cohesivos.damageFlagS1 = variablesRestart.meshInfo.cohesivos.damageFlagS1;
-    meshInfo.cohesivos.Ks1Iter      = variablesRestart.meshInfo.cohesivos.Ks1Iter;
-    meshInfo.cohesivos.dS1Mat       = variablesRestart.meshInfo.cohesivos.dS1Mat;
-    
-    meshInfo.cohesivos.dS1_2        = variablesRestart.meshInfo.cohesivos.dS1_2;
-    meshInfo.cohesivos.damageFlagS2 = variablesRestart.meshInfo.cohesivos.damageFlagS2;
-    meshInfo.cohesivos.Ks2Iter      = variablesRestart.meshInfo.cohesivos.Ks2Iter;
-    meshInfo.cohesivos.dS2Mat       = variablesRestart.meshInfo.cohesivos.dS2Mat;
-    
-    meshInfo.elementsFisu.ALL.nodesInFisu = variablesRestart.meshInfo.elementsFisu.ALL.nodesInFisu;
-    meshInfo.elementsFisu.fracturados = variablesRestart.meshInfo.elementsFisu.fracturados;
-    meshInfo.elementsFluidos.activos = variablesRestart.meshInfo.elementsFluidos.activos; 
-end
+% if strcmpi(restart,'Y') 
+%     variablesRestart = load([direccionRestart,propiedadesRestart],'iTime','algorithmProperties','temporalProperties','dTimes','QTimes','hhTimes','meshInfo');
+%     
+%     iTime = variablesRestart.iTime;
+%     dTimes = variablesRestart.dTimes;
+%     QTimes = variablesRestart.QTimes;
+%     hhTimes = variablesRestart.hhTimes;
+%     
+%     algorithmProperties.elapsedTime = variablesRestart.algorithmProperties.elapsedTime;
+%     
+%     temporalProperties.deltaTs = variablesRestart.temporalProperties.deltaTs;
+%    
+%     meshInfo.cohesivos.dS1Times = variablesRestart.meshInfo.cohesivos.dS1Times;
+%     meshInfo.cohesivos.dS2Times = variablesRestart.meshInfo.cohesivos.dS2Times;
+%     meshInfo.cohesivos.dNTimes = variablesRestart.meshInfo.cohesivos.dNTimes;
+%     meshInfo.cohesivos.KnTimes  = variablesRestart.meshInfo.cohesivos.KnTimes;
+%     meshInfo.cohesivos.Ks1Times = variablesRestart.meshInfo.cohesivos.Ks1Times;
+%     meshInfo.cohesivos.Ks2Times = variablesRestart.meshInfo.cohesivos.Ks2Times;
+%     meshInfo.cohesivos.KnPrevTime = variablesRestart.meshInfo.cohesivos.KnPrevTime;
+%     meshInfo.cohesivos.Ks1PrevTime = variablesRestart.meshInfo.cohesivos.Ks1PrevTime;
+%     meshInfo.cohesivos.Ks2PrevTime  = variablesRestart.meshInfo.cohesivos.Ks2PrevTime;
+%     meshInfo.cohesivos.biot = variablesRestart.meshInfo.cohesivos.biot;
+%     meshInfo.cohesivos.elementsFluidosActivos  = variablesRestart.meshInfo.cohesivos.elementsFluidosActivos;
+%     meshInfo.cohesivos.deadFlagTimes = variablesRestart.meshInfo.cohesivos.deadFlagTimes;
+%     
+%     meshInfo.cohesivos.positiveFlag     = variablesRestart.meshInfo.cohesivos.positiveFlag;
+%     meshInfo.cohesivos.dN1              = variablesRestart.meshInfo.cohesivos.dN1;
+%     meshInfo.cohesivos.damageFlagN      = variablesRestart.meshInfo.cohesivos.damageFlagN;
+%     meshInfo.cohesivos.deadFlag         = variablesRestart.meshInfo.cohesivos.deadFlag;
+%     meshInfo.cohesivos.KnIter           = variablesRestart.meshInfo.cohesivos.KnIter;
+%     meshInfo.cohesivos.lastPositiveKn   = variablesRestart.meshInfo.cohesivos.lastPositiveKn;
+%     meshInfo.cohesivos.dNMat            = variablesRestart.meshInfo.cohesivos.dNMat;
+%     meshInfo.cohesivos.firstDmgFlagN    = variablesRestart.meshInfo.cohesivos.firstDmgFlagN;
+%     
+%     
+%     meshInfo.cohesivos.dS1_1        = variablesRestart.meshInfo.cohesivos.dS1_1;
+%     meshInfo.cohesivos.damageFlagS1 = variablesRestart.meshInfo.cohesivos.damageFlagS1;
+%     meshInfo.cohesivos.Ks1Iter      = variablesRestart.meshInfo.cohesivos.Ks1Iter;
+%     meshInfo.cohesivos.dS1Mat       = variablesRestart.meshInfo.cohesivos.dS1Mat;
+%     
+%     meshInfo.cohesivos.dS1_2        = variablesRestart.meshInfo.cohesivos.dS1_2;
+%     meshInfo.cohesivos.damageFlagS2 = variablesRestart.meshInfo.cohesivos.damageFlagS2;
+%     meshInfo.cohesivos.Ks2Iter      = variablesRestart.meshInfo.cohesivos.Ks2Iter;
+%     meshInfo.cohesivos.dS2Mat       = variablesRestart.meshInfo.cohesivos.dS2Mat;
+%     
+%     meshInfo.elementsFisu.ALL.nodesInFisu = variablesRestart.meshInfo.elementsFisu.ALL.nodesInFisu;
+%     meshInfo.elementsFisu.fracturados = variablesRestart.meshInfo.elementsFisu.fracturados;
+%     meshInfo.elementsFluidos.activos = variablesRestart.meshInfo.elementsFluidos.activos; 
+% end
 
 % clear
 % close all
@@ -386,10 +323,10 @@ end
 
 
 while algorithmProperties.elapsedTime <= temporalProperties.tiempoTotalCorrida
-    %% Activacion de propantes luego de la fractura.
-    % Parte adaptada del codigo de multiples fracturas a este. Poreso
-    % hay referencias a muchas fracturas y otros comentarios al
-    % respecto.
+        %% Activacion de propantes luego de la fractura. 
+        % Parte adaptada del codigo de multiples fracturas a este. Poreso
+        % hay referencias a muchas fracturas y otros comentarios al
+        % respecto. 
         
     if algorithmProperties.elapsedTime >= temporalProperties.tInicioISIP && iProp == 1 && strcmpi(propanteProperties.Key,'Y')
         iProp = 0;        
@@ -486,37 +423,14 @@ while algorithmProperties.elapsedTime <= temporalProperties.tiempoTotalCorrida
     display(iTime);
  
     %% Cambio de KC. 
-    
-    
-    
     if restartKC == 1 && iTime>temporalProperties.drainTimes % Durante los drain times la permeabilidad esta alta para acelerar el estado estacionario. Aca se establecen los valores correctos para shale y barreras.
         Kperm     = getMatrizPermeabilidad(physicalProperties,meshInfo,SRVProperties,'frac','Y' );
         KC        = getTensor(meshInfo,paramDiscEle,pGaussParam,1,1,Kperm,'KC');
         restartKC = 0;
-    elseif isipKC && algorithmProperties.elapsedTime >= temporalProperties.tInicioISIP % Se establece el valor de permeabilidad mas elevado para el SRV que se activa durante la produccion. 
-
-        if KeyInicioIsip
-            
-            KeyInicioIsip=false; %% Aca vamos a generar la Curva y desp usamos esa
-            calcTensionesenInicioISIP 
-            calcTensionesenDrainTimes
-            DeltaPHidro=abs(abs(tensionHidroDrainTimes(Elem))-abs(tensionHidroInicioIsip(Elem))); %% diferencia de tensionesH entre el itime 2 y donde arranca el Isip
-            %%Elem es el elemento Bomba
-        end
-            calcTensionesenISIP
-            
-            if wantBuffPermeability
-                ImproveFactor=permFactor+(1-permFactor/DeltaPHidro)*(tensionHidroDrainTimes-tensionHidroIsip').*((tensionHidroDrainTimes-tensionHidroIsip')>0);
-                ImproveFactor=(ImproveFactor>1).*ImproveFactor+(ImproveFactor<1).*1;
-            else
-                ImproveFactor = ones(paramDiscEle.nel,1);
-            end
-%            improvePerm=physicalProperties.fluidoPoral.kappaIntShale;
-           
-            Kperm        = getMatrizPermeabilidadPorElemISIP(physicalProperties,meshInfo,SRVProperties,ImproveFactor,'ISIP','N' );
-            KC           = getTensor(meshInfo,paramDiscEle,pGaussParam,1,1,Kperm,'KC'); %improvePerm.*factor o solo factor arriba??
-            productionKC = 0;
-        
+    elseif strcmpi(SRVProperties.key,'Y') && productionKC == 1 && algorithmProperties.elapsedTime >= temporalProperties.tInicioProduccion % Se establece el valor de permeabilidad mas elevado para el SRV que se activa durante la produccion. 
+        Kperm        = getMatrizPermeabilidad(physicalProperties,meshInfo,SRVProperties,'produccion','Y' );
+        KC           = getTensor(meshInfo,paramDiscEle,pGaussParam,1,1,Kperm,'KC');
+        productionKC = 0;
     end
 
     %% ITERACIONES DE FRACUTRA %%
@@ -634,22 +548,12 @@ while algorithmProperties.elapsedTime <= temporalProperties.tiempoTotalCorrida
         He = cell(sum(meshInfo.elementsFluidos.activos),1);
         aux = 1:meshInfo.nFluidos; aux2 = 1;
         
-        if ~activadorDFN
-            boolToPerm = false(size(meshInfo.elementsFluidos.elements,1),1);
-        else
-            boolToPerm = nodosFuidosAddToActive;
-        end
         for iEle = aux(meshInfo.elementsFluidos.activos)
             if any(iEle == propanteProperties.propantesActivosTotales)
                 He{aux2} = zeros(4,4);
                 aux2     = aux2+1;
             else
-                if boolToPerm(iEle)
-                    dfnPerm = kappa_DFN;
-                else
-                    dfnPerm = 1;
-                end
-                He{aux2} = HFluidos2DV3(meshInfo.elementsFluidos,iEle,hhIter(meshInfo.nodosFluidos.EB_Asociados,1),physicalProperties.fluidoFracturante.MU,meshInfo.cohesivos,meshInfo.nodes,cohesivosProperties.angDilatancy,factor,dfnPerm);
+                He{aux2} = HFluidos2D(meshInfo.elementsFluidos,iEle,hhIter(meshInfo.nodosFluidos.EB_Asociados,1),physicalProperties.fluidoFracturante.MU,meshInfo.cohesivos,meshInfo.nodes,cohesivosProperties.angDilatancy,1);
                 aux2     = aux2+1;
             end
         end
@@ -744,9 +648,13 @@ while algorithmProperties.elapsedTime <= temporalProperties.tiempoTotalCorrida
             errorRelP{iTime}(1,nIter) = norm(pITER - pPrevITER ) / norm(pITER);
             errorRelCohesivos{iTime}(1,nIter) = norm(dN - dNPrevITER_Error) / norm(dN);
 
+%             errorRelU{iTime}(1,nIter) = norm(uITER - uPrevITER );
+%             errorRelP{iTime}(1,nIter) = norm(pITER - pPrevITER );
+%             errorRelCohesivos{iTime}(1,nIter) = norm(dN - dNPrevITER_Error);
+
             if keyPlots == true
                 figure(han1)
-%                 set(han1,'Position',[1 41 768 748.8]);
+                set(han1,'Position',[1 41 768 748.8]);
                 plotError
                 figure(han2)
                 
@@ -881,28 +789,6 @@ while algorithmProperties.elapsedTime <= temporalProperties.tiempoTotalCorrida
     %% ACTUALIZACION DE VECTORES DE PROPAGACIÓN %%
     
     nodosMuertos             = reshape(meshInfo.elementsBarra.ALL(unique(meshInfo.cohesivos.relatedEB(logical(meshInfo.cohesivos.deadFlag))),:),[],1);
-    % aca tengo que fijarme si de los nodos muertos alguno es un nodo de la
-    % interseccion y adicionarle que mate a todos los nodos cohesivos de
-    % los elementos que contengan este nodo interseccion
-    if any(ismember(find(nodTripleEncuentro),nodosMuertos)) && ~keyAgusCheck
-        disp('LCDTMAllBoys')
-        keyPermeador = true;
-        if keyPermeador
-            nodosFuidosAddToActive = false(size(meshInfo.elementsFluidos.elements,1),1);
-            nodosFuidosAddToActive(elFluidoElementID_X)=true;
-          
-            % aca hay que hacer que se activen los elementos de fluidos de
-            % la DFN sin matar nodos
-            
-        end
-        % hay que sacarlo -> pero es un beta para ver la propagacion en el
-        % encuentro. Va a entrar a este "if" si se rompe un nodo de la
-        % triple interseccion. Aca no hay que sacar el keyAgus. Pero
-        % arreglando lo del mallador deberian cambiar de nombre alguna
-        % estructura. 
-    end
-    [nodosMuertos, meshInfo.cohesivos] = fcnDeadGathering(meshInfo.cohesivos,nodosMuertos,nodTripleEncuentro);
-    
     deadIntNodes             = ismember(intNodes,nodosMuertos);
     
     if any(deadIntNodes)
@@ -919,19 +805,15 @@ while algorithmProperties.elapsedTime <= temporalProperties.tiempoTotalCorrida
     meshInfo.elementsFisu.fracturados                           = sum(ismember(meshInfo.elementsFisu.ALL.nodesInFisu,nodosMuertos),2) > 0;    % Este vector indica, segun como esten ordenados los elementsFisu, quienes de ellos
     % se comportan como parte de la fractura.
     meshInfo.elementsFluidos.activos                            = sum(ismember(meshInfo.elementsFluidos.elements,nodosMuertos),2) > 0;        % Este vector indica, segun como esten ordenados los elementsFluidos, quienes estan activos.
-    if keyPermeador
-        meshInfo.elementsFluidos.activos = meshInfo.elementsFluidos.activos | nodosFuidosAddToActive;
-        keyPermeador = false;
-        activadorDFN = true;
-    end
     meshInfo.cohesivos.biot(meshInfo.elementsFluidos.activos,:) = 1;
     meshInfo.cohesivos.elementsFluidosActivos                   = meshInfo.elementsFluidos.activos;
     meshInfo.cohesivos.deadFlagTimes(:,:,iTime+1)               = meshInfo.cohesivos.deadFlag;    
+    
 %     assert(~any(ismember(meshInfo.cohesivos.elements(meshInfo.cohesivos.deadFlag),meshInfo.nodosGendarmes)),['Fractura excede limites. Tiempo de corrida = ',num2str(algorithmProperties.elapsedTime),'s'])
     
     if keyPlots == true
         figure(han2)
-%         set(han2,'Position',[769.8 41.8 766.4 740.8]);
+        set(han2,'Position',[769.8 41.8 766.4 740.8]);
         clf
         subplot(1,2,1)
         bandplot(meshInfo.cohesivos.elements,meshInfo.nodes,meshInfo.cohesivos.dNTimes(:,:,iTime))
@@ -951,7 +833,43 @@ while algorithmProperties.elapsedTime <= temporalProperties.tiempoTotalCorrida
         daspect([1 1 1])
         title(['iTime: ',num2str(iTime)])
         drawnow
-  
+% subplot(1,3,1)
+%         bandplot(meshInfo.cohesivos.elements,meshInfo.nodes,meshInfo.cohesivos.dNTimes(:,:,iTime))
+%         axis square
+%         view(-45,20)
+%         daspect([1 1 1])
+%         hold on
+%         scatter3(meshInfo.nodes(nodosMuertos,1),meshInfo.nodes(nodosMuertos,2),meshInfo.nodes(nodosMuertos,3),'r')
+%         title(['iTime: ',num2str(iTime)])
+% 
+% 
+%         subplot(1,3,2)
+%         bandplot(meshInfo.cohesivos.elements,meshInfo.nodes,meshInfo.cohesivos.dS1Times(:,:,iTime))
+%         axis square
+%         view(-45,20)
+%         daspect([1 1 1])
+%         hold on
+%         scatter3(meshInfo.nodes(nodosMuertos,1),meshInfo.nodes(nodosMuertos,2),meshInfo.nodes(nodosMuertos,3),'r')
+%         title(['iTime: ',num2str(iTime)])
+%   
+% 
+%         subplot(1,3,3)
+%         bandplot(meshInfo.cohesivos.elements,meshInfo.nodes,meshInfo.cohesivos.dS2Times(:,:,iTime))
+%         axis square
+%         view(-45,20)
+%         daspect([1 1 1])
+%         hold on
+%         scatter3(meshInfo.nodes(nodosMuertos,1),meshInfo.nodes(nodosMuertos,2),meshInfo.nodes(nodosMuertos,3),'r')
+%         title(['iTime: ',num2str(iTime)])
+%         drawnow
+%         
+%         figure
+%         nodosDesplazados = meshInfo.nodes + reshape(dTimes(1:paramDiscEle.nDofTot_U,1),3,[])'*1000;
+%         plotMeshColo3D(meshInfo.nodes,meshInfo.elements,meshInfo.cohesivos.elements,'off','on','w',[.95 .95 .95],[.95 .95 .95],0.2)
+%         plotMeshColo3D(nodosDesplazados,meshInfo.elements,meshInfo.cohesivos.elements,'off','on','w','r','k',0.2)
+        
+        
+        
         
     end
     % Indica el final de la operacion.
@@ -987,29 +905,30 @@ if strcmpi(guardarCorrida,'Y')
     clear han1 han2
     cd('D:\Geomec\paper DFN\ITBA\Piloto\DFIT\Resultados de corridas (.mat)\')
     mkdir(nombreCorrida) % Crea una subcarpeta en Resultado de corridas donde se guardara la informacion obtenida.
-    cd([direccionGuardado,nombreCorrida])
     save(['resultadosCorrida_',nombreCorrida,'.mat']);    % Se guarda la informacion obtenida.
+    movefile(['resultadosCorrida_',nombreCorrida,'.mat'],[direccionGuardado,nombreCorrida]); % Se mueve la informacion obtenida a la carpeta creada para guardarla.
     guardarPropiedades(archivoLectura,nombreCorrida)
     guardarTXT
     fclose('all');
-
-%     movefile(['propiedades_',nombreCorrida,'.txt'],[direccionGuardado,nombreCorrida]);
-%     movefile(['tiempo_',nombreCorrida,'.txt'],[direccionGuardado,nombreCorrida]);
-%     movefile(['presion_',nombreCorrida,'.txt'],[direccionGuardado,nombreCorrida]);
-%     movefile(['Q_',nombreCorrida,'.txt'],[direccionGuardado,nombreCorrida]);
+    
+    
+    movefile(['propiedades_',nombreCorrida,'.txt'],[direccionGuardado,nombreCorrida]);
+    movefile(['tiempo_',nombreCorrida,'.txt'],[direccionGuardado,nombreCorrida]);
+    movefile(['presion_',nombreCorrida,'.txt'],[direccionGuardado,nombreCorrida]);
+    movefile(['Q_',nombreCorrida,'.txt'],[direccionGuardado,nombreCorrida]);
     
     if exist(['resultadosFinISIP_',nombreCorrida,'.mat'],'file') == 2
-        cd([mainFolder 'scriptSolverGitHub\'])
+        cd('D:\Geomec\paper DFN\ITBA\Piloto\DFIT\scriptSolver\')
         movefile(['resultadosFinISIP_',nombreCorrida,'.mat'],[direccionGuardado,nombreCorrida]);
     end
     if exist(['resultadosFinFractura_',nombreCorrida,'.mat'],'file') == 2
-        cd([mainFolder 'scriptSolverGitHub\'])
+        cd('D:\Geomec\paper DFN\ITBA\Piloto\DFIT\scriptSolver\')
         movefile(['resultadosFinFractura_',nombreCorrida,'.mat'],[direccionGuardado,nombreCorrida]);
     end
     
     if ~isempty(tSaveParcial)
         for i = 1:numel(tSaveParcial)
-            cd([mainFolder 'scripSolverGitHub\'])
+            cd('D:\Geomec\paper DFN\ITBA\Piloto\DFIT\scriptSolver\')
             movefile(['resultadosPARCIALESCorrida_',nombreCorrida,'_numero_',num2str(i),'.mat'],[direccionGuardado,nombreCorrida]);
         end
     end

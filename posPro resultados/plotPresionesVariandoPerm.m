@@ -9,7 +9,7 @@ wantOnlyISIP = false;
 deltaP_Dyn = 2000-60; %Asumimos una cierta cantidad de psi
 numberOfFolders = 5;
 
-dataRead = 'DFNs';%'virgin';%'kappaDFN_{100}';%'kappaDFN_{0.1}';%  'kappaDFN_{10}'; %'kappaDFN_{1}'; %
+dataRead = 'kappaDFN_{100}';%'DFNs';%'virgin';%'kappaDFN_{0.1}';%  'kappaDFN_{10}'; %'kappaDFN_{1}'; %
 % resultFolder1 = 'DFIT_WIplusDFNs_permNerfDFNsKappaBase\'; % corridaBase ----- OJO DESCOMENTAR
 resultFolder1 = 'DFIT_WIplusDFNs_permNerf\';
 switch dataRead
@@ -62,9 +62,9 @@ end
 result = {numberOfFolders};
 result{1} = resultFolder1; result{2} = resultFolder2; 
 result{3} = resultFolder3; result{4} = resultFolder4; 
-result{5} = resultFolder5; %result{6} = resultFolder6; 
-% result{7} = resultFolder7; result{8} = resultFolder8;
-% result{9} = resultFolder9; result{10} = resultFolder10;
+result{5} = resultFolder5; result{6} = resultFolder6; 
+result{7} = resultFolder7; result{8} = resultFolder8;
+result{9} = resultFolder9; result{10} = resultFolder10;
 % result{11} = resultFolder11; result{12} = resultFolder12;
 % result{13} = resultFolder13;  result{14} = resultFolder14; 
 % result{15} = resultFolder15;  result{16} = resultFolder16; 
@@ -73,13 +73,13 @@ result{5} = resultFolder5; %result{6} = resultFolder6;
 addpath([resultsFolder, resultFolder1])
 addpath([resultsFolder, resultFolder2])
 addpath([resultsFolder, resultFolder3])
-% addpath([resultsFolder, resultFolder4])
-% addpath([resultsFolder, resultFolder5])
-% addpath([resultsFolder, resultFolder6])
-% addpath([resultsFolder, resultFolder7])
-% addpath([resultsFolder, resultFolder8])
-% addpath([resultsFolder, resultFolder9])
-% addpath([resultsFolder, resultFolder10])
+addpath([resultsFolder, resultFolder4])
+addpath([resultsFolder, resultFolder5])
+addpath([resultsFolder, resultFolder6])
+addpath([resultsFolder, resultFolder7])
+addpath([resultsFolder, resultFolder8])
+addpath([resultsFolder, resultFolder9])
+addpath([resultsFolder, resultFolder10])
 % addpath([resultsFolder, resultFolder11])
 % addpath([resultsFolder, resultFolder12])
 % addpath([resultsFolder, resultFolder13])
@@ -189,8 +189,8 @@ else
     d = plot(tiempoCorregidoAll,presionCrudaAll,'m','lineWidth',2);
 end
 % title(['ISIP DFNs vs Data' dataRead])
-legend([ p{11} p{12} p{13} p{14} p{15} p{16}  d ],'miniDFNS2' ,'miniDFNS3' ,'kappa alto','mini4DFNS1','mini4DFNS2','mini4DFNS3','DATA1031h')
-% legend([ p{1} p{2} p{3} p{4} p{5} d],'Base' ,'kappaDFN=0.1' ,'kappaDFN=1','kappaDFN=1','kappaDFN=100','Data1031h')
+% legend([ p{11} p{12} p{13} p{14} p{15} p{16}  d ],'miniDFNS2' ,'miniDFNS3' ,'kappa alto','mini4DFNS1','mini4DFNS2','mini4DFNS3','DATA1031h')
+legend([ p{1} p{2} p{3} p{4} p{5} p{6} p{7} p{8} p{9} p{10} d],'Base' ,'permNerfDFNsKappaVariable4' ,'permBuffKappa100ISIP1','permBuffKappa100ISIP2','permBuffKappa100ISIP3','permBuffKappa100ISIP4','permBuffKappa100ISIP5ReStartBilineal','permBuffKappa100ISIP6','permNerfFractSensivity1', 'permNerfFractSensivityMiniDFNs0','Data1031h')
 
 grid minor
 xlim([40 200])

@@ -10,10 +10,10 @@ meshCase = 'DFIT'; %'WI';% 'DFN';%
 guardarCorrida    = 'Y'; % Si se quiere guardar la corrida. "Y" o "N".
 pathAdder
 direccionGuardado = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\Resultados de corridas (.mat)\'; % Direccion donde se guarda la informacion.
-nombreCorrida     = 'DFIT_testPump4'; % Nombre de la corrida. La corrida se guarda en la carpeta "Resultado de corridas" en una subcarpeta con este nombre.
+nombreCorrida     = 'DFIT_base'; % Nombre de la corrida. La corrida se guarda en la carpeta "Resultado de corridas" en una subcarpeta con este nombre.
 
 cargaDatos     = 'load'; % Forma en la que se cargan las propiedades de entrada. "load" "test" "default" "change".
-archivoLectura = 'DFIT_rev052022_base 062023PumpTest4.txt';%'DFIT_rev052022_WI062023CorridaCorta.txt';%'DFIT_rev052022_WI+DFN062023CorridaCorta.txt';%'Dfit_rev052022_DFIT_062023.txt'; %'Dfit_rev052022_DFIT_WItrial_062023.txt';% Nombre del archivo con las propiedades de entrada. 
+archivoLectura = 'DFIT_base.txt';%'DFIT_rev052022_WI062023CorridaCorta.txt';%'DFIT_rev052022_WI+DFN062023CorridaCorta.txt';%'Dfit_rev052022_DFIT_062023.txt'; %'Dfit_rev052022_DFIT_WItrial_062023.txt';% Nombre del archivo con las propiedades de entrada. 
 
 tSaveParcial   = []; % Guardado de resultados parciales durante la corrida. Colocar los tiempos en los cuales se quiere guardar algun resultado parcial.
 
@@ -47,6 +47,8 @@ else
     meshInfo.elementsFisu.ALL.minusNodes = cast(meshInfo.elementsFisu.ALL.minusNodes,'logical');
 end
 plotMeshColo3D(meshInfo.nodes,meshInfo.elements,meshInfo.cohesivos.elements,'off','on','w','r','k',1) % Se plotea la malla
+plotMeshColo3D(meshInfo.nodes,meshInfo.elements,meshInfo.cohesivos.elements,'on','on','w','r','k',1) % Se plotea la malla
+
 % Verificacion de malla.
 meshInfo = meshVerification(meshInfo);
 
@@ -551,7 +553,7 @@ while algorithmProperties.elapsedTime <= temporalProperties.tiempoTotalCorrida
                 He{aux2} = zeros(4,4);
                 aux2     = aux2+1;
             else
-                He{aux2} = HFluidos2D(meshInfo.elementsFluidos,iEle,hhIter(meshInfo.nodosFluidos.EB_Asociados,1),physicalProperties.fluidoFracturante.MU,meshInfo.cohesivos,meshInfo.nodes,cohesivosProperties.angDilatancy);
+                He{aux2} = HFluidos2D(meshInfo.elementsFluidos,iEle,hhIter(meshInfo.nodosFluidos.EB_Asociados,1),physicalProperties.fluidoFracturante.MU,meshInfo.cohesivos,meshInfo.nodes,cohesivosProperties.angDilatancy,1);
                 aux2     = aux2+1;
             end
         end
