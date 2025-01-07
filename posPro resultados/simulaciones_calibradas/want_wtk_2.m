@@ -1,8 +1,10 @@
 clc
 clearvars
+% Paths
 currentPath = pwd;
+addpath('C:\Geomec\DFIT\posPro resultados\simulaciones_calibradas\stress_calc_fcn\')
 % Input *.mat directory
-matDir = 'D:\Geomec\paper DFN\ITBA\Piloto\DFIT\posPro resultados\simulaciones_calibradas\base\';
+matDir = 'C:\Geomec\DFIT\posPro resultados\simulaciones_calibradas\base\';
 mpa2psi = 145.038;
 outputFolder = 'base';
 % Define prefix from *.mat
@@ -56,6 +58,23 @@ nuv = meshProps.nu_V.*ones(size(pressure_field));
 % --- Parte para exportar sólidos en 3D ---
 outputFile3D = 'meshSolid';
 
+%% --- Cálculo de tensiones ---
+% Calculo de tensiones efectivas por nodos.
+[stress_gp, strain_gp] = calc_stress_eff(iTime,paramDiscEle,pGaussParam,meshInfo,constitutivas,dTimes,initialSrainSolPG);
+% Extrapolacion de tensiones a los nodos.
+[stress_nodal, strain_nodal] = extrapolation_nodal(iTime,pGaussParam,paramDiscEle,stress_gp, strain_gp);
+% Calculo de tensiones efectivas. Primero hago el arreglo de array
+% pertinente.
+[pressure_gp, strain_pressure_gp] = calc_pressure_gp(pGaussParam,paramDiscEle,dTimes,iTime,meshInfo,constitutivas,Biot,temporalProperties);
+% Calculo de tension efectiva.
+stress_gp_tot = stress_gp - pressure_gp;
+strain_gp_tot = strain_gp - strain_pressure_gp;
+% Tensiones efectivas promediadas por nodo compartido.
+[mean_eff_stress, mean_eff_strain ] = mean_nodal_field(paramDiscEle,iTime,meshInfo,stress_nodal,strain_nodal,'on');
+% Calculo tensiones totales en los gp. Tenerlo en cuenta.
+[mean_tot_gp_stress, mean_tot_gp_strain] = mean_nodal_field(paramDiscEle,iTime,meshInfo,stress_gp_tot,strain_gp_tot,'on');
+% Promediamos el flujo por nodo compartido
+[mean_flux, ~] = mean_nodal_field(paramDiscEle,iTime,meshInfo,q_flux,[],'off');
 % --- Seguir codigo a partir de aqui
 disp('Codigo en desarrollo. Falta calcular campos de tenesiones. Seguir desarrollando a partir de esta linea.');
 return;
